@@ -1,7 +1,8 @@
-package com.bonhams.expensemanagement
+package com.bonhams.expensemanagement.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.ui.BaseActivity
 
 class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
