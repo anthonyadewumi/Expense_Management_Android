@@ -1,10 +1,13 @@
-package com.bonhams.expensemanagement
+package com.bonhams.expensemanagement.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.PersistableBundle
+import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.login.LoginActivity
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 
 class SplashScreenActivity : BaseActivity() {
@@ -19,18 +22,19 @@ class SplashScreenActivity : BaseActivity() {
     private fun checkUserToStartActivity(){
         Handler(Looper.getMainLooper()).postDelayed({
             // Your Code
-            if(AppPreferences.isLoggedIn)
+            if (AppPreferences.isLoggedIn)
                 startMainActivity()
             else
                 startLoginActivity()
 
-        }, 3000)
+        }, 2000)
     }
 
     private fun startLoginActivity(){
         val intent = Intent(this@SplashScreenActivity, LoginActivity::class.java)
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        finish()
     }
 
     private fun startMainActivity(){
@@ -38,5 +42,6 @@ class SplashScreenActivity : BaseActivity() {
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        finish()
     }
 }

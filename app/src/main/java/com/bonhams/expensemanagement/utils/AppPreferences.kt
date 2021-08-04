@@ -25,11 +25,9 @@ object AppPreferences {
         editor.apply()
     }
 
-
     var isLoggedIn: Boolean
         // custom getter to get a preference of a desired type, with a predefined default value
         get() = prefs.getBoolean(IS_LOGGED_IN.first, IS_LOGGED_IN.second)
-
         // custom setter to save a preference back to preferences file
         set(value) = prefs.edit {
             it.putBoolean(IS_LOGGED_IN.first, value)

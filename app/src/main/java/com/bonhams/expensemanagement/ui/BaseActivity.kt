@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement
+package com.bonhams.expensemanagement.ui
 
 import android.os.Bundle
 import android.os.PersistableBundle

@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement
+package com.bonhams.expensemanagement.ui
 
 import android.app.Application
 import com.bonhams.expensemanagement.utils.AppPreferences

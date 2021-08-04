@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_bottom_home"
+        android:icon="@android:drawable/btn_star"
+        android:title="@string/home" />
+
+    <item
+        android:id="@+id/navigation_bottom_orders"
+        android:icon="@android:drawable/btn_star"
+        android:title="@string/scan" />
+    <item
+        android:id="@+id/navigation_bottom_person"
+        android:icon="@android:drawable/btn_star"
+        android:title="@string/notifications" />
+    <item
+        android:id="@+id/navigation_bottom_contact_us"
+        android:icon="@android:drawable/btn_star"
+        android:title="@string/my_profile" />
+</menu>
