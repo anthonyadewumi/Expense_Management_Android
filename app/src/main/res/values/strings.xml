@@ -13,4 +13,14 @@
     <string name="notifications">Notifications</string>
     <string name="my_profile">My Profile</string>
     <string name="forgot_password_heading">Please provide your registered email address below.\nWe will send you a reset password link</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="no_notification_found">No notifications found</string>
+    <string name="submitted_on_colon">Submitted On :</string>
+    <string name="approved">Approved</string>
+    <string name="status_colon">Status :</string>
+    <string name="total_amount_colon">Total Amount</string>
+    <string name="claims">Claims</string>
+    <string name="mileage_expenses">Mileage Expenses</string>
+
+
 </resources>

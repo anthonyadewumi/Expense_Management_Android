@@ -19,6 +19,14 @@
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/Theme.NavigationDrawer.PopupOverlay">
 
+            <ImageView
+                android:id="@+id/ivMenu"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_menu"
+                android:layout_gravity="start" />
+
             <TextView
                 android:id="@+id/appbar_logo"
                 android:layout_width="wrap_content"
@@ -29,18 +37,18 @@
                 android:text="@string/bonhams" />
 
             <RelativeLayout
-                android:id="@+id/mAppbar_NotificationLay"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
+                android:id="@+id/layoutAppBarSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
                 android:layout_gravity="end">
 
-                <ImageButton
-                    android:id="@+id/mAppbar_notification"
+                <ImageView
+                    android:id="@+id/ivSearch"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
-                    android:background="@color/colorTransparent"
-                    android:src="@android:drawable/ic_menu_search" />
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_search" />
 
             </RelativeLayout>
 

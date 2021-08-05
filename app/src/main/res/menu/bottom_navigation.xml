@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_bottom_home"
-        android:icon="@android:drawable/btn_star"
+        android:id="@+id/bottom_nav_home"
+        android:icon="@drawable/ic_home"
         android:title="@string/home" />
 
     <item
-        android:id="@+id/navigation_bottom_orders"
-        android:icon="@android:drawable/btn_star"
+        android:id="@+id/bottom_nav_camera"
+        android:icon="@drawable/ic_scan"
         android:title="@string/scan" />
     <item
-        android:id="@+id/navigation_bottom_person"
-        android:icon="@android:drawable/btn_star"
+        android:id="@+id/bottom_nav_notifications"
+        android:icon="@drawable/ic_notification"
         android:title="@string/notifications" />
     <item
-        android:id="@+id/navigation_bottom_contact_us"
-        android:icon="@android:drawable/btn_star"
+        android:id="@+id/bottom_nav_my_profile"
+        android:icon="@drawable/ic_profile"
         android:title="@string/my_profile" />
 </menu>
