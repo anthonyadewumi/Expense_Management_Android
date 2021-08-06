@@ -23,7 +23,7 @@ class MyProfileFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_notification, container, false)
+        val view = inflater.inflate(R.layout.fragment_my_profile, container, false)
         contextActivity = activity as? BaseActivity
 
         return view
