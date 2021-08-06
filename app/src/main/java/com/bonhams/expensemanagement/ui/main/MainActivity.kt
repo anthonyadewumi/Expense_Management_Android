@@ -32,14 +32,14 @@ class MainActivity : BaseActivity() {
 
     private var navDrawerItems = arrayListOf(
         NavDrawerItem(R.drawable.ic_home, "Expense", -1),
-        NavDrawerItem(R.drawable.ic_home, "Manually Create", 1),
-        NavDrawerItem(R.drawable.ic_home, "Scan Receipt", 2),
+        NavDrawerItem(R.drawable.ic_nav_expense_plus, "Manually Create", 1),
+        NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2),
         NavDrawerItem(R.drawable.ic_home, "Mileage", -1),
-        NavDrawerItem(R.drawable.ic_home, "Manually Create", 4),
-        NavDrawerItem(R.drawable.ic_home, "Start GPS", 5),
+        NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 4),
+        NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 5),
         NavDrawerItem(R.drawable.ic_profile, "Others", -1),
-        NavDrawerItem(R.drawable.ic_profile, "My Account", 7),
-        NavDrawerItem(R.drawable.ic_profile, "Logout", 8),
+        NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 7),
+        NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 8),
     )
 
 
