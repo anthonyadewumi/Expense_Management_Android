@@ -70,14 +70,9 @@
                 android:id="@+id/navDrawerHeaderImg"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
-                android:layout_marginStart="3dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
-                android:layout_marginBottom="5dp"
-                android:padding="10dp"
+                android:padding="@dimen/_15sdp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_logo"
+                android:src="@drawable/ic_bonhams_white"
                 tools:ignore="ContentDescription" />
 
 
@@ -86,6 +81,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center"
+                android:gravity="center_vertical"
                 android:layout_marginTop="@dimen/_10sdp">
 
                 <ImageView
@@ -111,7 +107,7 @@
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:text="Wade Warren"
-                    android:textSize="@dimen/_12ssp"
+                    style="@style/TextRegular12"
                     android:textColor="@color/white"/>
 
                     <TextView
@@ -121,7 +117,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:text="wade@gmail.com"
-                        android:textSize="@dimen/_10ssp"
+                        style="@style/TextRegular10"
                         android:textColor="@color/white"/>
 
                 </LinearLayout>
@@ -150,7 +146,8 @@
             android:layout_margin="8sp"
             android:text="version 1.0"
             android:textAlignment="center"
-            android:textColor="@android:color/white" />
+            style="@style/TextRegular8"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
     <!-- Custom Navigation Drawer End -->

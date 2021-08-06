@@ -33,7 +33,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
-                style="@style/TextBoldWhite16"
+                style="@style/TextRegular14"
+                android:textColor="@color/white"
                 android:text="@string/bonhams" />
 
             <RelativeLayout

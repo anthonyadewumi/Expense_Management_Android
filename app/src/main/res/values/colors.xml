@@ -10,8 +10,9 @@
     <color name="colorLightGray">#F3F3F3</color>
     <color name="colorMediumGray">#C0C0C0</color>
     <color name="colorDarkGray">#686868</color>
-    <color name="colorTextGray">#828282</color>
-    <color name="colorTextDarkGray">#414141</color>
+    <color name="colorTextBlack">#242731</color>
+    <color name="colorTextGray">#7B7B7B</color>
+    <color name="colorTextDarkGray">#595B60</color>
     <color name="colorTextHintGray">#808080</color>
     <color name="colorTransparent">#00FFFFFF</color>
     <color name="colorLightGrayTransparent">#5BF3F3F3</color>

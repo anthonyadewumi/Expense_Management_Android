@@ -25,18 +25,22 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="Theme.NavigationDrawer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.ExpenseManagement.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
+    <style name="Theme.NavigationDrawer.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.NavigationDrawer.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="outlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxStrokeWidth">0.5px</item>
+        <item name="boxStrokeWidth">0.8px</item>
         <item name="boxStrokeWidthFocused">@dimen/_2sdp</item>
-        <item name="strokeColor">@color/colorDarkGray</item>
+        <item name="strokeColor">#595B60</item>
     </style>
 
     <style name="outlineBoxExposedDropdown" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-        <item name="boxStrokeWidth">0.5px</item>
+        <item name="boxStrokeWidth">0.8px</item>
         <item name="boxStrokeWidthFocused">@dimen/_2sdp</item>
         <item name="strokeColor">@color/colorDarkGray</item>
     </style>
@@ -46,130 +50,257 @@
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/raleway_regular</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-
-    <style name="TextRegularBlack8" parent="Theme.ExpenseManagement">
+    <!--Regular font style-->
+    <style name="TextRegular8" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/raleway_regular</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_8ssp</item>
-        <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="TextRegularBlack10" parent="Theme.ExpenseManagement">
+    <style name="TextRegular10" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/raleway_regular</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_10ssp</item>
-        <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="TextRegularBlack12" parent="Theme.ExpenseManagement">
+    <style name="TextRegular12" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/raleway_regular</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_12ssp</item>
-        <item name="android:textColor">@color/black</item>
     </style>
 
-
-    <style name="TextBoldBlack8" parent="Theme.ExpenseManagement">
+    <style name="TextRegular14" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
-        <item name="android:textSize">@dimen/_8ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="TextBoldBlack10" parent="Theme.ExpenseManagement">
-        <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
-        <item name="android:textSize">@dimen/_10ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="TextBoldBlack12" parent="Theme.ExpenseManagement">
-        <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
-        <item name="android:textSize">@dimen/_12ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="TextBoldBlack14" parent="Theme.ExpenseManagement">
-        <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_14ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
-
-    <style name="TextBoldBlack16" parent="Theme.ExpenseManagement">
+    <style name="TextRegular16" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_16ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextBoldBlack18" parent="Theme.ExpenseManagement">
+    <style name="TextRegular18" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_18ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextBoldBlack20" parent="Theme.ExpenseManagement">
+    <style name="TextRegular20" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_20ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
 
-    <style name="TextBoldBlack28" parent="Theme.ExpenseManagement">
+    <!--Medium font style-->
+    <style name="TextMedium8" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
-        <item name="android:textSize">@dimen/_28ssp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
     </style>
 
-
-    <style name="TextBoldWhite14" parent="Theme.ExpenseManagement">
+    <style name="TextMedium10" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+    </style>
+
+    <style name="TextMedium12" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+
+    <style name="TextMedium14" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
         <item name="android:textSize">@dimen/_14ssp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextBoldWhite16" parent="Theme.ExpenseManagement">
+    <style name="TextMedium16" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_medium</item>
         <item name="android:textSize">@dimen/_16ssp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="TextBoldWhite18" parent="Theme.ExpenseManagement">
+    <style name="TextMedium18" parent="Theme.ExpenseManagement">
         <item name="android:includeFontPadding">false</item>
-        <item name="android:fontFamily">@font/opensans_semibold</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
         <item name="android:textSize">@dimen/_18ssp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Theme.ExpenseManagement.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="TextMedium20" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_20ssp</item>
     </style>
 
-    <style name="Theme.ExpenseManagement.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.ExpenseManagement.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--Semi Bold font style-->
+    <style name="TextSemiBold8" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+    </style>
+
+    <style name="TextSemiBold10" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+    </style>
+
+    <style name="TextSemiBold12" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+
+    <style name="TextSemiBold14" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
+    </style>
+
+    <style name="TextSemiBold16" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_16ssp</item>
+    </style>
+
+    <style name="TextSemiBold18" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_18ssp</item>
+    </style>
+
+    <style name="TextSemiBold20" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_semi_bold</item>
+        <item name="android:textSize">@dimen/_20ssp</item>
+    </style>
+
+    <!--Bold font style-->
+    <style name="TextBold8" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+    </style>
+
+    <style name="TextBold10" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+    </style>
+
+    <style name="TextBold12" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+
+    <style name="TextBold14" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
+    </style>
+
+    <style name="TextBold16" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_16ssp</item>
+    </style>
+
+    <style name="TextBold18" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_18ssp</item>
+    </style>
+
+    <style name="TextBold20" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_20ssp</item>
+    </style>
+
+    <style name="TextBold22" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_22ssp</item>
+    </style>
+
+    <style name="TextBold24" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_24ssp</item>
+    </style>
+
+    <style name="TextBold26" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_26ssp</item>
+    </style>
+
+    <style name="TextBold28" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_28ssp</item>
+    </style>
+
+    <style name="TextBold30" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">@dimen/_30ssp</item>
+    </style>
+
+    <!--Extra Bold font style-->
+    <style name="TextExtraBold8" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_8ssp</item>
+    </style>
+
+    <style name="TextExtraBold10" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+    </style>
+
+    <style name="TextExtraBold12" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+    </style>
+
+    <style name="TextExtraBold14" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
+    </style>
+
+    <style name="TextExtraBold16" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_16ssp</item>
+    </style>
+
+    <style name="TextExtraBold18" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_18ssp</item>
+    </style>
+
+    <style name="TextExtraBold20" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_extra_bold</item>
+        <item name="android:textSize">@dimen/_20ssp</item>
+    </style>
+
+
 </resources>

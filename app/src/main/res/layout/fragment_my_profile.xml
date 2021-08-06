@@ -18,31 +18,49 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.05" />
 
-
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/TextBoldBlack28"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/bonhams"
+            android:orientation="vertical"
             android:gravity="center"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
-            app:layout_constraintTop_toBottomOf="@id/guidelineTop" />
+            app:layout_constraintTop_toBottomOf="@id/guidelineTop">
+
+            <ImageView
+                android:id="@+id/tvTitle"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_70sdp"
+                android:src="@drawable/ic_logo"
+                android:layout_margin="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"/>
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="(Employee Id)"
+                style="@style/TextRegular10"
+                android:textColor="@color/colorTextBlack"/>
+
+        </LinearLayout>
+
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.4" />
+            app:layout_constraintGuide_percent="0.3" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineVerticalLeft"
@@ -58,35 +76,21 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.92" />
 
-        <TextView
-            android:id="@+id/mWelcomeMsg"
-            style="@style/TextBoldBlack20"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layoutProfileDetail"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/welcome"
+            android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
-            app:layout_constraintTop_toBottomOf="@id/guideline" />
-
-        <TextView
-            android:id="@+id/mLoginContinue"
-            style="@style/TextRegularBlack12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:text="@string/please_login_to_continue"
-            app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
-            app:layout_constraintTop_toBottomOf="@id/mWelcomeMsg" />
-
+            app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
+            app:layout_constraintTop_toBottomOf="@+id/guideline">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/mEmailTextField"
             style="@style/outlineBox"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/enter_user_id"
-            app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
-            app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
-            app:layout_constraintTop_toBottomOf="@+id/guidelineInput">
+            android:hint="@string/enter_user_id">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/mEmail"
@@ -97,60 +101,7 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/mPasswordTextField"
-            style="@style/outlineBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:hint="@string/enter_password"
-            app:endIconMode="password_toggle"
-            app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
-            app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
-            app:layout_constraintTop_toBottomOf="@+id/mEmailTextField">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/mPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textPassword"
-                android:singleLine="true" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <ImageView
-            android:id="@+id/mRememberMeCheckbox"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:src="@drawable/ic_checkbox_uncheck_login"
-            android:tag="0"
-            app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
-            app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
-
-        <TextView
-            android:id="@+id/mLabelRemember"
-            style="@style/TextRegularBlack12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/remember_me"
-            app:layout_constraintLeft_toRightOf="@id/mRememberMeCheckbox"
-            app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
-
-        <TextView
-            android:id="@+id/mForgotPassword"
-            style="@style/TextRegularBlack12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/forgot_password"
-            app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
-            app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
-
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/mSubmitLay"
@@ -160,26 +111,81 @@
             android:layout_marginTop="@dimen/_35sdp"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
-            app:layout_constraintTop_toBottomOf="@id/mRememberMeCheckbox">
+            app:layout_constraintTop_toBottomOf="@id/layoutProfileDetail">
 
-            <ProgressBar
-                android:id="@+id/mProgressBars"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_gravity="center"
-                android:indeterminateTint="@color/colorRed"
-                android:visibility="gone" />
-
-            <androidx.appcompat.widget.AppCompatButton
+            <View
                 android:id="@+id/mContinue"
-                style="@style/TextRegularBlack12"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_corner_theme"
-                android:text="@string/sign_in"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:layout_height="0.5dp"
+                android:background="@drawable/round_corner_theme" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:orientation="horizontal"
+                android:padding="3sp"
+                android:paddingStart="10dp"
+                android:paddingEnd="0dp">
+
+                <ImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerInside"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_settings"
+                    tools:ignore="ContentDescription"
+                    app:tint="@color/secondary"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="7sp"
+                    android:gravity="center_vertical"
+                    android:text="@string/settings_colon"
+                    android:textSize="18sp"
+                    android:textColor="@color/secondary"/>
+
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:orientation="horizontal"
+                android:padding="3sp"
+                android:paddingStart="10dp"
+                android:paddingEnd="0dp">
+
+                <TextView
+                    android:id="@+id/tvChangePassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="35sp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="7sp"
+                    android:gravity="center_vertical"
+                    android:text="@string/change_password"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorTextDarkGray"
+                    android:layout_marginEnd="@dimen/_30sdp"/>
+
+                <ImageView
+                    android:layout_width="35sp"
+                    android:layout_height="35sp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="centerInside"
+                    android:src="@android:drawable/btn_star_big_on"
+                    tools:ignore="ContentDescription"
+                    app:tint="@color/secondary"/>
+
+            </LinearLayout>
+
+
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

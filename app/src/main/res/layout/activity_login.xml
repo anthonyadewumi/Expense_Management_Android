@@ -19,13 +19,10 @@
             app:layout_constraintGuide_percent="0.05" />
 
 
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/TextBoldBlack28"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/bonhams"
-            android:gravity="center"
+        <ImageView
+            android:layout_width="@dimen/_140sdp"
+            android:layout_height="@dimen/_55sdp"
+            android:src="@drawable/ic_bonhams_black"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@id/guidelineTop" />
@@ -35,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.2" />
+            app:layout_constraintGuide_percent="0.25" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineInput"
@@ -60,30 +57,32 @@
 
         <TextView
             android:id="@+id/mWelcomeMsg"
-            style="@style/TextBoldBlack20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/welcome"
+            style="@style/TextBold30"
+            android:textColor="@color/colorTextBlack"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintTop_toBottomOf="@id/guideline" />
 
         <TextView
             android:id="@+id/mLoginContinue"
-            style="@style/TextRegularBlack12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/please_login_to_continue"
+            style="@style/TextRegular12"
+            android:textColor="@color/colorTextDarkGray"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintTop_toBottomOf="@id/mWelcomeMsg" />
 
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/mEmailTextField"
-            style="@style/outlineBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/enter_user_id"
+            style="@style/outlineBox"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@+id/guidelineInput">
@@ -93,7 +92,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:drawableStart="@drawable/ic_email"
+                android:drawablePadding="@dimen/_5sdp"
+                style="@style/TextRegular12"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,7 +117,10 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
                 android:inputType="textPassword"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:drawableStart="@drawable/ic_password"
+                android:drawablePadding="@dimen/_5sdp"
+                style="@style/TextRegular12"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -131,23 +136,25 @@
 
         <TextView
             android:id="@+id/mLabelRemember"
-            style="@style/TextRegularBlack12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/remember_me"
+            style="@style/TextRegular12"
+            android:textColor="@color/colorTextGray"
             app:layout_constraintLeft_toRightOf="@id/mRememberMeCheckbox"
             app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
 
         <TextView
             android:id="@+id/mForgotPassword"
-            style="@style/TextRegularBlack12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/forgot_password"
+            style="@style/TextRegular12"
+            android:textColor="@color/colorTextDarkGray"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
 
@@ -157,7 +164,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_40sdp"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@id/mRememberMeCheckbox">
@@ -172,7 +179,7 @@
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/mContinue"
-                style="@style/TextRegularBlack12"
+                style="@style/TextRegular12"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_corner_theme"
