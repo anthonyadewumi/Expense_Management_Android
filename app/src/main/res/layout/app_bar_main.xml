@@ -19,30 +19,118 @@
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/Theme.NavigationDrawer.PopupOverlay">
 
-            <ImageView
-                android:id="@+id/ivMenu"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_menu"
-                android:layout_gravity="start" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/appbar_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/transparent"
-                style="@style/TextRegular14"
-                android:textColor="@color/white"
-                android:text="@string/bonhams" />
+                <RelativeLayout
+                    android:id="@+id/layoutAppBarMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:layout_gravity="end"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true">
+
+                    <ImageView
+                        android:id="@+id/ivMenu"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:src="@drawable/ic_menu"
+                        android:layout_gravity="start"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:visibility="visible"/>
+
+                    <LinearLayout
+                        android:id="@+id/layoutBack"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:padding="@dimen/_5sdp"
+                            android:src="@drawable/ic_back"
+                            android:layout_gravity="start"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
+                            style="@style/TextRegular14"
+                            android:textColor="@color/white"
+                            android:text="@string/back"/>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:layout_toEndOf="@+id/layoutAppBarMenu"
+                    android:layout_toStartOf="@+id/layoutAppBarSearch"
+                    android:layout_marginStart="@dimen/_5sdp">
+
+                    <LinearLayout
+                        android:id="@+id/layoutGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/appbarGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        style="@style/TextMedium12"
+                        android:textColor="@color/white"
+                        android:text="Hello Wade!"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
+                            style="@style/TextRegular8"
+                            android:textColor="@color/white"
+                            android:text="@string/good_to_see_you"/>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/appbarTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@android:color/transparent"
+                        style="@style/TextRegular14"
+                        android:textColor="@color/white"
+                        android:text="@string/bonhams"
+                        android:layout_centerInParent="true"/>
+
+                </RelativeLayout>
+
 
             <RelativeLayout
                 android:id="@+id/layoutAppBarSearch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_5sdp"
-                android:layout_gravity="end">
+                android:layout_gravity="end"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true">
 
                 <ImageView
                     android:id="@+id/ivSearch"
@@ -50,6 +138,8 @@
                     android:layout_height="@dimen/_30sdp"
                     android:padding="@dimen/_5sdp"
                     android:src="@drawable/ic_search" />
+
+            </RelativeLayout>
 
             </RelativeLayout>
 

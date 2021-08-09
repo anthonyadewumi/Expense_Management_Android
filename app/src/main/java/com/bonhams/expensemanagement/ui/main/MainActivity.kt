@@ -11,14 +11,20 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bonhams.expensemanagement.BuildConfig
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.NavDrawerAdapter
 import com.bonhams.expensemanagement.data.model.NavDrawerItem
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
+import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
+import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.ClickListener
+import com.bonhams.expensemanagement.utils.CustomAlertDialog
 import com.bonhams.expensemanagement.utils.RecyclerTouchListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,17 +35,18 @@ import kotlinx.android.synthetic.main.app_bar_main.view.*
 class MainActivity : BaseActivity() {
 
     private lateinit var navDrawerAdapter: NavDrawerAdapter
+    val TAG = "MainActivity"
 
     private var navDrawerItems = arrayListOf(
         NavDrawerItem(R.drawable.ic_home, "Expense", -1),
         NavDrawerItem(R.drawable.ic_nav_expense_plus, "Manually Create", 1),
         NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2),
         NavDrawerItem(R.drawable.ic_home, "Mileage", -1),
-        NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 4),
-        NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 5),
+        NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3),
+        NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4),
         NavDrawerItem(R.drawable.ic_profile, "Others", -1),
-        NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 7),
-        NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 8),
+        NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5),
+        NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6),
     )
 
 
@@ -49,6 +56,7 @@ class MainActivity : BaseActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         setupNavDrawer()
         setupClickListeners()
+        setupAppbar()
 
         if (savedInstanceState == null) {
             val fragment = HomeFragment()
@@ -76,12 +84,13 @@ class MainActivity : BaseActivity() {
             bottomNavigationView.getMenu().setGroupCheckable(0, true, true)
             when (menuItem.itemId) {
                 R.id.bottom_nav_home -> {
+                    setupAppbar()
                     val fragment = HomeFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_camera -> {
-                    val fragment = MyProfileFragment()
+                    val fragment = ClaimDetailFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -107,7 +116,26 @@ class MainActivity : BaseActivity() {
         })
     }
 
+    private fun setupAppbar(){
+        appbarTitle.visibility = View.GONE
+        layoutAppBarMenu.visibility = View.VISIBLE
+        layoutGreeting.visibility = View.VISIBLE
+        ivMenu.visibility = View.VISIBLE
+        layoutBack.visibility = View.GONE
+        layoutAppBarSearch.visibility = View.VISIBLE
+    }
+
+    fun setAppbarTitle(title: String){
+        appbarTitle.visibility = View.VISIBLE
+        appbarTitle.text = title
+        layoutGreeting.visibility = View.GONE
+        ivMenu.visibility = View.VISIBLE
+        layoutBack.visibility = View.GONE
+        layoutAppBarSearch.visibility = View.VISIBLE
+    }
+
     private fun setupNavDrawer(){
+        tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
         // Setup Recyclerview's Layout
         navDrawerRv.layoutManager = LinearLayoutManager(this)
         navDrawerRv.setHasFixedSize(true)
@@ -115,15 +143,38 @@ class MainActivity : BaseActivity() {
         // Add Item Touch Listener
         navDrawerRv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
             override fun onClick(view: View, position: Int) {
-                when (position) {
-                    0 -> {
+                Log.d(TAG, "navDrawerRv onClick: $position")
+                when (navDrawerItems[position].code) {
+                    1 -> { // Manually Create
+                        val fragment = NewClaimFragment()
+                        addFragment(fragment)
+                    }
+                    2 -> { // Scan Receipt
+                        val fragment = HomeFragment()
+                        addFragment(fragment)
+                    }
+                    3 -> { // Manually Create
+                        val fragment = MileageDetailFragment()
+                        addFragment(fragment)
+                    }
+                    4 -> { // Start GPS
+                        val fragment = GPSTrackingFragment()
+                        addFragment(fragment)
+                    }
+                    5 -> { // My Account
+                        val fragment = MyProfileFragment()
+                        addFragment(fragment)
+                    }
+                    6 -> { // Logout
+
+                        val dialog = CustomAlertDialog(this@MainActivity)
+                        dialog.showNegativeButton(false)
+                        dialog.show()
+                    }
+                    else -> {
                         val fragment = HomeFragment()
                         changeFragment(fragment)
                     }
-                }
-                // Don't highlight the 'Profile' and 'Like us on Facebook' item row
-                if (position != 6 && position != 4) {
-                    updateAdapter(position)
                 }
 
                 Handler(Looper.getMainLooper()).postDelayed({
@@ -132,44 +183,17 @@ class MainActivity : BaseActivity() {
             }
         }))
 
-        // Close the soft keyboard when you open or close the Drawer
-        /*val toggle: ActionBarDrawerToggle = object : ActionBarDrawerToggle(this, navDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            override fun onDrawerClosed(drawerView: View) {
-                // Triggered once the drawer closes
-                super.onDrawerClosed(drawerView)
-                try {
-                    val inputMethodManager =
-                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
-                } catch (e: Exception) {
-                    e.stackTrace
-                }
-            }
-
-            override fun onDrawerOpened(drawerView: View) {
-                // Triggered once the drawer opens
-                super.onDrawerOpened(drawerView)
-                try {
-                    val inputMethodManager =
-                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
-                } catch (e: Exception) {
-                    e.stackTrace
-                }
-            }
-        }
-        navDrawer.addDrawerListener(toggle)
-
-        toggle.syncState()*/
-
-        updateAdapter(0)
-    }
-
-    private fun updateAdapter(highlightItemPos: Int) {
-        navDrawerAdapter = NavDrawerAdapter(navDrawerItems, highlightItemPos)
+//        updateAdapter(0)
+        navDrawerAdapter = NavDrawerAdapter(navDrawerItems, -1)
         navDrawerRv.adapter = navDrawerAdapter
         navDrawerAdapter.notifyDataSetChanged()
     }
+
+    /*private fun updateAdapter(highlightItemPos: Int) {
+        navDrawerAdapter = NavDrawerAdapter(navDrawerItems, highlightItemPos)
+        navDrawerRv.adapter = navDrawerAdapter
+        navDrawerAdapter.notifyDataSetChanged()
+    }*/
 
     private fun hasLocationForegroundPermission() =
         ActivityCompat.checkSelfPermission(
@@ -227,5 +251,13 @@ class MainActivity : BaseActivity() {
             fragment,
             fragment.javaClass.getSimpleName()
         ).commit()
+    }
+
+    private fun addFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(
+            R.id.container,
+            fragment,
+            fragment.javaClass.getSimpleName()
+        ).addToBackStack(fragment.javaClass.getSimpleName()).commit()
     }
 }

@@ -31,5 +31,37 @@
     <string name="create_copy">Create Copy</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="submit">Submit</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="company_name">Company Name</string>
+    <string name="department_name">Department Name</string>
+    <string name="car_type">Car Type</string>
+    <string name="country">Country</string>
+    <string name="mileage_type">Mileage Type</string>
+    <string name="default_approver">Default Approver</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_your_password">Confirm your password</string>
+    <string name="reset">Reset</string>
+    <string name="merchant_name">Merchant Name</string>
+    <string name="expense_group">Expense Group</string>
+    <string name="expense_type">Expense Type</string>
+    <string name="company_number">Company Number</string>
+    <string name="department">Department</string>
+    <string name="date_of_submission">Date of Submission</string>
+    <string name="currency">Currency</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="tax">Tax</string>
+    <string name="net_amount">Net Amount</string>
+    <string name="reporting_manager_status">Reporting Manager Approval Status</string>
+    <string name="finance_manager_status">Finance Manager Approval Status</string>
+    <string name="description">Description</string>
+    <string name="attachments">Attachments</string>
+    <string name="back">Back</string>
+    <string name="good_to_see_you">Good to see you</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

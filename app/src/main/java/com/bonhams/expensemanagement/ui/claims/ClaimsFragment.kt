@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement.ui.home.claims
+package com.bonhams.expensemanagement.ui.claims
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,9 +16,6 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 private const val TAG = "NotificationFragment"
 
 class ClaimsFragment() : Fragment() {
-    companion object {
-        fun newInstance() = ClaimsFragment()
-    }
 
     private var contextActivity: BaseActivity? = null
     private var adapter: ClaimsAndMileageAdapter? = null

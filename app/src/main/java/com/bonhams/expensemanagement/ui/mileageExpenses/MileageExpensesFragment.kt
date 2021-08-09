@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement.ui.home.mileageExpenses
+package com.bonhams.expensemanagement.ui.mileageExpenses
 
 import android.os.Bundle
 import android.view.LayoutInflater
