@@ -85,21 +85,28 @@ class MainActivity : BaseActivity() {
             when (menuItem.itemId) {
                 R.id.bottom_nav_home -> {
                     setupAppbar()
+                    showBottomNavbar(true)
                     val fragment = HomeFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_camera -> {
+                    setAppbarTitle(getString(R.string.scan_receipt))
+                    showBottomNavbar(true)
                     val fragment = ClaimDetailFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_notifications -> {
+                    setAppbarTitle(getString(R.string.notifications))
+                    showBottomNavbar(true)
                     val fragment = NotificationFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_my_profile -> {
+                    setAppbarTitle(getString(R.string.profile))
+                    showBottomNavbar(true)
                     val fragment = MyProfileFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
@@ -109,6 +116,9 @@ class MainActivity : BaseActivity() {
         }
 
     private fun setupClickListeners(){
+        layoutBack.setOnClickListener(View.OnClickListener {
+            onBackPressed()
+        })
         ivMenu.setOnClickListener(View.OnClickListener {
             if (!navDrawer.isDrawerOpen(GravityCompat.START)) {
                 navDrawer.openDrawer(GravityCompat.START)
@@ -134,6 +144,31 @@ class MainActivity : BaseActivity() {
         layoutAppBarSearch.visibility = View.VISIBLE
     }
 
+    fun showAppbarBackButton(show: Boolean){
+        appbarTitle.visibility = if(show) View.VISIBLE else View.GONE
+        layoutGreeting.visibility = View.GONE
+        ivMenu.visibility = View.GONE
+        layoutBack.visibility = if(show) View.VISIBLE else View.GONE
+        showAppbarSearch(false)
+    }
+
+    fun showAppbarSearch(show: Boolean){
+        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.GONE
+        ivSearch.visibility = if(show) View.VISIBLE else View.GONE
+        appbarEdit.visibility = View.GONE
+    }
+
+
+    fun showAppbarEdit(show: Boolean){
+        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.GONE
+        appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
+        ivSearch.visibility = View.GONE
+    }
+
+    fun showBottomNavbar(show: Boolean){
+        bottomNavigationView.visibility = if(show) View.VISIBLE else View.GONE
+    }
+
     private fun setupNavDrawer(){
         tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
         // Setup Recyclerview's Layout
@@ -146,32 +181,48 @@ class MainActivity : BaseActivity() {
                 Log.d(TAG, "navDrawerRv onClick: $position")
                 when (navDrawerItems[position].code) {
                     1 -> { // Manually Create
+                        setAppbarTitle(getString(R.string.create_new_claim))
+                        showBottomNavbar(false)
+                        showAppbarBackButton(true)
                         val fragment = NewClaimFragment()
                         addFragment(fragment)
                     }
                     2 -> { // Scan Receipt
+                        setAppbarTitle(getString(R.string.scan_receipt))
+                        showBottomNavbar(false)
+                        showAppbarBackButton(true)
                         val fragment = HomeFragment()
                         addFragment(fragment)
                     }
                     3 -> { // Manually Create
+                        setAppbarTitle(getString(R.string.create_mileage_claim))
+                        showBottomNavbar(false)
+                        showAppbarBackButton(true)
                         val fragment = MileageDetailFragment()
                         addFragment(fragment)
                     }
                     4 -> { // Start GPS
+                        setAppbarTitle(getString(R.string.start_gps))
+                        showBottomNavbar(false)
+                        showAppbarBackButton(true)
                         val fragment = GPSTrackingFragment()
                         addFragment(fragment)
                     }
                     5 -> { // My Account
+                        setAppbarTitle(getString(R.string.profile))
+                        showBottomNavbar(true)
+                        showAppbarBackButton(true)
                         val fragment = MyProfileFragment()
                         addFragment(fragment)
                     }
                     6 -> { // Logout
-
                         val dialog = CustomAlertDialog(this@MainActivity)
                         dialog.showNegativeButton(false)
                         dialog.show()
                     }
                     else -> {
+                        setupAppbar()
+                        showBottomNavbar(true)
                         val fragment = HomeFragment()
                         changeFragment(fragment)
                     }

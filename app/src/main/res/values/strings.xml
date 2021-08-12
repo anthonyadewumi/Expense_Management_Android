@@ -63,5 +63,14 @@
     <string name="good_to_see_you">Good to see you</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="start">Start</string>
+    <string name="profile">Profile</string>
+    <string name="scan_receipt">Scan Receipt</string>
+    <string name="create_new_claim">Create New Claim</string>
+    <string name="create_mileage_claim">Create Mileage Claim</string>
+    <string name="start_gps">Start GPS</string>
+    <string name="claim_details">Claim Details</string>
+    <string name="mileage_details">Mileage Details</string>
+    <string name="edit">Edit</string>
 
 </resources>
