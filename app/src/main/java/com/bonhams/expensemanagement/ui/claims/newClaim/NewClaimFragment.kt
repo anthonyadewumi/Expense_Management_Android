@@ -23,7 +23,8 @@ class NewClaimFragment() : Fragment() {
         val view = inflater.inflate(R.layout.fragment_new_claim, container, false)
         contextActivity = activity as? BaseActivity
 
-        (contextActivity as MainActivity).setAppbarTitle("Create New Claim")
+        (contextActivity as MainActivity).setAppbarTitle(getString(R.string.create_new_claim))
+        (contextActivity as MainActivity).showAppbarBackButton(true)
         return view
     }
 }

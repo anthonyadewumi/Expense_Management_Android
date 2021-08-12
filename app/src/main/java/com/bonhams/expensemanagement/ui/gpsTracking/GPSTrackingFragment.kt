@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -13,6 +15,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 class GPSTrackingFragment : Fragment() {
+
+    private var contextActivity: BaseActivity? = null
 
     private val callback = OnMapReadyCallback { googleMap ->
         /**
@@ -34,7 +38,14 @@ class GPSTrackingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_gps_tracking, container, false)
+        val view = inflater.inflate(R.layout.fragment_gps_tracking, container, false)
+        contextActivity = activity as? BaseActivity
+
+        (contextActivity as MainActivity).setAppbarTitle(getString(R.string.start_gps))
+        (contextActivity as MainActivity).showBottomNavbar(false)
+        (contextActivity as MainActivity).showAppbarBackButton(true)
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -23,7 +23,8 @@ class ClaimDetailFragment() : Fragment() {
         val view = inflater.inflate(R.layout.fragment_claim_detail, container, false)
         contextActivity = activity as? BaseActivity
 
-        (contextActivity as MainActivity).setAppbarTitle("Claim Details")
+        (contextActivity as MainActivity).setAppbarTitle(getString(R.string.claim_details))
+        (contextActivity as MainActivity).showAppbarBackButton(true)
         return view
     }
 }
