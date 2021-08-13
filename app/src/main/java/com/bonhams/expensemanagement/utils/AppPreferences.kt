@@ -9,6 +9,12 @@ object AppPreferences {
     private const val PREFS_NAME = "expense_management_prefs"
     // list of app specific preferences
     private val IS_LOGGED_IN = Pair("is_logged_in", false)
+    private val FIREBASE_TOKEN = Pair("firebase_token", "")
+    private val USER_ID = Pair("user_id", "")
+    private val FIRST_NAME = Pair("first_name", "")
+    private val LAST_NAME = Pair("last_name", "")
+    private val EMAIL = Pair("email", "")
+    private val PROFILE_PIC = Pair("profile_pic", "")
 
     fun init(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -31,5 +37,41 @@ object AppPreferences {
         // custom setter to save a preference back to preferences file
         set(value) = prefs.edit {
             it.putBoolean(IS_LOGGED_IN.first, value)
+        }
+
+    var fireBaseToken: String
+        get() = prefs.getString(FIREBASE_TOKEN.first, FIREBASE_TOKEN.second)!!
+        set(value) = prefs.edit {
+            it.putString(FIREBASE_TOKEN.first, value)
+        }
+
+    var userId: String
+        get() = prefs.getString(USER_ID.first, USER_ID.second)!!
+        set(value) = prefs.edit {
+            it.putString(USER_ID.first, value)
+        }
+
+    var firstName: String
+        get() = prefs.getString(FIRST_NAME.first, FIRST_NAME.second)!!
+        set(value) = prefs.edit {
+            it.putString(FIRST_NAME.first, value)
+        }
+
+    var lastName: String
+        get() = prefs.getString(LAST_NAME.first, LAST_NAME.second)!!
+        set(value) = prefs.edit {
+            it.putString(LAST_NAME.first, value)
+        }
+
+    var email: String
+        get() = prefs.getString(EMAIL.first, EMAIL.second)!!
+        set(value) = prefs.edit {
+            it.putString(EMAIL.first, value)
+        }
+
+    var profilePic: String
+        get() = prefs.getString(PROFILE_PIC.first, PROFILE_PIC.second)!!
+        set(value) = prefs.edit {
+            it.putString(PROFILE_PIC.first, value)
         }
 }

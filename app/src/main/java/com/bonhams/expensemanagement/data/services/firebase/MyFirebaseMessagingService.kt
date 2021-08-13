@@ -1,6 +1,7 @@
 package com.bonhams.expensemanagement.data.services.firebase
 
 import android.util.Log
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.google.firebase.messaging.FirebaseMessagingService
 
 class MyFirebaseMessagingService() : FirebaseMessagingService() {
@@ -16,5 +17,6 @@ class MyFirebaseMessagingService() : FirebaseMessagingService() {
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
 //        sendRegistrationToServer(token)
+        AppPreferences.fireBaseToken = token
     }
 }

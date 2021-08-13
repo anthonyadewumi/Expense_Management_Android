@@ -95,35 +95,25 @@ class ExtensionAttributes() : Parcelable {
 }
 
 class UserDetails() : Parcelable {
-    @SerializedName("db_id")
-    var dbId: String? = null
-
-    @SerializedName("user_id")
+    @SerializedName("id")
     var userId: String? = null
+    @SerializedName("name")
     var name: String? = null
-
-    @SerializedName("country_code")
-    var countryCode: String? = null
-
-    @SerializedName("contact_no")
+    @SerializedName("profileImage")
     var contactNo: String? = null
-    var email: String? = null
 
-    @SerializedName("vehicle_type")
+    @SerializedName("token")
     var vehicleType: String? = null
 
-    @SerializedName("vehicle_no")
+    @SerializedName("refresh_token")
     var vehicleNo: String? = null
     var online: String? = null
     var rememberMe: Boolean = false
 
     constructor(parcel: Parcel) : this() {
-        dbId = parcel.readString()
         userId = parcel.readString()
         name = parcel.readString()
-        countryCode = parcel.readString()
         contactNo = parcel.readString()
-        email = parcel.readString()
         vehicleType = parcel.readString()
         vehicleNo = parcel.readString()
         online = parcel.readString()
@@ -131,12 +121,9 @@ class UserDetails() : Parcelable {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(dbId)
         parcel.writeString(userId)
         parcel.writeString(name)
-        parcel.writeString(countryCode)
         parcel.writeString(contactNo)
-        parcel.writeString(email)
         parcel.writeString(vehicleType)
         parcel.writeString(vehicleNo)
         parcel.writeString(online)

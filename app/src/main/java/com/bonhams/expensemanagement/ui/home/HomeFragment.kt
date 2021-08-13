@@ -16,9 +16,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 
 class HomeFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = HomeFragment()
-    }
 
     private var contextActivity: BaseActivity? = null
     private var adapter: HomeViewPagerAdapter? = null

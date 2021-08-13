@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
-class ResponseMessage() : Parcelable {
+class LoginResponse() : Parcelable {
     var response: Response? = null
 
     constructor(parcel: Parcel) : this() {
@@ -34,12 +34,12 @@ class ResponseMessage() : Parcelable {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<ResponseMessage> {
-        override fun createFromParcel(parcel: Parcel): ResponseMessage {
-            return ResponseMessage(parcel)
+    companion object CREATOR : Parcelable.Creator<LoginResponse> {
+        override fun createFromParcel(parcel: Parcel): LoginResponse {
+            return LoginResponse(parcel)
         }
 
-        override fun newArray(size: Int): Array<ResponseMessage?> {
+        override fun newArray(size: Int): Array<LoginResponse?> {
             return arrayOfNulls(size)
         }
     }
