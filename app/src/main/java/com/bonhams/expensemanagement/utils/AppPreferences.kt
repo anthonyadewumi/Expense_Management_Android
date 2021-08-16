@@ -11,6 +11,9 @@ object AppPreferences {
     private val IS_LOGGED_IN = Pair("is_logged_in", false)
     private val FIREBASE_TOKEN = Pair("firebase_token", "")
     private val USER_ID = Pair("user_id", "")
+    private val EMPLOYEE_ID = Pair("employee_id", "")
+    private val USER_TOKEN = Pair("user_token", "")
+    private val REFRESH_TOKEN = Pair("refresh_token", "")
     private val FIRST_NAME = Pair("first_name", "")
     private val LAST_NAME = Pair("last_name", "")
     private val EMAIL = Pair("email", "")
@@ -51,6 +54,24 @@ object AppPreferences {
             it.putString(USER_ID.first, value)
         }
 
+    var employeeId: String
+        get() = prefs.getString(EMPLOYEE_ID.first, EMPLOYEE_ID.second)!!
+        set(value) = prefs.edit {
+            it.putString(EMPLOYEE_ID.first, value)
+        }
+
+    var userToken: String
+        get() = prefs.getString(USER_TOKEN.first, USER_TOKEN.second)!!
+        set(value) = prefs.edit {
+            it.putString(USER_TOKEN.first, value)
+        }
+
+    var refreshToken: String
+        get() = prefs.getString(REFRESH_TOKEN.first, REFRESH_TOKEN.second)!!
+        set(value) = prefs.edit {
+            it.putString(REFRESH_TOKEN.first, value)
+        }
+
     var firstName: String
         get() = prefs.getString(FIRST_NAME.first, FIRST_NAME.second)!!
         set(value) = prefs.edit {
@@ -74,4 +95,21 @@ object AppPreferences {
         set(value) = prefs.edit {
             it.putString(PROFILE_PIC.first, value)
         }
+
+
+    fun clearPrefs(){
+        isLoggedIn = false
+        prefs.edit {
+            it.remove(IS_LOGGED_IN.first)
+            it.remove(FIREBASE_TOKEN.first)
+            it.remove(USER_ID.first)
+            it.remove(EMPLOYEE_ID.first)
+            it.remove(USER_TOKEN.first)
+            it.remove(REFRESH_TOKEN.first)
+            it.remove(FIRST_NAME.first)
+            it.remove(LAST_NAME.first)
+            it.remove(EMAIL.first)
+            it.remove(PROFILE_PIC.first)
+        }
+    }
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -15,24 +16,36 @@ import com.bonhams.expensemanagement.R
 
 class CustomAlertDialog (context: Context) : Dialog(context) {
 
-    private var txtTitle: TextView? = null
-    private var txtDescription: TextView? = null
-    private var edtDescription: EditText? = null
-    private var btnPositive: Button? = null
-    private var btnNegative: Button? = null
+    private lateinit var txtTitle: TextView
+    private lateinit var txtDescription: TextView
+    private lateinit var edtDescription: EditText
+    private lateinit var btnPositive: Button
+    private lateinit var btnNegative: Button
     private var callback: DialogButtonCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        setContentView(R.layout.custom_alert_dialog)
+        val view = LayoutInflater.from(context).inflate(R.layout.custom_alert_dialog, null)
 
-        txtTitle = findViewById(R.id.txtTitle)
-        txtDescription = findViewById(R.id.txtDescription)
-        edtDescription = findViewById(R.id.edtDescription)
-        btnPositive = findViewById(R.id.btnPositive)
-        btnNegative = findViewById(R.id.btnNegative)
+        txtTitle = view.findViewById(R.id.txtTitle)
+        txtDescription = view.findViewById(R.id.txtDescription)
+        edtDescription = view.findViewById(R.id.edtDescription)
+        btnPositive = view.findViewById(R.id.btnPositive)
+        btnNegative = view.findViewById(R.id.btnNegative)
+
+        setClickListeners()
+        setContentView(view)
+    }
+
+    private fun setClickListeners(){
+        btnPositive.setOnClickListener(View.OnClickListener {
+            callback?.onPositiveClick()
+        })
+        btnNegative.setOnClickListener(View.OnClickListener {
+            callback?.onNegativeClick()
+        })
     }
 
     fun setAlertCancelable(cancelable: Boolean){
@@ -41,14 +54,14 @@ class CustomAlertDialog (context: Context) : Dialog(context) {
 
     fun showPositiveButton(show: Boolean) {
         if (show) {
-            btnPositive?.visibility = View.VISIBLE
-            btnNegative?.layoutParams = LinearLayout.LayoutParams(
+            btnPositive.visibility = View.VISIBLE
+            btnNegative.layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1f
             )
         } else {
-            btnPositive?.visibility = View.GONE
-            btnNegative?.layoutParams = LinearLayout.LayoutParams(
+            btnPositive.visibility = View.GONE
+            btnNegative.layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 2f
             )
@@ -57,14 +70,14 @@ class CustomAlertDialog (context: Context) : Dialog(context) {
 
     fun showNegativeButton(show: Boolean) {
         if (show) {
-            btnNegative?.visibility = View.VISIBLE
-            btnPositive?.layoutParams = LinearLayout.LayoutParams(
+            btnNegative.visibility = View.VISIBLE
+            btnPositive.layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1f
             )
         } else {
-            btnNegative?.visibility = View.GONE
-            btnPositive?.layoutParams = LinearLayout.LayoutParams(
+            btnNegative.visibility = View.GONE
+            btnPositive.layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 2f
             )
@@ -72,31 +85,31 @@ class CustomAlertDialog (context: Context) : Dialog(context) {
     }
 
     fun showEditText(show: Boolean) {
-        if (show) edtDescription?.visibility = View.VISIBLE else edtDescription?.visibility =
+        if (show) edtDescription.visibility = View.VISIBLE else edtDescription.visibility =
             View.GONE
     }
 
     fun showDescriptionText(show: Boolean) {
-        if (show) txtDescription?.visibility = View.VISIBLE else txtDescription?.visibility =
+        if (show) txtDescription.visibility = View.VISIBLE else txtDescription.visibility =
             View.GONE
     }
 
     fun setEditTextDescription(description: String) {
-        edtDescription?.setText(description)
-        edtDescription?.requestFocus()
-        edtDescription?.setSelection(description.trim { it <= ' ' }.length)
+        edtDescription.setText(description)
+        edtDescription.requestFocus()
+        edtDescription.setSelection(description.trim { it <= ' ' }.length)
     }
 
-    fun getEditTextDescription(): String? {
-        return edtDescription!!.text.toString().trim { it <= ' ' }
+    fun getEditTextDescription(): String {
+        return edtDescription.text.toString().trim { it <= ' ' }
     }
 
     fun setPositiveText(text: CharSequence?) {
-        btnPositive?.text = text
+        btnPositive.text = text
     }
 
     fun setNegativeText(text: CharSequence?) {
-        btnNegative?.text = text
+        btnNegative.text = text
     }
 
 
