@@ -1,17 +1,16 @@
 package com.bonhams.expensemanagement.ui.login
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.bonhams.expensemanagement.data.model.LoginInner
-import com.bonhams.expensemanagement.data.model.LoginResponse
 import com.bonhams.expensemanagement.data.services.requests.LoginRequest
-import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.data.services.responses.LoginResponse
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Resource
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
-import java.util.regex.Pattern
 
 class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
 
@@ -22,7 +21,7 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
     var isInvalid: MutableLiveData<Boolean>? = null
     var message: String? = null
     var token: String? = null
-    var loginData: LoginInner? = null
+    var loginData: LoginResponse? = null
     init {
         login = MutableLiveData()
         isInvalid = MutableLiveData()
@@ -41,21 +40,21 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
         val loginRequest = LoginRequest()
         loginRequest.username = email
         loginRequest.password = password
-        loginRequest.deviceToken = token
+//        loginRequest.deviceToken = token
         return loginRequest
     }
 
-    fun validateUsername(email: String, error: String): String? {
+    fun validateEmail(email: String, error: String): String? {
         var errorStr: String? = null
 
         if (email.isEmpty()){
             errorStr = error
             validEmail = true
         }
-//        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && !TextUtils.isDigitsOnly(email)){
-//            errorStr = error
-//            validEmail = true
-//        }
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && !TextUtils.isDigitsOnly(email)){
+            errorStr = error
+            validEmail = true
+        }
         else {
             validEmail = false
         }
@@ -65,25 +64,35 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
 
     fun validatePassword(password: String, error: String) : String?{
         var errorStr: String? = null
-        val pattern = Pattern.compile(Constants.PASSWORD_PATTERN)
-        if (!pattern.matcher(password).matches()) {
+        if (password.isEmpty()){
             errorStr = error
-            validPassword = true
-        } else{
-            validPassword = false
+            validEmail = true
         }
+        else {
+            validEmail = false
+        }
+
         return  errorStr
     }
 
     fun setResponse(response: LoginResponse) {
-        when {
-            response.response?.code?.toInt() == 200 -> {
-                login?.value = response
-            }
-            else -> {
-                message = response.response?.message
-                isInvalid?.value = true
-            }
+        if(response.success) {
+            login?.value = response
+            AppPreferences.isLoggedIn = (response.userDetails?.token ?: "").trim().isNotEmpty()
+            AppPreferences.userToken = response.userDetails?.token ?: ""
+            AppPreferences.refreshToken = response.userDetails?.refresh_token ?: ""
+            AppPreferences.userId = response.userDetails?.id ?: ""
+            AppPreferences.employeeId = response.userDetails?.employId ?: ""
+            AppPreferences.firstName = response.userDetails?.fname ?: ""
+            AppPreferences.lastName = response.userDetails?.lname ?: ""
+            AppPreferences.email = response.userDetails?.email ?: ""
+            AppPreferences.profilePic = response.userDetails?.profileImage ?: ""
+
+            Log.d("LoginActivity", "setResponse: ${AppPreferences.userId}  Name: ${AppPreferences.firstName} ${AppPreferences.lastName}")
+        }
+        else {
+            message = response.message
+            isInvalid?.value = true
         }
     }
 

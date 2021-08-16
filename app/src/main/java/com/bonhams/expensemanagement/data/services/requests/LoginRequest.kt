@@ -3,9 +3,9 @@ package com.bonhams.expensemanagement.data.services.requests
 import com.google.gson.annotations.SerializedName
 
 class LoginRequest {
-    @SerializedName("db_id")
+    @SerializedName("userId")
     var username: String? = null
+    @SerializedName("password")
     var password: String? = null
-    var deviceToken: String? = null
-    var langCode: String? = null
+//    var deviceToken: String? = null
 }

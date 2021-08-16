@@ -7,11 +7,10 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
-import com.bonhams.expensemanagement.data.model.LoginInner
-import com.bonhams.expensemanagement.data.model.LoginResponse
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.LoginRequest
+import com.bonhams.expensemanagement.data.services.responses.LoginResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
@@ -28,7 +27,6 @@ class LoginActivity : BaseActivity() {
 
         setupViewModel()
         setClickListeners()
-
     }
 
     fun setClickListeners(){
@@ -68,6 +66,7 @@ class LoginActivity : BaseActivity() {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
+                                Log.d("LoginActivity", "setLoginObserver: ${resource.data.message}")
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -92,6 +91,11 @@ class LoginActivity : BaseActivity() {
         mProgressBars.visibility = View.GONE
         mContinue.visibility = View.VISIBLE
         viewModel.setResponse(response)
+
+        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        finish()
     }
 
     private fun login() {
@@ -108,26 +112,19 @@ class LoginActivity : BaseActivity() {
         val email = mEmailTextField.editText!!.text.toString()
         val password = mPasswordTextField.editText!!.text.toString()
         val loginRequest = viewModel.getLoginRequest(email, password)
-        //send login credential
         setLoginObserver(loginRequest)
-
-        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-        startActivity(intent)
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-        finish()
     }
 
     fun validate(): Boolean {
-
-        /*mEmailTextField!!.error = viewModel.validateUsename(
+        mEmailTextField!!.error = viewModel.validateEmail(
             mEmailTextField.editText!!.text.toString(),
-            resources.getString(R.string.validate_username)
+            resources.getString(R.string.validate_email)
         )
 
         mPasswordTextField!!.error = viewModel.validatePassword(
             mPasswordTextField.editText!!.text.toString(),
             resources.getString(R.string.validate_password)
-        )*/
+        )
 
         return (viewModel.validEmail || viewModel.validPassword)
     }
@@ -137,10 +134,10 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(
-            this,
+        viewModel = ViewModelProvider(this,
             LoginViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(LoginViewModel::class.java)
+
         viewModel.login?.observe(this, Observer {
             checkUserData()
         })
@@ -155,10 +152,10 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun checkUserData(){
-        viewModel.login?.value?.response?.userData?.let {
-            viewModel.loginData = LoginInner().apply {
+        viewModel.login?.value?.userDetails?.let {
+           /* viewModel.loginData = LoginResponse.LoginInner().apply {
                 userDetails = it
-            }
+            }*/
             val jsonString = viewModel.responseToString()
             savePreference(jsonString)
             gotoDashboard()
