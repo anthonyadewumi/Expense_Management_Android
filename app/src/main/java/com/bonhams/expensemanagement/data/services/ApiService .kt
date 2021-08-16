@@ -1,25 +1,26 @@
 package com.bonhams.expensemanagement.data.services
 
 import com.bonhams.expensemanagement.BuildConfig
-import com.bonhams.expensemanagement.data.model.LoginResponse
+import com.bonhams.expensemanagement.data.services.requests.ForgotPasswordRequest
 import com.bonhams.expensemanagement.data.services.requests.LoginRequest
+import com.bonhams.expensemanagement.data.services.responses.CommonResponse
+import com.bonhams.expensemanagement.data.services.responses.LoginResponse
 import com.bonhams.expensemanagement.utils.RetrofitHeaderInterceptor
-import com.bonhams.expensemanagement.utils.RetrofitStatusInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 object RetrofitBuilder {
+
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
-    )
-        .addInterceptor(RetrofitHeaderInterceptor())
-        .addInterceptor(RetrofitStatusInterceptor())
+    ).addInterceptor(RetrofitHeaderInterceptor())
         .build()
 
     private fun getRetrofit(): Retrofit {
@@ -35,6 +36,15 @@ object RetrofitBuilder {
 
 interface ApiService {
 
-    @POST("deliveryboy/login/")
+    @POST("login")
     suspend fun loginUser(@Body loginRequest: LoginRequest): LoginResponse
+
+    @POST("forget-pass")
+    suspend fun forgotPassword(@Body forgotPasswordRequest: ForgotPasswordRequest) : CommonResponse
+
+    @POST("mileage_list")
+    suspend fun mileageList(@Body loginRequest: LoginRequest)
+
+    @GET("logOut")
+    suspend fun logoutUser(): CommonResponse
 }
