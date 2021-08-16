@@ -77,5 +77,8 @@
     <string name="split">Split</string>
     <string name="upload_a_pic_underline"><u>Upload a picture</u></string>
     <string name="no_files_selected">No Files Selected</string>
+    <string name="logout">Logout</string>
+    <string name="validate_email">Please enter email</string>
+    <string name="validate_password">Please enter password</string>
 
 </resources>

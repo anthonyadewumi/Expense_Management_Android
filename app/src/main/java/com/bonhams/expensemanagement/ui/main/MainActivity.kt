@@ -1,6 +1,7 @@
 package com.bonhams.expensemanagement.ui.main
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -10,22 +11,25 @@ import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.BuildConfig
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.NavDrawerAdapter
 import com.bonhams.expensemanagement.data.model.NavDrawerItem
+import com.bonhams.expensemanagement.data.services.ApiHelper
+import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
+import com.bonhams.expensemanagement.ui.login.LoginActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
-import com.bonhams.expensemanagement.utils.ClickListener
-import com.bonhams.expensemanagement.utils.CustomAlertDialog
-import com.bonhams.expensemanagement.utils.RecyclerTouchListener
+import com.bonhams.expensemanagement.utils.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -34,6 +38,7 @@ import kotlinx.android.synthetic.main.app_bar_main.view.*
 
 class MainActivity : BaseActivity() {
 
+    private lateinit var viewModel: MainViewModel
     private lateinit var navDrawerAdapter: NavDrawerAdapter
     val TAG = "MainActivity"
 
@@ -55,6 +60,7 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         setupNavDrawer()
+        setupViewModel()
         setupClickListeners()
         setupAppbar()
 
@@ -126,6 +132,17 @@ class MainActivity : BaseActivity() {
         })
     }
 
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(MainViewModel::class.java)
+        
+        viewModel.responseLogout?.observe(this, Observer {
+            Log.d(TAG, "setupViewModel: ${it.message}")
+        })
+    }
+    
     private fun setupAppbar(){
         appbarTitle.visibility = View.GONE
         layoutAppBarMenu.visibility = View.VISIBLE
@@ -179,6 +196,7 @@ class MainActivity : BaseActivity() {
         navDrawerRv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.d(TAG, "navDrawerRv onClick: $position")
+                Log.d(TAG, "navDrawerRv onClick code: ${navDrawerItems[position].code}")
                 when (navDrawerItems[position].code) {
                     1 -> { // Manually Create
                         setAppbarTitle(getString(R.string.create_new_claim))
@@ -216,9 +234,7 @@ class MainActivity : BaseActivity() {
                         addFragment(fragment)
                     }
                     6 -> { // Logout
-                        val dialog = CustomAlertDialog(this@MainActivity)
-                        dialog.showNegativeButton(false)
-                        dialog.show()
+                        showLogoutAlert()
                     }
                     else -> {
                         setupAppbar()
@@ -245,6 +261,58 @@ class MainActivity : BaseActivity() {
         navDrawerRv.adapter = navDrawerAdapter
         navDrawerAdapter.notifyDataSetChanged()
     }*/
+
+    fun showLogoutAlert(){
+        Log.d(TAG, "showLogoutAlert: ${resources.getString(R.string.logout)}")
+        /*val dialog = CustomAlertDialog(this@MainActivity)
+        dialog.apply {
+            showNegativeButton(false)
+            setTitle(resources.getString(R.string.logout))
+            setPositiveText(resources.getString(R.string.logout))
+            setNegativeText(resources.getString(R.string.cancel))
+            setCallback(object: CustomAlertDialog.DialogButtonCallback {
+                override fun onPositiveClick() {
+                    Log.d(TAG, "onPositiveClick: ")
+                    dialog.dismiss()
+                    logoutUser()
+                }
+                override fun onNegativeClick() {
+                    Log.d(TAG, "onNegativeClick: ")
+                    dialog.dismiss()
+                }
+            })
+        }*/
+//        dialog.show()
+        logoutUser()
+    }
+
+    fun logoutUser(){
+        Log.d(TAG, "Logout User.......")
+        viewModel.logoutUser().observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            AppPreferences.clearPrefs()
+                            Log.d(TAG, "logoutUser: ${response.message}")
+
+                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                            finish()
+                        }
+                    }
+                    Status.ERROR -> {
+                        it.message?.let { it1 -> Log.d(TAG, "logoutUser: $it1")}
+                    }
+                    Status.LOADING -> {
+                        Log.d(TAG, "Loading.......")
+                    }
+                }
+
+            }
+        })
+    }
 
     private fun hasLocationForegroundPermission() =
         ActivityCompat.checkSelfPermission(
