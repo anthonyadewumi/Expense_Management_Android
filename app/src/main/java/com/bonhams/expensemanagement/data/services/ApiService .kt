@@ -1,10 +1,11 @@
 package com.bonhams.expensemanagement.data.services
 
 import com.bonhams.expensemanagement.BuildConfig
-import com.bonhams.expensemanagement.data.services.requests.ForgotPasswordRequest
-import com.bonhams.expensemanagement.data.services.requests.LoginRequest
+import com.bonhams.expensemanagement.data.services.requests.*
+import com.bonhams.expensemanagement.data.services.responses.ClaimsResponse
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.data.services.responses.LoginResponse
+import com.bonhams.expensemanagement.data.services.responses.MileageListResponse
 import com.bonhams.expensemanagement.utils.RetrofitHeaderInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,8 +43,14 @@ interface ApiService {
     @POST("forget-pass")
     suspend fun forgotPassword(@Body forgotPasswordRequest: ForgotPasswordRequest) : CommonResponse
 
+    @POST("claim-list")
+    suspend fun claimsList(@Body claimListRequest: ClaimsRequest) : ClaimsResponse
+
     @POST("mileage_list")
-    suspend fun mileageList(@Body loginRequest: LoginRequest)
+    suspend fun mileageList(@Body mileageExpenseRequest: MileageExpenseRequest) : MileageListResponse
+
+    @POST("changePassword")
+    suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest) : CommonResponse
 
     @GET("logOut")
     suspend fun logoutUser(): CommonResponse

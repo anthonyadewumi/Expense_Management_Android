@@ -81,5 +81,6 @@
     <string name="validate_email">Please enter email</string>
     <string name="validate_password">Please enter password</string>
     <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="validate_password_not_match">Confirm Password does not match new password</string>
 
 </resources>

@@ -1,7 +1,6 @@
 package com.bonhams.expensemanagement.data.services
 
-import com.bonhams.expensemanagement.data.services.requests.ForgotPasswordRequest
-import com.bonhams.expensemanagement.data.services.requests.LoginRequest
+import com.bonhams.expensemanagement.data.services.requests.*
 
 class ApiHelper(private val apiService: ApiService) {
 
@@ -9,7 +8,11 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun forgotPassword(forgotPassRequest: ForgotPasswordRequest) = apiService.forgotPassword(forgotPassRequest)
 
-    suspend fun mileageList(loginRequest: LoginRequest) = apiService.mileageList(loginRequest)
+    suspend fun claimsList(claimListRequest: ClaimsRequest) = apiService.claimsList(claimListRequest)
+
+    suspend fun mileageExpensesList(mileageExpenseRequest: MileageExpenseRequest) = apiService.mileageList(mileageExpenseRequest)
+
+    suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) = apiService.changePassword(changePasswordRequest)
 
     suspend fun logoutUser() = apiService.logoutUser()
 }

@@ -37,6 +37,7 @@ import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDet
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.*
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
@@ -198,7 +199,16 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupNavDrawer(){
+        navDrawerTitle.text = AppPreferences.fullName
+        navDrawerDescription.text = AppPreferences.email
         tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
+        Glide.with(this)
+            .load(AppPreferences.profilePic)
+            .error(R.drawable.ic_default_user)
+            .fallback(R.drawable.ic_default_user)
+            .circleCrop()
+            .into(navDrawerProfilePic);
+
         // Setup Recyclerview's Layout
         navDrawerRv.layoutManager = LinearLayoutManager(this)
         navDrawerRv.setHasFixedSize(true)

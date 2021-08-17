@@ -80,7 +80,7 @@ class ForgotPasswordActivity : BaseActivity() {
                         mProgressBar.visibility = View.GONE
                         mContinue.visibility = View.VISIBLE
                         Log.e(TAG, "setupObservers: ${it.message}")
-                        it.message?.let { it1 -> Log.d(TAG, "setLoginObserver: $it1") }
+                        it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
                         mProgressBar.visibility = View.VISIBLE

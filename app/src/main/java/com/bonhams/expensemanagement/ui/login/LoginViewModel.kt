@@ -83,6 +83,7 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
             AppPreferences.refreshToken = response.userDetails?.refresh_token ?: ""
             AppPreferences.userId = response.userDetails?.id ?: ""
             AppPreferences.employeeId = response.userDetails?.employId ?: ""
+            AppPreferences.fullName = response.userDetails?.name ?: ""
             AppPreferences.firstName = response.userDetails?.fname ?: ""
             AppPreferences.lastName = response.userDetails?.lname ?: ""
             AppPreferences.email = response.userDetails?.email ?: ""

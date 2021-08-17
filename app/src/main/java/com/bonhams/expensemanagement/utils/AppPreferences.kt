@@ -14,6 +14,7 @@ object AppPreferences {
     private val EMPLOYEE_ID = Pair("employee_id", "")
     private val USER_TOKEN = Pair("user_token", "")
     private val REFRESH_TOKEN = Pair("refresh_token", "")
+    private val FULL_NAME = Pair("full_name", "")
     private val FIRST_NAME = Pair("first_name", "")
     private val LAST_NAME = Pair("last_name", "")
     private val EMAIL = Pair("email", "")
@@ -70,6 +71,12 @@ object AppPreferences {
         get() = prefs.getString(REFRESH_TOKEN.first, REFRESH_TOKEN.second)!!
         set(value) = prefs.edit {
             it.putString(REFRESH_TOKEN.first, value)
+        }
+
+    var fullName: String
+        get() = prefs.getString(FULL_NAME.first, FULL_NAME.second)!!
+        set(value) = prefs.edit {
+            it.putString(FULL_NAME.first, value)
         }
 
     var firstName: String

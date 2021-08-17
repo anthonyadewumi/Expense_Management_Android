@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -16,7 +16,8 @@ import com.bonhams.expensemanagement.R
 
 class CustomAlertDialog (context: Context) : Dialog(context) {
 
-    private lateinit var txtTitle: TextView
+    private val TAG = javaClass.simpleName
+    private var txtTitle: TextView? = null
     private lateinit var txtDescription: TextView
     private lateinit var edtDescription: EditText
     private lateinit var btnPositive: Button
@@ -27,16 +28,16 @@ class CustomAlertDialog (context: Context) : Dialog(context) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val view = LayoutInflater.from(context).inflate(R.layout.custom_alert_dialog, null)
+        setContentView(R.layout.custom_alert_dialog)
 
-        txtTitle = view.findViewById(R.id.txtTitle)
-        txtDescription = view.findViewById(R.id.txtDescription)
-        edtDescription = view.findViewById(R.id.edtDescription)
-        btnPositive = view.findViewById(R.id.btnPositive)
-        btnNegative = view.findViewById(R.id.btnNegative)
+        txtTitle = findViewById(R.id.txtTitle)
+        txtDescription = findViewById(R.id.txtDescription)
+        edtDescription = findViewById(R.id.edtDescription)
+        btnPositive = findViewById(R.id.btnPositive)
+        btnNegative = findViewById(R.id.btnNegative)
 
         setClickListeners()
-        setContentView(view)
+        Log.d(TAG, "onCreate: Called .....................")
     }
 
     private fun setClickListeners(){

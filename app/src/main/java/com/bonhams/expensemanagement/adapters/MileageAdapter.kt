@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.data.services.responses.MileageDetail
 
 
-class ClaimsAndMileageAdapter(
-    var listClaimsAndMileage: List<String>?
-) : RecyclerView.Adapter<ClaimsAndMileageAdapter.ViewHolder>() {
+class MileageAdapter(
+    var listMileage: List<MileageDetail>?
+) : RecyclerView.Adapter<MileageAdapter.ViewHolder>() {
 
     init {
     }
@@ -22,17 +23,21 @@ class ClaimsAndMileageAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val orderItem = listClaimsAndMileage?.get(position)
+        val orderItem = listMileage?.get(position)
         orderItem?.let { holder.bindItems(it) }
 
     }
 
     override fun getItemCount(): Int {
-        return listClaimsAndMileage!!.size
+        listMileage?.let {
+            return listMileage?.size!!
+        } ?: kotlin.run {
+            return 0
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(item: String) {
+        fun bindItems(item: MileageDetail) {
 
         }
     }

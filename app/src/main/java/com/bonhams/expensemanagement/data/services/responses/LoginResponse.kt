@@ -17,6 +17,7 @@ class UserDetails() {
     var profileImage: String? = null
     var fname: String? = null
     var lname: String? = null
+    @SerializedName("userId")
     var email: String? = null
     var countryCode: String? = null
     var companyName: String? = null
