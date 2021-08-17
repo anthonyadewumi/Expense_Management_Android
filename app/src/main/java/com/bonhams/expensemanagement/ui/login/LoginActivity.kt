@@ -16,7 +16,11 @@ import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_main.*
+import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
+import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 
 class LoginActivity : BaseActivity() {
     private lateinit var viewModel: LoginViewModel
@@ -27,6 +31,7 @@ class LoginActivity : BaseActivity() {
 
         setupViewModel()
         setClickListeners()
+        setNoInternetSnackbar()
     }
 
     fun setClickListeners(){
@@ -178,5 +183,28 @@ class LoginActivity : BaseActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
+    private fun setNoInternetSnackbar(){
+        // No Internet Snackbar: Fire
+        NoInternetSnackbarFire.Builder(
+            mainLayout,
+            lifecycle
+        ).apply {
+            snackbarProperties.apply {
+                connectionCallback = object : ConnectionCallback { // Optional
+                    override fun hasActiveConnection(hasActiveConnection: Boolean) {
+
+                    }
+                }
+
+                duration = Snackbar.LENGTH_INDEFINITE // Optional
+                noInternetConnectionMessage = "No active Internet connection!" // Optional
+                onAirplaneModeMessage = "You have turned on the airplane mode!" // Optional
+                snackbarActionText = "Settings" // Optional
+                showActionToDismiss = false // Optional
+                snackbarDismissActionText = "OK" // Optional
+            }
+        }.build()
     }
 }

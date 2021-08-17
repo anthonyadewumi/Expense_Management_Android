@@ -31,9 +31,12 @@ import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.app_bar_main.view.*
+import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
+import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 
 
 class MainActivity : BaseActivity() {
@@ -63,6 +66,7 @@ class MainActivity : BaseActivity() {
         setupViewModel()
         setupClickListeners()
         setupAppbar()
+        setNoInternetSnackbar()
 
         if (savedInstanceState == null) {
             val fragment = HomeFragment()
@@ -264,30 +268,34 @@ class MainActivity : BaseActivity() {
 
     fun showLogoutAlert(){
         Log.d(TAG, "showLogoutAlert: ${resources.getString(R.string.logout)}")
-        /*val dialog = CustomAlertDialog(this@MainActivity)
+        val dialog = CustomAlertDialog(this@MainActivity)
         dialog.apply {
-            showNegativeButton(false)
-            setTitle(resources.getString(R.string.logout))
-            setPositiveText(resources.getString(R.string.logout))
-            setNegativeText(resources.getString(R.string.cancel))
-            setCallback(object: CustomAlertDialog.DialogButtonCallback {
-                override fun onPositiveClick() {
-                    Log.d(TAG, "onPositiveClick: ")
-                    dialog.dismiss()
-                    logoutUser()
-                }
-                override fun onNegativeClick() {
-                    Log.d(TAG, "onNegativeClick: ")
-                    dialog.dismiss()
-                }
-            })
-        }*/
-//        dialog.show()
-        logoutUser()
+            try {
+                showNegativeButton(false)
+                setTitle(resources.getString(R.string.logout))
+                setPositiveText(resources.getString(R.string.logout))
+                setNegativeText(resources.getString(R.string.cancel))
+                setCallback(object : CustomAlertDialog.DialogButtonCallback {
+                    override fun onPositiveClick() {
+                        Log.d(TAG, "onPositiveClick: ")
+                        dialog.dismiss()
+                        logoutUser()
+                    }
+
+                    override fun onNegativeClick() {
+                        Log.d(TAG, "onNegativeClick: ")
+                        dialog.dismiss()
+                    }
+                })
+            }
+            catch (err: Exception){
+                Log.e(TAG, "ERROR: ${err.message}")
+            }
+        }
+        dialog.show()
     }
 
     fun logoutUser(){
-        Log.d(TAG, "Logout User.......")
         viewModel.logoutUser().observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
@@ -378,5 +386,28 @@ class MainActivity : BaseActivity() {
             fragment,
             fragment.javaClass.getSimpleName()
         ).addToBackStack(fragment.javaClass.getSimpleName()).commit()
+    }
+
+    private fun setNoInternetSnackbar(){
+        // No Internet Snackbar: Fire
+        NoInternetSnackbarFire.Builder(
+            navDrawer,
+            lifecycle
+        ).apply {
+            snackbarProperties.apply {
+                connectionCallback = object : ConnectionCallback { // Optional
+                    override fun hasActiveConnection(hasActiveConnection: Boolean) {
+
+                    }
+                }
+
+                duration = Snackbar.LENGTH_INDEFINITE // Optional
+                noInternetConnectionMessage = "No active Internet connection!" // Optional
+                onAirplaneModeMessage = "You have turned on the airplane mode!" // Optional
+                snackbarActionText = "Settings" // Optional
+                showActionToDismiss = false // Optional
+                snackbarDismissActionText = "OK" // Optional
+            }
+        }.build()
     }
 }

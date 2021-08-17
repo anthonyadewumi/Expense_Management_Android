@@ -118,6 +118,9 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:18.0.0"
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.21"
+
+    //No Internet connection check
+    implementation 'org.imaginativeworld.oopsnointernet:oopsnointernet:2.0.0'
 }
 repositories {
     mavenCentral()

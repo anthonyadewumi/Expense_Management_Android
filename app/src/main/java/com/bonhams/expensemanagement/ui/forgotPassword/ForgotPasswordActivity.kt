@@ -13,7 +13,10 @@ import com.bonhams.expensemanagement.data.services.requests.ForgotPasswordReques
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.utils.Status
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_forgot_password.*
+import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
+import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 
 class ForgotPasswordActivity : BaseActivity() {
 
@@ -26,6 +29,7 @@ class ForgotPasswordActivity : BaseActivity() {
 
         setupViewModel()
         setClickListeners()
+        setNoInternetSnackbar()
     }
 
 
@@ -104,5 +108,28 @@ class ForgotPasswordActivity : BaseActivity() {
 
     private fun onForgotPasswordFailed() {
         mContinue!!.isEnabled = true
+    }
+
+    private fun setNoInternetSnackbar(){
+        // No Internet Snackbar: Fire
+        NoInternetSnackbarFire.Builder(
+            forgotPassMainLayout,
+            lifecycle
+        ).apply {
+            snackbarProperties.apply {
+                connectionCallback = object : ConnectionCallback { // Optional
+                    override fun hasActiveConnection(hasActiveConnection: Boolean) {
+
+                    }
+                }
+
+                duration = Snackbar.LENGTH_INDEFINITE // Optional
+                noInternetConnectionMessage = "No active Internet connection!" // Optional
+                onAirplaneModeMessage = "You have turned on the airplane mode!" // Optional
+                snackbarActionText = "Settings" // Optional
+                showActionToDismiss = false // Optional
+                snackbarDismissActionText = "OK" // Optional
+            }
+        }.build()
     }
 }
