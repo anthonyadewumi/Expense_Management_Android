@@ -66,10 +66,10 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
         var errorStr: String? = null
         if (password.isEmpty()){
             errorStr = error
-            validEmail = true
+            validPassword = true
         }
         else {
-            validEmail = false
+            validPassword = false
         }
 
         return  errorStr

@@ -87,9 +87,9 @@
                 <Button
                     android:id="@+id/btnPositive"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_28sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:minWidth="@dimen/_80sdp"
-                    android:text="@string/ok"
+                    android:text="@string/logout"
                     style="@style/TextBold12"
                     android:textColor="@color/secondary"
                     android:textAllCaps="false"
@@ -100,7 +100,7 @@
                 <Button
                     android:id="@+id/btnNegative"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_28sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:minWidth="@dimen/_80sdp"
                     android:text="@string/cancel"
                     style="@style/TextBold12"

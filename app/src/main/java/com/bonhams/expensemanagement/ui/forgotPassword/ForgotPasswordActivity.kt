@@ -51,14 +51,13 @@ class ForgotPasswordActivity : BaseActivity() {
     }
 
     private fun forgotPassword() {
-        Log.d(TAG, "forgotPassword: ===============")
-        if (validate()) {
+        if (validateForgotPassword()) {
             onForgotPasswordFailed()
             return
         }
 
         mContinue!!.visibility = View.GONE
-        val email = mEmailTextField.editText!!.text.toString()
+        val email = mEmailTextField.editText!!.text.toString().trim()
         val forgotPasswordRequest = viewModel.getForgotPasswordRequest(email)
         setForgotPasswordObserver(forgotPasswordRequest)
     }
@@ -91,9 +90,9 @@ class ForgotPasswordActivity : BaseActivity() {
         })
     }
 
-    fun validate(): Boolean {
+    private fun validateForgotPassword(): Boolean {
         mEmailTextField!!.error = viewModel.validateEmail(
-            mEmailTextField.editText!!.text.toString(),
+            mEmailTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_email)
         )
 

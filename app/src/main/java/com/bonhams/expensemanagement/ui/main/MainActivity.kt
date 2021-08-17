@@ -1,13 +1,20 @@
 package com.bonhams.expensemanagement.ui.main
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
@@ -174,14 +181,14 @@ class MainActivity : BaseActivity() {
     }
 
     fun showAppbarSearch(show: Boolean){
-        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.GONE
+        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
         ivSearch.visibility = if(show) View.VISIBLE else View.GONE
         appbarEdit.visibility = View.GONE
     }
 
 
     fun showAppbarEdit(show: Boolean){
-        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.GONE
+        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
         appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
         ivSearch.visibility = View.GONE
     }
@@ -258,56 +265,43 @@ class MainActivity : BaseActivity() {
         navDrawerAdapter = NavDrawerAdapter(navDrawerItems, -1)
         navDrawerRv.adapter = navDrawerAdapter
         navDrawerAdapter.notifyDataSetChanged()
+
     }
 
-    /*private fun updateAdapter(highlightItemPos: Int) {
-        navDrawerAdapter = NavDrawerAdapter(navDrawerItems, highlightItemPos)
-        navDrawerRv.adapter = navDrawerAdapter
-        navDrawerAdapter.notifyDataSetChanged()
-    }*/
+    private fun showLogoutAlert() {
+        val dialog = Dialog(this)
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_alert_dialog)
+        val title = dialog.findViewById(R.id.txtTitle) as TextView
+        val body = dialog.findViewById(R.id.txtDescription) as TextView
+        val input = dialog.findViewById(R.id.edtDescription) as EditText
+        val yesBtn = dialog.findViewById(R.id.btnPositive) as Button
+        val noBtn = dialog.findViewById(R.id.btnNegative) as TextView
 
-    fun showLogoutAlert(){
-        Log.d(TAG, "showLogoutAlert: ${resources.getString(R.string.logout)}")
-        val dialog = CustomAlertDialog(this@MainActivity)
-        dialog.apply {
-            try {
-                showNegativeButton(false)
-                setTitle(resources.getString(R.string.logout))
-                setPositiveText(resources.getString(R.string.logout))
-                setNegativeText(resources.getString(R.string.cancel))
-                setCallback(object : CustomAlertDialog.DialogButtonCallback {
-                    override fun onPositiveClick() {
-                        Log.d(TAG, "onPositiveClick: ")
-                        dialog.dismiss()
-                        logoutUser()
-                    }
+        input.visibility = View.GONE
+        title.text = resources.getString(R.string.logout)
+        body.text = resources.getString(R.string.are_you_sure_you_want_to_logout)
+        yesBtn.text = resources.getString(R.string.logout)
+        noBtn.text = resources.getString(R.string.cancel)
 
-                    override fun onNegativeClick() {
-                        Log.d(TAG, "onNegativeClick: ")
-                        dialog.dismiss()
-                    }
-                })
-            }
-            catch (err: Exception){
-                Log.e(TAG, "ERROR: ${err.message}")
-            }
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+            logoutUser()
         }
+        noBtn.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
-    fun logoutUser(){
+    private fun logoutUser(){
         viewModel.logoutUser().observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
-                            AppPreferences.clearPrefs()
                             Log.d(TAG, "logoutUser: ${response.message}")
-
-                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                            startActivity(intent)
-                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                            finish()
                         }
                     }
                     Status.ERROR -> {
@@ -320,6 +314,12 @@ class MainActivity : BaseActivity() {
 
             }
         })
+
+        AppPreferences.clearPrefs()
+        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        finish()
     }
 
     private fun hasLocationForegroundPermission() =

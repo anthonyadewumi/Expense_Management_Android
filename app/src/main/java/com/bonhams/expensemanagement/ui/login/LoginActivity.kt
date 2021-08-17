@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
@@ -24,6 +25,7 @@ import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 
 class LoginActivity : BaseActivity() {
     private lateinit var viewModel: LoginViewModel
+    private val TAG = javaClass.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +36,7 @@ class LoginActivity : BaseActivity() {
         setNoInternetSnackbar()
     }
 
-    fun setClickListeners(){
+    private fun setClickListeners(){
         mContinue.setOnClickListener {
             login()
         }
@@ -46,7 +48,7 @@ class LoginActivity : BaseActivity() {
         }
     }
 
-    fun setRememberMe(){
+    private fun setRememberMe(){
         if (mRememberMeCheckbox.tag == 0){
             mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_checked_login)
             mRememberMeCheckbox.setTag(1)
@@ -71,7 +73,6 @@ class LoginActivity : BaseActivity() {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                                Log.d("LoginActivity", "setLoginObserver: ${resource.data.message}")
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -81,8 +82,7 @@ class LoginActivity : BaseActivity() {
                     Status.ERROR -> {
                         mProgressBars.visibility = View.GONE
                         mContinue.visibility = View.VISIBLE
-                        Log.e("LoginActivity", "setupObservers: ${it.message}")
-                        it.message?.let { it1 -> Log.d("LoginActivity", "setLoginObserver: $it1") }
+                        it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
                         mProgressBars.visibility = View.VISIBLE
@@ -92,15 +92,23 @@ class LoginActivity : BaseActivity() {
         })
     }
 
-    fun setResponse(response: LoginResponse) {
+    private fun setResponse(response: LoginResponse) {
         mProgressBars.visibility = View.GONE
         mContinue.visibility = View.VISIBLE
         viewModel.setResponse(response)
 
-        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-        startActivity(intent)
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-        finish()
+        if(response.success){
+            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            finish()
+        }
+        else{
+            mProgressBars.visibility = View.GONE
+            mContinue.visibility = View.VISIBLE
+            Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun login() {
@@ -108,33 +116,33 @@ class LoginActivity : BaseActivity() {
             getFirebaseToken()
         }
 
-        if (validate()) {
+        if (validateLoginDetails()) {
             onLoginFailed()
             return
         }
-
+        hideKeyboard()
         mContinue!!.visibility = View.GONE
-        val email = mEmailTextField.editText!!.text.toString()
-        val password = mPasswordTextField.editText!!.text.toString()
+        val email = mEmailTextField.editText!!.text.toString().trim()
+        val password = mPasswordTextField.editText!!.text.toString().trim()
         val loginRequest = viewModel.getLoginRequest(email, password)
         setLoginObserver(loginRequest)
     }
 
-    fun validate(): Boolean {
+    private fun validateLoginDetails(): Boolean {
         mEmailTextField!!.error = viewModel.validateEmail(
-            mEmailTextField.editText!!.text.toString(),
+            mEmailTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_email)
         )
 
         mPasswordTextField!!.error = viewModel.validatePassword(
-            mPasswordTextField.editText!!.text.toString(),
+            mPasswordTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_password)
         )
 
         return (viewModel.validEmail || viewModel.validPassword)
     }
 
-    fun onLoginFailed() {
+    private fun onLoginFailed() {
         mContinue!!.isEnabled = true
     }
 
@@ -152,25 +160,17 @@ class LoginActivity : BaseActivity() {
                 //and to be available to trigger action again
                 viewModel.isInvalid?.value = null
              //   toast(viewModel.message!!)
+                Toast.makeText(this, viewModel.message!!, Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     private fun checkUserData(){
         viewModel.login?.value?.userDetails?.let {
-           /* viewModel.loginData = LoginResponse.LoginInner().apply {
-                userDetails = it
-            }*/
-            val jsonString = viewModel.responseToString()
-            savePreference(jsonString)
             gotoDashboard()
         } ?: kotlin.run {
-//            goToContactVerifaction()
+
         }
-    }
-
-    private fun savePreference(jsonString: String) {
-
     }
 
     private fun getFirebaseToken(){
