@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.services.responses.MileageDetail
+import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 
 class MileageAdapter(
@@ -38,7 +39,15 @@ class MileageAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(item: MileageDetail) {
-
+            itemView.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
+//            itemView.tvSubmittedOn.text = item.
+            itemView.tvTotalAmount.text = "$" + item.totalAmount
+            itemView.tvStatus.text = item.reportMStatus.replaceFirstChar(Char::uppercase)
+            when {
+                item.reportMStatus.equals("Pending", true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                item.reportMStatus.equals("Approved", true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
+            }
         }
     }
 }

@@ -46,8 +46,14 @@ interface ApiService {
     @POST("claim-list")
     suspend fun claimsList(@Body claimListRequest: ClaimsRequest) : ClaimsResponse
 
+    @POST("create-claim")
+    suspend fun createNewClaim(@Body newClaimRequest: NewClaimRequest) : CommonResponse
+
     @POST("mileage_list")
     suspend fun mileageList(@Body mileageExpenseRequest: MileageExpenseRequest) : MileageListResponse
+
+    @POST("new_mileageclaim")
+    suspend fun createNewMileageClaim(@Body mileageClaimRequest: NewMileageClaimRequest) : CommonResponse
 
     @POST("changePassword")
     suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest) : CommonResponse

@@ -8,7 +8,7 @@ class ClaimsResponse {
     @SerializedName("message")
     var message: String? = ""
     @SerializedName("data")
-    var claimsList: List<MileageDetail>? = null
+    var claimsList: List<ClaimDetail>? = null
 }
 
 class ClaimDetail() {

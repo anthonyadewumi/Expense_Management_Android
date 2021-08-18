@@ -19,7 +19,7 @@ import com.bonhams.expensemanagement.data.services.requests.ChangePasswordReques
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.utils.Status
-import kotlinx.android.synthetic.main.fragment_change_password.*
+import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 
 class ChangePasswordFragment() : Fragment() {
@@ -54,7 +54,13 @@ class ChangePasswordFragment() : Fragment() {
 
     private fun setClickListeners(){
         btnReset?.setOnClickListener(View.OnClickListener {
-            changePasswordPassword()
+
+            contextActivity?.let {
+                if(NoInternetUtils.isConnectedToInternet(it))
+                    changePasswordPassword()
+                else
+                    Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
+            }
         })
     }
 
@@ -92,13 +98,13 @@ class ChangePasswordFragment() : Fragment() {
                         }
                     }
                     Status.ERROR -> {
-                        mProgressBars.visibility = View.GONE
+                        mProgressBar?.visibility = View.GONE
                         btnReset?.visibility = View.VISIBLE
                         Log.e(TAG, "setChangePasswordObserver: ${it.message}")
                         it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-                        mProgressBars.visibility = View.VISIBLE
+                        mProgressBar?.visibility = View.VISIBLE
                     }
                 }
             }
@@ -128,7 +134,7 @@ class ChangePasswordFragment() : Fragment() {
     }
 
     private fun setResponse(commonResponse: CommonResponse) {
-        mProgressBars.visibility = View.GONE
+        mProgressBar?.visibility = View.GONE
         btnReset?.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
     }

@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_forgot_password.*
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
+import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 class ForgotPasswordActivity : BaseActivity() {
 
@@ -40,7 +41,10 @@ class ForgotPasswordActivity : BaseActivity() {
 
     private fun setClickListeners(){
         mContinue.setOnClickListener(View.OnClickListener {
-            forgotPassword()
+            if(NoInternetUtils.isConnectedToInternet(this))
+                forgotPassword()
+            else
+                Toast.makeText(this, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
         })
     }
 

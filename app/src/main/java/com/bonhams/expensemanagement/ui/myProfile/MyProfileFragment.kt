@@ -41,7 +41,7 @@ class MyProfileFragment() : Fragment() {
         fragmentManager?.beginTransaction()?.replace(
             R.id.container,
             fragment,
-            fragment.javaClass.getSimpleName()
-        )?.addToBackStack(fragment.javaClass.getSimpleName())?.commit()
+            fragment.javaClass.simpleName
+        )?.addToBackStack(fragment.javaClass.simpleName)?.commit()
     }
 }

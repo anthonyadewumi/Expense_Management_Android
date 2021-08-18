@@ -45,16 +45,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/merchant_name"
+                android:text="@string/company_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextGray"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
-                android:id="@+id/edtMerchantName"
+                android:id="@+id/edtCompanyName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/merchant_name"
+                android:hint="@string/company_name"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 style="@style/TextRegular12"
@@ -69,62 +69,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/expense_group"
-                style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
-                android:layout_marginTop="@dimen/_10sdp"/>
-
-            <Spinner
-                android:id="@+id/spnExpenseGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/expense_group"
-                style="@style/outlineBoxExposedDropdown"
-                android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/expense_type"
-                style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
-                android:layout_marginTop="@dimen/_10sdp"/>
-
-            <Spinner
-                android:id="@+id/spnExpenseType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/expense_type"
-                style="@style/outlineBoxExposedDropdown"
-                android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/company_number"
+                android:text="@string/mileage_type"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextGray"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
-                android:id="@+id/edtCompanyNumber"
+                android:id="@+id/edtMileageType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/company_number"
+                android:hint="@string/mileage_type"
                 android:imeOptions="actionNext"
-                android:inputType="number"
+                android:inputType="text"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
@@ -182,6 +138,245 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/expense_type"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <Spinner
+                android:id="@+id/spnExpenseType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/expense_type"
+                style="@style/outlineBoxExposedDropdown"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/merchant_name"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <EditText
+                android:id="@+id/edtMerchantName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/merchant_name"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@drawable/round_corner_theme"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="35sp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="7sp"
+                android:gravity="center_vertical"
+                android:text="@string/trip_details_colon"
+                android:textSize="18sp"
+                android:textColor="@color/secondary"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date_of_trip"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <TextView
+                android:id="@+id/tvDateOfTrip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/date_of_trip"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                app:drawableRightCompat="@drawable/ic_calendar_input_drawable"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/from"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <TextView
+                android:id="@+id/edtTripFrom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_starting_location"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/to"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <TextView
+                android:id="@+id/edtTripTo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_end_location"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/distance"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <Spinner
+                android:id="@+id/spnDistance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/select_distance"
+                style="@style/outlineBoxExposedDropdown"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/car_type"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <Spinner
+                android:id="@+id/spnCarType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/car_type"
+                style="@style/outlineBoxExposedDropdown"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/claimed_miles"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <EditText
+                android:id="@+id/edtClaimedMiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/claimed_miles"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@drawable/round_corner_theme"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginTop="@dimen/_5sdp">
+
+                <TextView
+                    android:id="@+id/tvRoundTrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@string/round_trip"
+                    style="@style/TextRegular12"
+                    android:textColor="@color/colorTextBlack"
+                    android:layout_toStartOf="@+id/switchRoundTrip"
+                    android:layout_centerVertical="true"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchRoundTrip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    tools:ignore="ContentDescription"
+                    app:tint="@color/secondary"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"/>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@drawable/round_corner_theme" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/currency"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextGray"
@@ -193,6 +388,54 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/currency"
                 style="@style/outlineBoxExposedDropdown"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/petrol_amount"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <EditText
+                android:id="@+id/edtPetrolAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/petrol_amount"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:minHeight="@dimen/_30sdp"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/park_amount"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <EditText
+                android:id="@+id/edtParkAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/park_amount"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
                 android:minHeight="@dimen/_30sdp"
@@ -358,18 +601,6 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:visibility="gone"/>
 
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnSplit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/round_border_theme_transparent_bg"
-                android:text="@string/split"
-                style="@style/TextRegular12"
-                android:textColor="@color/secondary"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-                android:layout_marginTop="@dimen/_15sdp"/>
 
             <LinearLayout
                 android:id="@+id/mSubmitLay"

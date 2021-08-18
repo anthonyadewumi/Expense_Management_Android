@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
+import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 class LoginActivity : BaseActivity() {
     private lateinit var viewModel: LoginViewModel
@@ -38,7 +39,10 @@ class LoginActivity : BaseActivity() {
 
     private fun setClickListeners(){
         mContinue.setOnClickListener {
-            login()
+            if(NoInternetUtils.isConnectedToInternet(this))
+                login()
+            else
+                Toast.makeText(this, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
         }
         mRememberMeCheckbox.setOnClickListener {
             setRememberMe()

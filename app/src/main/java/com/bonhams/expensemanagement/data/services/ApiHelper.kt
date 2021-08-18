@@ -10,7 +10,11 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun claimsList(claimListRequest: ClaimsRequest) = apiService.claimsList(claimListRequest)
 
+    suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiService.createNewClaim(newClaimRequest)
+
     suspend fun mileageExpensesList(mileageExpenseRequest: MileageExpenseRequest) = apiService.mileageList(mileageExpenseRequest)
+
+    suspend fun createNewMileageClaim(mileageClaimRequest: NewMileageClaimRequest) = apiService.createNewMileageClaim(mileageClaimRequest)
 
     suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) = apiService.changePassword(changePasswordRequest)
 

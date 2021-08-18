@@ -21,6 +21,7 @@ import com.bonhams.expensemanagement.data.services.requests.MileageExpenseReques
 import com.bonhams.expensemanagement.data.services.responses.MileageListResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.utils.Status
+import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 class MileageExpensesFragment() : Fragment() {
 
@@ -60,7 +61,12 @@ class MileageExpensesFragment() : Fragment() {
             setupRecyclerView()
         })
 
-        getMileageListObserver(viewModel.getMileageListRequest(1, ""))
+        contextActivity?.let {
+            if(NoInternetUtils.isConnectedToInternet(it))
+                getMileageListObserver(viewModel.getMileageListRequest(1, ""))
+            else
+                Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setViews() {

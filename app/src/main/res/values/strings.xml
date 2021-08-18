@@ -18,7 +18,7 @@
     <string name="submitted_on_colon">Submitted On :</string>
     <string name="approved">Approved</string>
     <string name="status_colon">Status :</string>
-    <string name="total_amount_colon">Total Amount</string>
+    <string name="total_amount_colon">Total Amount:</string>
     <string name="claims">Claims</string>
     <string name="mileage_expenses">Mileage Expenses</string>
 
@@ -82,5 +82,18 @@
     <string name="validate_password">Please enter password</string>
     <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
     <string name="validate_password_not_match">Confirm Password does not match new password</string>
+    <string name="check_internet_msg">Please check your internet connection</string>
+    <string name="trip_details_colon">Trip Details:</string>
+    <string name="round_trip">Round Trip</string>
+    <string name="date_of_trip">Date Of Trip</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="enter_end_location">Enter End Location</string>
+    <string name="enter_starting_location">Enter Starting Location</string>
+    <string name="distance">Distance</string>
+    <string name="select_distance">Select Distance</string>
+    <string name="claimed_miles">Claimed Miles</string>
+    <string name="petrol_amount">Petrol Amount</string>
+    <string name="park_amount">Park Amount</string>
 
 </resources>

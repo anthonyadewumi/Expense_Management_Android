@@ -14,8 +14,8 @@ class MileageListResponse {
 class MileageDetail {
     val title: String = ""
     val description: String = ""
-    val totalAmount: Long = 0
-    val id: Long = 0
+    val totalAmount: String = ""
+    val id: String = ""
     val reportMStatus: String = ""
     val financeMStatus: String = ""
     val comapnyname: String = ""

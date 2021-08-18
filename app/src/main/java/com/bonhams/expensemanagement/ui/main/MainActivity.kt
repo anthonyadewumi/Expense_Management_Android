@@ -28,12 +28,12 @@ import com.bonhams.expensemanagement.data.model.NavDrawerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
-import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
+import com.bonhams.expensemanagement.ui.BlankFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
 import com.bonhams.expensemanagement.ui.login.LoginActivity
-import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
+import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.*
@@ -51,8 +51,7 @@ class MainActivity : BaseActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var navDrawerAdapter: NavDrawerAdapter
-    val TAG = "MainActivity"
-
+    private val TAG = javaClass.simpleName
     private var navDrawerItems = arrayListOf(
         NavDrawerItem(R.drawable.ic_home, "Expense", -1),
         NavDrawerItem(R.drawable.ic_nav_expense_plus, "Manually Create", 1),
@@ -69,12 +68,14 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         setupNavDrawer()
         setupViewModel()
         setupClickListeners()
         setupAppbar()
         setNoInternetSnackbar()
+        fragmentBackstackListener()
 
         if (savedInstanceState == null) {
             val fragment = HomeFragment()
@@ -88,8 +89,7 @@ class MainActivity : BaseActivity() {
         } else {
             // Checking for fragment count on back stack
             if (supportFragmentManager.backStackEntryCount > 0) {
-                // Go to the previous fragment
-                supportFragmentManager.popBackStack()
+                backButtonPressed()
             } else {
                 // Exit the app
                 super.onBackPressed()
@@ -97,13 +97,24 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun backButtonPressed(){
+        // Go to the previous fragment
+        supportFragmentManager.popBackStack()
+        // Reset app bar
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            setupAppbar()
+            bottomNavigationView.selectedItemId = R.id.bottom_nav_home
+        }
+    }
+
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
-            bottomNavigationView.getMenu().setGroupCheckable(0, true, true)
+            bottomNavigationView.menu.setGroupCheckable(0, true, true)
             when (menuItem.itemId) {
                 R.id.bottom_nav_home -> {
                     setupAppbar()
                     showBottomNavbar(true)
+                    removeAnyOtherFragVisible()
                     val fragment = HomeFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
@@ -111,7 +122,7 @@ class MainActivity : BaseActivity() {
                 R.id.bottom_nav_camera -> {
                     setAppbarTitle(getString(R.string.scan_receipt))
                     showBottomNavbar(true)
-                    val fragment = ClaimDetailFragment()
+                    val fragment = BlankFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -135,7 +146,9 @@ class MainActivity : BaseActivity() {
 
     private fun setupClickListeners(){
         layoutBack.setOnClickListener(View.OnClickListener {
-            onBackPressed()
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                backButtonPressed()
+            }
         })
         ivMenu.setOnClickListener(View.OnClickListener {
             if (!navDrawer.isDrawerOpen(GravityCompat.START)) {
@@ -162,40 +175,7 @@ class MainActivity : BaseActivity() {
         ivMenu.visibility = View.VISIBLE
         layoutBack.visibility = View.GONE
         layoutAppBarSearch.visibility = View.VISIBLE
-    }
-
-    fun setAppbarTitle(title: String){
-        appbarTitle.visibility = View.VISIBLE
-        appbarTitle.text = title
-        layoutGreeting.visibility = View.GONE
-        ivMenu.visibility = View.VISIBLE
-        layoutBack.visibility = View.GONE
-        layoutAppBarSearch.visibility = View.VISIBLE
-    }
-
-    fun showAppbarBackButton(show: Boolean){
-        appbarTitle.visibility = if(show) View.VISIBLE else View.GONE
-        layoutGreeting.visibility = View.GONE
-        ivMenu.visibility = View.GONE
-        layoutBack.visibility = if(show) View.VISIBLE else View.GONE
-        showAppbarSearch(false)
-    }
-
-    fun showAppbarSearch(show: Boolean){
-        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
-        ivSearch.visibility = if(show) View.VISIBLE else View.GONE
-        appbarEdit.visibility = View.GONE
-    }
-
-
-    fun showAppbarEdit(show: Boolean){
-        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
-        appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
-        ivSearch.visibility = View.GONE
-    }
-
-    fun showBottomNavbar(show: Boolean){
-        bottomNavigationView.visibility = if(show) View.VISIBLE else View.GONE
+        ivSearch.visibility = View.VISIBLE
     }
 
     private fun setupNavDrawer(){
@@ -230,14 +210,14 @@ class MainActivity : BaseActivity() {
                         setAppbarTitle(getString(R.string.scan_receipt))
                         showBottomNavbar(false)
                         showAppbarBackButton(true)
-                        val fragment = HomeFragment()
+                        val fragment = BlankFragment()
                         addFragment(fragment)
                     }
                     3 -> { // Manually Create
                         setAppbarTitle(getString(R.string.create_mileage_claim))
                         showBottomNavbar(false)
                         showAppbarBackButton(true)
-                        val fragment = MileageDetailFragment()
+                        val fragment = NewMileageClaimFragment()
                         addFragment(fragment)
                     }
                     4 -> { // Start GPS
@@ -249,10 +229,10 @@ class MainActivity : BaseActivity() {
                     }
                     5 -> { // My Account
                         setAppbarTitle(getString(R.string.profile))
-                        showBottomNavbar(true)
-                        showAppbarBackButton(true)
-                        val fragment = MyProfileFragment()
-                        addFragment(fragment)
+                        setupAppbar()
+                        bottomNavigationView.selectedItemId = R.id.bottom_nav_my_profile
+                        /*val fragment = MyProfileFragment()
+                        addFragment(fragment)*/
                     }
                     6 -> { // Logout
                         showLogoutAlert()
@@ -275,7 +255,6 @@ class MainActivity : BaseActivity() {
         navDrawerAdapter = NavDrawerAdapter(navDrawerItems, -1)
         navDrawerRv.adapter = navDrawerAdapter
         navDrawerAdapter.notifyDataSetChanged()
-
     }
 
     private fun showLogoutAlert() {
@@ -332,20 +311,21 @@ class MainActivity : BaseActivity() {
         finish()
     }
 
-    private fun hasLocationForegroundPermission() =
-        ActivityCompat.checkSelfPermission(
+
+    /*
+    * Location functions
+    * */
+    private fun hasLocationForegroundPermission() = ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-    private fun hasLocationBackgroundPermission() =
-        ActivityCompat.checkSelfPermission(
+    private fun hasLocationBackgroundPermission() = ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
-    private fun hasFineLocationPermission() =
-        ActivityCompat.checkSelfPermission(
+    private fun hasFineLocationPermission() = ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
@@ -366,11 +346,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 0 && grantResults.isNotEmpty()) {
             for (i in grantResults.indices) {
@@ -382,22 +359,114 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /*
+    * App bar functions
+    * */
+    fun setAppbarTitle(title: String){
+        appbarTitle.visibility = View.VISIBLE
+        appbarTitle.text = title
+        layoutGreeting.visibility = View.GONE
+        ivMenu.visibility = View.VISIBLE
+        layoutBack.visibility = View.GONE
+        layoutAppBarSearch.visibility = View.VISIBLE
+    }
+
+    fun showAppbarBackButton(show: Boolean){
+        appbarTitle.visibility = View.VISIBLE//if(show) View.VISIBLE else View.INVISIBLE
+        layoutGreeting.visibility = View.GONE
+        ivMenu.visibility = View.GONE
+        layoutBack.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        showAppbarSearch(false)
+    }
+
+    fun showAppbarSearch(show: Boolean){
+        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        ivSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        appbarEdit.visibility = View.GONE
+    }
+
+    fun showAppbarEdit(show: Boolean){
+        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
+        ivSearch.visibility = View.GONE
+    }
+
+    fun showBottomNavbar(show: Boolean){
+        bottomNavigationView.visibility = if(show) View.VISIBLE else View.GONE
+    }
+
+    /*
+    * Fragment backstack functions
+    * */
+    private fun removeAnyOtherFragVisible(){
+        supportFragmentManager.fragments.forEach {
+            if (it !is HomeFragment) {
+                supportFragmentManager.beginTransaction().remove(it).commit()
+            }
+        }
+    }
+
     private fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(
             R.id.container,
             fragment,
-            fragment.javaClass.getSimpleName()
+            fragment.javaClass.simpleName
         ).commit()
     }
 
     private fun addFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(
+        supportFragmentManager.beginTransaction().add(
             R.id.container,
             fragment,
-            fragment.javaClass.getSimpleName()
-        ).addToBackStack(fragment.javaClass.getSimpleName()).commit()
+            fragment.javaClass.simpleName
+        ).addToBackStack(fragment.javaClass.simpleName).commit()
     }
 
+    private fun fragmentBackstackListener(){
+        supportFragmentManager.addOnBackStackChangedListener {
+            val fragment = supportFragmentManager.findFragmentById(R.id.container)
+            if (fragment != null) {
+                val fragName = fragment.javaClass.simpleName
+                if(fragName.equals(HomeFragment::class.java.name, true)){
+                    setupAppbar()
+                }
+                else if(fragName.equals(NewClaimFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.create_new_claim))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
+                else if(fragName.equals(BlankFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.bonhams))
+                    setupAppbar()
+                    showBottomNavbar(true)
+                }
+                else if(fragName.equals(NewMileageClaimFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.create_mileage_claim))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
+                else if(fragName.equals(GPSTrackingFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.start_gps))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
+                else if(fragName.equals(NotificationFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.notifications))
+                    showAppbarBackButton(false)
+                    showBottomNavbar(true)
+                }
+                else if(fragName.equals(MyProfileFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.profile))
+                    showAppbarBackButton(false)
+                    showBottomNavbar(true)
+                }
+            }
+        }
+    }
+
+    /*
+    * No internet connection check
+    * */
     private fun setNoInternetSnackbar(){
         // No Internet Snackbar: Fire
         NoInternetSnackbarFire.Builder(

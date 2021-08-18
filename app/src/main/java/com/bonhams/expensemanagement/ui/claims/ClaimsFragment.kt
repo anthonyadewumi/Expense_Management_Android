@@ -21,6 +21,7 @@ import com.bonhams.expensemanagement.data.services.requests.ClaimsRequest
 import com.bonhams.expensemanagement.data.services.responses.ClaimsResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.utils.Status
+import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 private const val TAG = "NotificationFragment"
 
@@ -62,7 +63,12 @@ class ClaimsFragment() : Fragment() {
             setupRecyclerView()
         })
 
-        getMileageListObserver(viewModel.getClaimsRequest(1, "test"))
+        contextActivity?.let {
+            if(NoInternetUtils.isConnectedToInternet(it))
+                getMileageListObserver(viewModel.getClaimsRequest(1, "test"))
+            else
+                Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun setViews() {
