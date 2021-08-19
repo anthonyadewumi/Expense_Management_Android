@@ -102,7 +102,7 @@ class MileageExpensesFragment() : Fragment() {
     }
 
     private fun getMileageListObserver(mileageExpenseRequest: MileageExpenseRequest){
-        viewModel.getMileageExpensesList(mileageExpenseRequest).observe(this, Observer {
+        viewModel.getMileageExpensesList(mileageExpenseRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    tools:context=".ui.main.MainActivity"
+    android:background="@color/colorLightGray">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVerticalLeft"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.08" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVerticalRight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.92" />
+
+        <LinearLayout
+            android:id="@+id/layoutSplit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                style="@style/TextRegular12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/company"
+                android:textColor="@color/colorTextGray" />
+
+            <Spinner
+                android:id="@+id/spnCompany"
+                style="@style/outlineBoxExposedDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/spinner_bg"
+                android:hint="@string/expense_group"
+                android:minHeight="@dimen/_30sdp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/colorTextBlack"
+                android:textSize="@dimen/_13ssp" />
+
+            <TextView
+                style="@style/TextRegular12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/department"
+                android:textColor="@color/colorTextGray" />
+
+            <Spinner
+                android:id="@+id/spnDepartment"
+                style="@style/outlineBoxExposedDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/spinner_bg"
+                android:hint="@string/department"
+                android:minHeight="@dimen/_30sdp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/colorTextBlack"
+                android:textSize="@dimen/_13ssp" />
+
+            <TextView
+                style="@style/TextRegular12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/expense"
+                android:textColor="@color/colorTextGray" />
+
+            <Spinner
+                android:id="@+id/spnExpense"
+                style="@style/outlineBoxExposedDropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/spinner_bg"
+                android:hint="@string/expense"
+                android:minHeight="@dimen/_30sdp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/colorTextBlack"
+                android:textSize="@dimen/_13ssp" />
+
+            <TextView
+                style="@style/TextRegular12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/total_amount"
+                android:textColor="@color/colorTextGray" />
+
+            <EditText
+                android:id="@+id/edtTotalAmount"
+                style="@style/TextRegular12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:hint="@string/net_amount"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:minHeight="@dimen/_30sdp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/colorTextBlack"
+                android:textSize="@dimen/_13ssp" />
+
+            <TextView
+                style="@style/TextRegular12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/tax_code"
+                android:textColor="@color/colorTextGray" />
+
+            <EditText
+                android:id="@+id/edtTaxCode"
+                style="@style/TextRegular12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:hint="@string/tax_code"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:minHeight="@dimen/_30sdp"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/colorTextBlack"
+                android:textSize="@dimen/_13ssp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSplit"
+                style="@style/TextRegular12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@drawable/round_border_theme_transparent_bg"
+                android:text="@string/split"
+                android:textAllCaps="false"
+                android:textColor="@color/secondary"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

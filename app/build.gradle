@@ -21,7 +21,7 @@ android {
 
     signingConfigs {
         /*release {
-            storeFile file('../bonhams_keystore/inkclick_keystore')
+            storeFile file('../bonhams_keystore/bonhams_keystore')
             storePassword 'bonhams@123'
             keyPassword 'bonhams@123'
             keyAlias = 'key0'
@@ -121,6 +121,8 @@ dependencies {
 
     //No Internet connection check
     implementation 'org.imaginativeworld.oopsnointernet:oopsnointernet:2.0.0'
+    // Media Picker
+    implementation 'com.github.Mindinventory:Lassi:0.2.0'
 }
 repositories {
     mavenCentral()

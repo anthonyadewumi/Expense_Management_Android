@@ -231,8 +231,6 @@ class MainActivity : BaseActivity() {
                         setAppbarTitle(getString(R.string.profile))
                         setupAppbar()
                         bottomNavigationView.selectedItemId = R.id.bottom_nav_my_profile
-                        /*val fragment = MyProfileFragment()
-                        addFragment(fragment)*/
                     }
                     6 -> { // Logout
                         showLogoutAlert()
@@ -300,7 +298,6 @@ class MainActivity : BaseActivity() {
                         Log.d(TAG, "Loading.......")
                     }
                 }
-
             }
         })
 

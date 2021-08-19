@@ -1,9 +1,8 @@
 package com.bonhams.expensemanagement.ui.claims.newClaim
 
+import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,14 +12,27 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
+import com.bonhams.expensemanagement.data.model.SpinnerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
-import com.bonhams.expensemanagement.ui.main.MainActivity
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Status
+import com.bonhams.expensemanagement.utils.Utils
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.lassi.common.utils.KeyUtils
+import com.lassi.data.media.MiMedia
+import com.lassi.domain.media.LassiOption
+import com.lassi.domain.media.MediaType
+import com.lassi.presentation.builder.Lassi
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 
@@ -39,13 +51,21 @@ class NewClaimFragment() : Fragment() {
     private var edtTax: EditText? = null
     private var edtNetAmount: EditText? = null
     private var edtDescription: EditText? = null
+    private var tvUploadPic: TextView? = null
     private var tvNoFileSelected: TextView? = null
     private var ivPicUpload: ImageView? = null
+    private var rvAttachments: RecyclerView? = null
     private var mProgressBar: ProgressBar? = null
     private var btnSplit: AppCompatButton? = null
     private var btnSubmit: AppCompatButton? = null
-    private lateinit var viewModel: NewClaimViewModel
     private var attachments = "1, 2, 3"
+
+    private lateinit var viewModel: NewClaimViewModel
+    private lateinit var expenseGroupAdapter: ArrayAdapter<SpinnerItem>
+    private lateinit var expenseTypeAdapter: ArrayAdapter<SpinnerItem>
+    private lateinit var departmentAdapter: ArrayAdapter<SpinnerItem>
+    private lateinit var currencyAdapter: ArrayAdapter<SpinnerItem>
+    private lateinit var attachmentsAdapter: AttachmentsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,25 +86,42 @@ class NewClaimFragment() : Fragment() {
         edtTax = view.findViewById(R.id.edtTax)
         edtNetAmount = view.findViewById(R.id.edtNetAmount)
         edtDescription = view.findViewById(R.id.edtDescription)
+        tvUploadPic = view.findViewById(R.id.tvUploadPic)
         tvNoFileSelected = view.findViewById(R.id.tvNoFileSelected)
         ivPicUpload = view.findViewById(R.id.ivPicUpload)
+        rvAttachments = view.findViewById(R.id.rvAttachments)
         mProgressBar = view.findViewById(R.id.mProgressBars)
         btnSplit = view.findViewById(R.id.btnSplit)
         btnSubmit = view.findViewById(R.id.btnSubmit)
 
-        (contextActivity as MainActivity).setAppbarTitle(getString(R.string.create_new_claim))
-        (contextActivity as MainActivity).showAppbarBackButton(true)
-        (contextActivity as MainActivity).showAppbarSearch(false)
 
         setupViewModel()
         setClickListeners()
+        setupSpinners()
+        setupAttachmentRecyclerView();
 
         return view
     }
 
     private fun setClickListeners(){
-        btnSplit?.setOnClickListener(View.OnClickListener {
+        tvUploadPic?.setOnClickListener(View.OnClickListener {
+            showBottomSheet()
+        })
+        ivPicUpload?.setOnClickListener(View.OnClickListener {
+            showBottomSheet()
+        })
 
+        tvDateOfSubmission?.setOnClickListener(View.OnClickListener {
+            showCalenderDialog()
+        })
+
+        btnSplit?.setOnClickListener(View.OnClickListener {
+             val fragment = SplitClaimFragment()
+            contextActivity?.supportFragmentManager?.beginTransaction()?.add(
+                R.id.container,
+                fragment,
+                fragment.javaClass.simpleName
+            )?.addToBackStack(fragment.javaClass.simpleName)?.commit()
         })
 
         btnSubmit?.setOnClickListener(View.OnClickListener {
@@ -97,39 +134,123 @@ class NewClaimFragment() : Fragment() {
         })
     }
 
+    private fun setupSpinners(){
+        initializeSpinnerItems();
+
+        // Expense Group Adapter
+        expenseGroupAdapter = ArrayAdapter<SpinnerItem>(
+            requireContext(),
+            R.layout.item_spinner, R.id.title,
+            viewModel.expenseGroupList
+        )
+        spnExpenseGroup?.adapter = expenseGroupAdapter
+        spnExpenseGroup?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.expenseGroupList[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+        // Expense Type Adapter
+        expenseTypeAdapter = ArrayAdapter<SpinnerItem>(
+            requireContext(),
+            R.layout.item_spinner, R.id.title,
+            viewModel.expenseTypeList
+        )
+        spnExpenseType?.adapter = expenseTypeAdapter
+        spnExpenseType?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.expenseTypeList[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+        // Department Adapter
+        departmentAdapter = ArrayAdapter<SpinnerItem>(
+            requireContext(),
+            R.layout.item_spinner, R.id.title,
+            viewModel.departmentList
+        )
+        spnDepartment?.adapter = departmentAdapter
+        spnDepartment?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.departmentList[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+        // Currency Adapter
+        currencyAdapter = ArrayAdapter<SpinnerItem>(
+            requireContext(),
+            R.layout.item_spinner, R.id.title,
+            viewModel.currencyList
+        )
+        spnCurrency?.adapter = currencyAdapter
+        spnCurrency?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.currencyList[position].title
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+
+    private fun setupAttachmentRecyclerView(){
+        val linearLayoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        rvAttachments?.layoutManager = linearLayoutManager
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList)
+        rvAttachments?.adapter = attachmentsAdapter
+    }
+
+    private fun refreshAttachments(){
+        if(viewModel.attachmentsList.size > 0){
+            tvNoFileSelected?.visibility = View.GONE
+            rvAttachments?.visibility = View.VISIBLE
+            attachmentsAdapter.notifyDataSetChanged()
+        }
+        else{
+            rvAttachments?.visibility = View.GONE
+            tvNoFileSelected?.visibility = View.VISIBLE
+        }
+    }
+
+    private fun initializeSpinnerItems(){
+        viewModel.expenseGroupList =
+            listOf(SpinnerItem("1", "Group 1"), SpinnerItem("2", "Group 2"),
+                SpinnerItem("3", "Group 3"), SpinnerItem("4", "Group 4"))
+
+        viewModel.expenseTypeList =
+            listOf(SpinnerItem("1", "Group Type 1"), SpinnerItem("2", "Group Type 2"),
+                SpinnerItem("3", "Group Type 3"), SpinnerItem("4", "Group Type 4"))
+
+        viewModel.departmentList =
+            listOf(SpinnerItem("1", "Department 1"), SpinnerItem("2", "Department 2"),
+                SpinnerItem("3", "Department 3"), SpinnerItem("4", "Department 4"))
+
+        viewModel.currencyList =
+            listOf(SpinnerItem("1", "Currency 1"), SpinnerItem("2", "Currency 2"),
+                SpinnerItem("3", "Currency 3"), SpinnerItem("4", "Currency 4"))
+    }
+
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
             NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NewClaimViewModel::class.java)
     }
 
-    private fun createNewClaim() {
-        if (validateCreateClaim()) {
-            onCreateClaimFailed()
-            return
-        }
-
-        btnSubmit?.visibility = View.GONE
-        val changePasswordRequest = viewModel.getNewClaimRequest(
-            edtMerchantName?.text.toString().trim(),
-            "1", //spnExpenseGroup.selectedItemPosition,
-            "1", //spnExpenseType.selectedItemPosition,
-            edtCompanyNumber?.text.toString().trim(),
-            "1", //spnDepartment.selectedItemPosition,
-            "12-08-2021",//tvDateOfSubmission?.text.toString().trim(),
-            "1", //spnCurrency.selectedItemPosition,
-            edtTotalAmount?.text.toString().trim(),
-            edtTax?.text.toString().trim(),
-            edtNetAmount?.text.toString().trim(),
-            edtDescription?.text.toString().trim(),
-            attachments,
-            attachments
-        )
-        setCreateClaimObserver(changePasswordRequest)
-    }
-
     private fun setCreateClaimObserver(newClaimRequest: NewClaimRequest) {
-        viewModel.createNewClaim(newClaimRequest).observe(this, Observer {
+        viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -154,6 +275,33 @@ class NewClaimFragment() : Fragment() {
                 }
             }
         })
+    }
+
+    private fun createNewClaim() {
+        if (validateCreateClaim()) {
+            onCreateClaimFailed()
+            return
+        }
+
+//        attachments = viewModel.attachmentsList.joinToString { it }
+
+        btnSubmit?.visibility = View.GONE
+        val changePasswordRequest = viewModel.getNewClaimRequest(
+            edtMerchantName?.text.toString().trim(),
+            viewModel.expenseGroupList[spnExpenseGroup?.selectedItemPosition!!].id,
+            viewModel.expenseTypeList[spnExpenseType?.selectedItemPosition!!].id,
+            edtCompanyNumber?.text.toString().trim(),
+            viewModel.departmentList[spnDepartment?.selectedItemPosition!!].id,
+            Utils.getFormattedDate(tvDateOfSubmission?.text.toString().trim(), Constants.DD_MMM_YYYY_FORMAT),
+            viewModel.currencyList[spnCurrency?.selectedItemPosition!!].id,
+            edtTotalAmount?.text.toString().trim(),
+            edtTax?.text.toString().trim(),
+            edtNetAmount?.text.toString().trim(),
+            edtDescription?.text.toString().trim(),
+            attachments,
+            attachments
+        )
+        setCreateClaimObserver(changePasswordRequest)
     }
 
     private fun validateCreateClaim(): Boolean {
@@ -189,38 +337,107 @@ class NewClaimFragment() : Fragment() {
         btnSubmit?.isEnabled = true
     }
 
+    private fun showCalenderDialog(){
+        val builder = MaterialDatePicker.Builder.datePicker()
+        val picker = builder.build()
+        activity?.supportFragmentManager?.let { picker.show(it, picker.toString()) }
+        picker.addOnPositiveButtonClickListener {
+            val date = Utils.getDateInDisplayFormat(it)
+            Log.d("DatePicker Activity", "Date String = ${date}:: Date epoch value = ${it}")
+            tvDateOfSubmission?.text = date
+        }
+    }
+
+    private fun showBottomSheet(){
+        contextActivity?.let {
+            val dialog = BottomSheetDialog(contextActivity!!, R.style.CustomBottomSheetDialogTheme)
+            val view = layoutInflater.inflate(R.layout.item_bottom_sheet_picture, null)
+            dialog.setCancelable(true)
+            dialog.setContentView(view)
+            val bottomOptionOne = view.findViewById<TextView>(R.id.bottomOptionOne)
+            val bottomOptionTwo = view.findViewById<TextView>(R.id.bottomOptionTwo)
+            val bottomOptionCancel = view.findViewById<TextView>(R.id.bottomOptionCancel)
+
+            bottomOptionOne.setOnClickListener {
+                dialog.dismiss()
+                choosePhotoFromGallery()
+            }
+            bottomOptionTwo.setOnClickListener {
+                dialog.dismiss()
+                takePhotoFromCamera()
+            }
+            bottomOptionCancel.setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.show()
+        }
+    }
+
     private fun choosePhotoFromGallery() {
-        val galleryIntent = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
-        galleryIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivityForResult(galleryIntent, 100)
+        contextActivity?. let {
+            val intent = Lassi(contextActivity!!)
+                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .setMaxCount(1)
+                .setGridSize(3)
+                .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
+                .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
+                .setMinFileSize(100) // Restrict by minimum file size
+                .setMaxFileSize(1024) //  Restrict by maximum file size
+                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+                .setStatusBarColor(R.color.secondary)
+                .setToolbarResourceColor(R.color.white)
+                .setProgressBarColor(R.color.secondary)
+                .setToolbarColor(R.color.secondary)
+                .setPlaceHolder(R.drawable.ic_image_placeholder)
+                .setErrorDrawable(R.drawable.ic_image_placeholder)
+                .build()
+            startActivityForResult(intent, 100)
+        }
     }
 
     private fun takePhotoFromCamera(){
-
+        contextActivity?. let {
+            val intent = Lassi(contextActivity!!)
+                .with(LassiOption.CAMERA) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .setMaxCount(1)
+                .setGridSize(3)
+                .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
+                .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
+                .setMinFileSize(100) // Restrict by minimum file size
+                .setMaxFileSize(1024) //  Restrict by maximum file size
+                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+                .setStatusBarColor(R.color.secondary)
+                .setToolbarResourceColor(R.color.white)
+                .setProgressBarColor(R.color.secondary)
+                .setToolbarColor(R.color.secondary)
+                .setPlaceHolder(R.drawable.ic_image_placeholder)
+                .setErrorDrawable(R.drawable.ic_image_placeholder)
+                .build()
+            startActivityForResult(intent, 101)
+        }
     }
 
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100 && grantResults.isNotEmpty()) {
-            for (i in grantResults.indices) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("MainActivity", "onRequestPermissionsResult: ${permissions[i]}")
-                    //granted
-                    choosePhotoFromGallery()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when (requestCode) {
+                100 -> {
+                    val selectedMedia = data.getSerializableExtra(KeyUtils.SELECTED_MEDIA) as ArrayList<MiMedia>
+                    Log.d(TAG, "onActivityResult: ${selectedMedia.size}")
+                    if(selectedMedia.size > 0) {
+                        viewModel.attachmentsList.add(selectedMedia[0].path!!)
+                        refreshAttachments()
+                        Log.d(TAG, "onActivityResult:  attachmentsList: ${viewModel.attachmentsList.size}")
+                    }
                 }
-            }
-        }
-        else if (requestCode == 101 && grantResults.isNotEmpty()) {
-            for (i in grantResults.indices) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d("MainActivity", "onRequestPermissionsResult: ${permissions[i]}")
-                    //granted
-                    takePhotoFromCamera()
+                101 -> {
+                    val selectedMedia = data.getSerializableExtra(KeyUtils.SELECTED_MEDIA) as ArrayList<MiMedia>
+                    Log.d(TAG, "onActivityResult: ${selectedMedia.size}")
+                    if(selectedMedia.size > 0) {
+                        viewModel.attachmentsList.add(selectedMedia[0].path!!)
+                        refreshAttachments()
+                        Log.d(TAG, "onActivityResult:  attachmentsList: ${viewModel.attachmentsList.size}")
+                    }
                 }
             }
         }

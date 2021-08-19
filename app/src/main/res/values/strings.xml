@@ -95,5 +95,10 @@
     <string name="claimed_miles">Claimed Miles</string>
     <string name="petrol_amount">Petrol Amount</string>
     <string name="park_amount">Park Amount</string>
+    <string name="date">Date</string>
+    <string name="user_name">Username</string>
+    <string name="company">Company</string>
+    <string name="expense">Expense</string>
+    <string name="tax_code">Tax Code</string>
 
 </resources>
