@@ -26,10 +26,5 @@ class ClaimDetail() {
     val tax: String = ""
     val netAmount: String = ""
     val merchant: String = ""
-    val attachments: List<Attachment>? = null
-}
-
-class Attachment {
-    val url1: String = ""
-    val url2: String = ""
+    val attachments: List<String>? = null
 }

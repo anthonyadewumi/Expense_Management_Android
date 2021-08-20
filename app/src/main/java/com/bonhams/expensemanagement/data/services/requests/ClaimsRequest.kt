@@ -8,5 +8,5 @@ class ClaimsRequest {
     @SerializedName("numberOfItems")
     var numberOfItems: Int = 10
     @SerializedName("searchKey")
-    var searchKey: String? = "test"
+    var searchKey: String? = ""
 }
