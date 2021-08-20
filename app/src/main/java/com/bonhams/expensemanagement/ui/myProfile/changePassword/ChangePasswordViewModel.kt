@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.bonhams.expensemanagement.data.services.requests.ChangePasswordRequest
 import com.bonhams.expensemanagement.data.services.responses.MileageListResponse
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import java.util.regex.Pattern
 
 class ChangePasswordViewModel(private val changePasswordRepository: ChangePasswordRepository) : ViewModel() {
 
@@ -47,8 +49,17 @@ class ChangePasswordViewModel(private val changePasswordRepository: ChangePasswo
         else {
             if(isOldPass)
                 validOldPassword = false
-            else
+            else {
                 validPassword = false
+
+                val pattern = Pattern.compile(Constants.PASSWORD_PATTERN)
+                if (!pattern.matcher(password).matches()) {
+                    errorStr = error
+                    validPassword = true
+                } else{
+                    validPassword = false
+                }
+            }
 
         }
 

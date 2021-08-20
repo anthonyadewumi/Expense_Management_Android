@@ -1,10 +1,14 @@
 package com.bonhams.expensemanagement.ui.login
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
+import android.view.Window
+import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
@@ -15,6 +19,7 @@ import com.bonhams.expensemanagement.data.services.responses.LoginResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
+import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.snackbar.Snackbar
@@ -70,6 +75,13 @@ class LoginActivity : BaseActivity() {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
+    private fun showResetPassword() {
+        val intent = Intent(this@LoginActivity, ResetPasswordActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        finish()
+    }
+
     private fun setLoginObserver(loginRequest: LoginRequest) {
         viewModel.loginUser(loginRequest).observe(this, Observer {
             it?.let { resource ->
@@ -102,17 +114,13 @@ class LoginActivity : BaseActivity() {
         viewModel.setResponse(response)
 
         if(response.success){
-            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-            finish()
+            showResetPassword()
         }
         else{
             mProgressBars.visibility = View.GONE
             mContinue.visibility = View.VISIBLE
             Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun login() {
@@ -171,7 +179,7 @@ class LoginActivity : BaseActivity() {
 
     private fun checkUserData(){
         viewModel.login?.value?.userDetails?.let {
-            gotoDashboard()
+            showResetPassword()
         } ?: kotlin.run {
 
         }
@@ -187,6 +195,39 @@ class LoginActivity : BaseActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    }
+
+    private fun showLoginAlert() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_alert_dialog)
+        val title = dialog.findViewById(R.id.txtTitle) as TextView
+        val body = dialog.findViewById(R.id.txtDescription) as TextView
+        val input = dialog.findViewById(R.id.edtDescription) as EditText
+        val yesBtn = dialog.findViewById(R.id.btnPositive) as Button
+        val noBtn = dialog.findViewById(R.id.btnNegative) as TextView
+
+        input.visibility = View.GONE
+        title.text = resources.getString(R.string.login_successful)
+        body.text = resources.getString(R.string.reset_your_pass_to_continue)
+        yesBtn.text = resources.getString(R.string.logout)
+        noBtn.text = resources.getString(R.string.cancel)
+
+        noBtn.visibility = View.GONE
+        noBtn.layoutParams = LinearLayout.LayoutParams(
+            0,
+            LinearLayout.LayoutParams.WRAP_CONTENT, 2f
+        )
+
+
+        yesBtn.setOnClickListener {
+            dialog.dismiss()
+            showResetPassword()
+        }
+        noBtn.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 
     private fun setNoInternetSnackbar(){

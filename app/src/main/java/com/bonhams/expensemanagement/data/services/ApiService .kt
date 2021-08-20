@@ -43,6 +43,9 @@ interface ApiService {
     @POST("forget-pass")
     suspend fun forgotPassword(@Body forgotPasswordRequest: ForgotPasswordRequest) : CommonResponse
 
+    @POST("reset-password")
+    suspend fun resetPassword(@Body resetPasswordRequest: ResetPasswordRequest) : CommonResponse
+
     @POST("claim-list")
     suspend fun claimsList(@Body claimListRequest: ClaimsRequest) : ClaimsResponse
 

@@ -51,16 +51,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.login.LoginActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.forgotPassword.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.resetPassword.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

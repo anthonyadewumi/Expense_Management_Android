@@ -79,7 +79,8 @@
     <string name="no_files_selected">No Files Selected</string>
     <string name="logout">Logout</string>
     <string name="validate_email">Please enter email</string>
-    <string name="validate_password">Please enter password</string>
+<!--    <string name="validate_password">Please enter password</string>-->
+    <string name="validate_password">Password should contains a letter, number and must be greater than 6 characters</string>
     <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
     <string name="validate_password_not_match">Confirm Password does not match new password</string>
     <string name="check_internet_msg">Please check your internet connection</string>
@@ -100,5 +101,7 @@
     <string name="company">Company</string>
     <string name="expense">Expense</string>
     <string name="tax_code">Tax Code</string>
+    <string name="login_successful">Login Successful</string>
+    <string name="reset_your_pass_to_continue">Please reset your password to continue</string>
 
 </resources>

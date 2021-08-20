@@ -8,6 +8,8 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun forgotPassword(forgotPassRequest: ForgotPasswordRequest) = apiService.forgotPassword(forgotPassRequest)
 
+    suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest) = apiService.resetPassword(resetPasswordRequest)
+
     suspend fun claimsList(claimListRequest: ClaimsRequest) = apiService.claimsList(claimListRequest)
 
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiService.createNewClaim(newClaimRequest)

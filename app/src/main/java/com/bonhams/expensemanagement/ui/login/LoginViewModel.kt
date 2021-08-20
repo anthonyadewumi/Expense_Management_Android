@@ -8,9 +8,11 @@ import androidx.lifecycle.liveData
 import com.bonhams.expensemanagement.data.services.requests.LoginRequest
 import com.bonhams.expensemanagement.data.services.responses.LoginResponse
 import com.bonhams.expensemanagement.utils.AppPreferences
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Resource
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import java.util.regex.Pattern
 
 class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
 
@@ -70,6 +72,14 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
         }
         else {
             validPassword = false
+
+            val pattern = Pattern.compile(Constants.PASSWORD_PATTERN)
+            if (!pattern.matcher(password).matches()) {
+                errorStr = error
+                validPassword = true
+            } else{
+                validPassword = false
+            }
         }
 
         return  errorStr
