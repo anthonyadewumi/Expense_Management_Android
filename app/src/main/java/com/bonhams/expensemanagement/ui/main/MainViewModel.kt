@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 
 class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
     var responseLogout: MutableLiveData<LogoutResponse>? = null
+    var appbarSearchClick: MutableLiveData<Boolean>? = MutableLiveData(false)
+    var appbarEditClick: MutableLiveData<Boolean>? = MutableLiveData(false)
 
     init {
         responseLogout = MutableLiveData()

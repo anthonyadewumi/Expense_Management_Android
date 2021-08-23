@@ -150,10 +150,21 @@ class MainActivity : BaseActivity() {
                 backButtonPressed()
             }
         })
+
         ivMenu.setOnClickListener(View.OnClickListener {
             if (!navDrawer.isDrawerOpen(GravityCompat.START)) {
                 navDrawer.openDrawer(GravityCompat.START)
             }
+        })
+
+        ivSearch.setOnClickListener(View.OnClickListener {
+            Log.d(TAG, "setupClickListeners: appbarSearchClick")
+            viewModel.appbarSearchClick?.value = viewModel.appbarSearchClick?.value?.not()
+            Log.d(TAG, "setupClickListeners: appbarSearchClick: ${viewModel.appbarSearchClick?.value}")
+        })
+
+        appbarEdit.setOnClickListener(View.OnClickListener {
+            viewModel.appbarEditClick?.value = true
         })
     }
 

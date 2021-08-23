@@ -33,10 +33,10 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/bottomOptionOne"
+                    android:id="@+id/bottomOptionPending"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/upload_file"
+                    android:text="@string/pending"
                     style="@style/TextMedium12"
                     android:padding="@dimen/_15sdp"
                     android:gravity="center"/>
@@ -47,10 +47,24 @@
                     android:background="@color/colorTextDarkGray" />
 
                 <TextView
-                    android:id="@+id/bottomOptionTwo"
+                    android:id="@+id/bottomOptionApproved"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/take_photo"
+                    android:text="@string/approved"
+                    style="@style/TextMedium12"
+                    android:padding="@dimen/_15sdp"
+                    android:gravity="center"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/colorTextDarkGray" />
+
+                <TextView
+                    android:id="@+id/bottomOptionRejected"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rejected"
                     style="@style/TextMedium12"
                     android:padding="@dimen/_15sdp"
                     android:gravity="center"/>

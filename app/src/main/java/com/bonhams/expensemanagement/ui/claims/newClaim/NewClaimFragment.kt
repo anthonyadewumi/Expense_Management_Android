@@ -27,6 +27,8 @@ import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
@@ -34,6 +36,7 @@ import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.util.*
 
 
 class NewClaimFragment() : Fragment() {
@@ -338,8 +341,25 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun showCalenderDialog(){
-        val builder = MaterialDatePicker.Builder.datePicker()
-        val picker = builder.build()
+        val calendar = Calendar.getInstance()
+        val calendarStart: Calendar = Calendar.getInstance()
+//        val calendarEnd: Calendar = Calendar.getInstance()
+
+        calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
+//        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
+
+        val constraintsBuilder =
+            CalendarConstraints.Builder()
+                .setStart(calendarStart.timeInMillis)
+                .setEnd(calendar.timeInMillis)
+                .setValidator(DateValidatorPointBackward.now())
+
+
+        val picker = MaterialDatePicker.Builder.datePicker()
+            .setTheme(R.style.Widget_AppTheme_MaterialDatePicker)
+            .setInputMode(MaterialDatePicker.INPUT_MODE_CALENDAR)
+            .setCalendarConstraints(constraintsBuilder.build())
+            .build()
         activity?.supportFragmentManager?.let { picker.show(it, picker.toString()) }
         picker.addOnPositiveButtonClickListener {
             val date = Utils.getDateInDisplayFormat(it)
