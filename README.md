@@ -6,7 +6,6 @@
   </a>
 
   <h3 align="center">Expense Management</h3>
-  <p align="center">Development Branch</p>
 </p>
 
 
