@@ -8,6 +8,7 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
 
 private const val TAG = "MyProfileFragment"
@@ -29,19 +30,10 @@ class MyProfileFragment() : Fragment() {
         return view
     }
 
-
     private fun setClickListeners(){
         layoutChangePassword?.setOnClickListener(View.OnClickListener {
             val fragment = ChangePasswordFragment()
-            changeFragment(fragment)
+            (contextActivity as? MainActivity)?.addFragment(fragment)
         })
-    }
-
-    private fun changeFragment(fragment: Fragment) {
-        fragmentManager?.beginTransaction()?.replace(
-            R.id.container,
-            fragment,
-            fragment.javaClass.simpleName
-        )?.addToBackStack(fragment.javaClass.simpleName)?.commit()
     }
 }

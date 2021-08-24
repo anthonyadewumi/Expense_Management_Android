@@ -155,7 +155,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/forgot_password"
             style="@style/TextRegular12"
-            android:textColor="@color/colorTextDarkGray"
+            android:textColor="@color/colorTextBlack"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
 
