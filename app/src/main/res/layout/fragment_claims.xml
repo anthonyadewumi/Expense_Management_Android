@@ -23,7 +23,10 @@
             app:endIconMode="clear_text"
             app:startIconDrawable="@drawable/ic_search_input_drawable"
             app:startIconTint="@color/secondary"
-            android:layout_margin="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:visibility="visible"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp">

@@ -61,25 +61,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_marginTop="@dimen/_10sdp"
-                    android:gravity="center_vertical">
+                    android:weightSum="3">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1.1"
                         android:layout_marginStart="@dimen/_5sdp"
-                        android:text="@string/submitted_on_colon"
                         style="@style/TextRegular12"
-                        android:textColor="@color/colorTextDarkGray"/>
+                        android:text="@string/submitted_on_colon"
+                        android:textColor="@color/colorTextDarkGray"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
 
                     <TextView
                         android:id="@+id/tvSubmittedOn"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_weight="1.9"
                         android:text="02 May"
                         style="@style/TextRegular12"
-                        android:textColor="@color/colorTextDarkGray"/>
+                        android:textColor="@color/colorTextDarkGray"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
 
                 </LinearLayout>
 
@@ -87,24 +95,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/_5sdp">
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:weightSum="3">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1.1"
                         android:layout_marginStart="@dimen/_5sdp"
-                        android:text="@string/total_amount_colon"
                         style="@style/TextRegular12"
-                        android:textColor="@color/colorTextDarkGray"/>
+                        android:text="@string/total_amount_colon"
+                        android:textColor="@color/colorTextDarkGray"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
 
                     <TextView
                         android:id="@+id/tvTotalAmount"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:text="$280.00"
+                        android:layout_weight="1.9"
+                        android:text="$ 100"
                         style="@style/TextRegular12"
-                        android:textColor="@color/colorTextDarkGray"/>
+                        android:textColor="@color/colorTextDarkGray"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
 
                 </LinearLayout>
 
@@ -112,26 +129,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/_5sdp">
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:weightSum="3">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1.1"
                         android:layout_marginStart="@dimen/_5sdp"
-                        android:text="@string/status_colon"
                         style="@style/TextRegular12"
-                        android:textColor="@color/colorTextDarkGray"/>
+                        android:text="@string/status_colon"
+                        android:textColor="@color/colorTextDarkGray"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
 
                     <TextView
                         android:id="@+id/tvStatus"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_weight="1.9"
                         android:text="@string/approved"
                         style="@style/TextRegular12"
-                        android:textColor="@color/colorGreen"/>
+                        android:textColor="@color/colorGreen"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="1"
+                        android:ellipsize="end"/>
 
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

@@ -43,7 +43,7 @@ class ClaimsAdapter(
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(item: ClaimDetail, position: Int, claimListener: OnClaimClickListener) {
-            itemView.tvTitle.text = "TESTINGGGGGGGGG"//item.title.replaceFirstChar(Char::uppercase)
+            itemView.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
             // itemView.tvSubmittedOn.text = TODO
             itemView.tvTotalAmount.text = "$" + item.totalAmount
             itemView.tvStatus.text = item.reportingMStatus.replaceFirstChar(Char::uppercase)
