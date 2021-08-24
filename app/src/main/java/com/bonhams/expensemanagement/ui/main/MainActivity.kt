@@ -126,6 +126,14 @@ class MainActivity : BaseActivity() {
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
+                R.id.bottom_nav_expense_plus -> {
+                    setAppbarTitle(getString(R.string.create_new_claim))
+                    showBottomNavbar(false)
+                    showAppbarBackButton(true)
+                    val fragment = NewClaimFragment()
+                    addFragment(fragment)
+                    return@OnNavigationItemSelectedListener true
+                }
                 R.id.bottom_nav_notifications -> {
                     setAppbarTitle(getString(R.string.notifications))
                     showBottomNavbar(true)

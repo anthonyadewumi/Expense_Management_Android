@@ -4,11 +4,14 @@
         android:id="@+id/bottom_nav_home"
         android:icon="@drawable/ic_home"
         android:title="@string/home" />
-
     <item
         android:id="@+id/bottom_nav_camera"
         android:icon="@drawable/ic_scan"
         android:title="@string/scan" />
+    <item
+        android:id="@+id/bottom_nav_expense_plus"
+        android:icon="@drawable/ic_plus"
+        android:title="@string/create_new_claim"/>
     <item
         android:id="@+id/bottom_nav_notifications"
         android:icon="@drawable/ic_notification"
