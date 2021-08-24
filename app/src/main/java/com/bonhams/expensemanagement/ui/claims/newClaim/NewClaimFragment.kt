@@ -24,6 +24,7 @@ import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
@@ -121,11 +122,7 @@ class NewClaimFragment() : Fragment() {
 
         btnSplit?.setOnClickListener(View.OnClickListener {
              val fragment = SplitClaimFragment()
-            contextActivity?.supportFragmentManager?.beginTransaction()?.add(
-                R.id.container,
-                fragment,
-                fragment.javaClass.simpleName
-            )?.addToBackStack(fragment.javaClass.simpleName)?.commit()
+            (contextActivity as? MainActivity)?.addFragment(fragment)
         })
 
         btnSubmit?.setOnClickListener(View.OnClickListener {

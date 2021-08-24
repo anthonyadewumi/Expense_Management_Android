@@ -20,10 +20,14 @@ import com.bonhams.expensemanagement.adapters.ClaimsAdapter
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.ClaimsRequest
+import com.bonhams.expensemanagement.data.services.responses.ClaimDetail
 import com.bonhams.expensemanagement.data.services.responses.ClaimsResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.home.HomeViewModel
 import com.bonhams.expensemanagement.ui.home.HomeViewModelFactory
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.textfield.TextInputEditText
@@ -32,7 +36,7 @@ import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 private const val TAG = "NotificationFragment"
 
-class ClaimsFragment() : Fragment() {
+class ClaimsFragment() : Fragment(), ClaimsAdapter.OnClaimClickListener {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -86,7 +90,6 @@ class ClaimsFragment() : Fragment() {
         })
 
         viewModel.responseClaimsList?.observe(requireActivity(), Observer {
-            Log.d(TAG, "setupViewModel: ${viewModel.responseClaimsList?.value?.claimsList?.size}")
             setupRecyclerView()
         })
 
@@ -132,8 +135,7 @@ class ClaimsFragment() : Fragment() {
                     false
                 )
                 recyclerView?.layoutManager = linearLayoutManager
-                adapter =
-                    ClaimsAdapter(viewModel.responseClaimsList?.value?.claimsList)
+                adapter = ClaimsAdapter(viewModel.responseClaimsList?.value?.claimsList, this)
                 recyclerView?.adapter = adapter
             }else{
                 adapter?.listClaims = viewModel.responseClaimsList?.value?.claimsList
@@ -173,5 +175,17 @@ class ClaimsFragment() : Fragment() {
     private fun setClaimsResponse(claimsResponse: ClaimsResponse) {
         viewModel.responseClaimsList?.value = claimsResponse
         mProgressBar?.visibility = View.GONE
+    }
+
+    override fun onClaimItemClicked(claim: ClaimDetail, position: Int) {
+        Log.d(TAG, "onClaimItemClicked: $position")
+        val fragment = ClaimDetailFragment()
+        (contextActivity as? MainActivity)?.addFragment(fragment)
+    }
+
+    override fun onClaimCreateCopyClicked(claim: ClaimDetail, position: Int) {
+        Log.d(TAG, "onClaimCreateCopyClicked: $position")
+        val fragment = NewClaimFragment()
+        (contextActivity as? MainActivity)?.addFragment(fragment)
     }
 }

@@ -422,7 +422,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun changeFragment(fragment: Fragment) {
+    fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(
             R.id.container,
             fragment,
@@ -430,7 +430,7 @@ class MainActivity : BaseActivity() {
         ).commit()
     }
 
-    private fun addFragment(fragment: Fragment) {
+    fun addFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().add(
             R.id.container,
             fragment,
