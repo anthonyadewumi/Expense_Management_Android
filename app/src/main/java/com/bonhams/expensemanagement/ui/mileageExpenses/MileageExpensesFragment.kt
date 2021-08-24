@@ -38,7 +38,7 @@ class MileageExpensesFragment() : Fragment() {
     private var edtSearchClaim: TextInputEditText? = null
     private var adapter: MileageAdapter? = null
     private var swipeRefresh: SwipeRefreshLayout? = null
-    private var mNotifyRecycler: RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
     private var mNoResult: TextView? = null
     private var mProgressBar: ProgressBar? = null
     private lateinit var viewModel: MileageExpensesViewModel
@@ -50,12 +50,12 @@ class MileageExpensesFragment() : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_notification, container, false)
+        val view = inflater.inflate(R.layout.fragment_claims, container, false)
         contextActivity = activity as? BaseActivity
         tilSearchClaim = view.findViewById(R.id.tilSearchClaim)
         edtSearchClaim = view.findViewById(R.id.edtSearchClaim)
         swipeRefresh = view.findViewById(R.id.swipeRefresh)
-        mNotifyRecycler = view.findViewById(R.id.mNotifyRecycler)
+        recyclerView = view.findViewById(R.id.recyclerView)
         mProgressBar = view.findViewById(R.id.mProgressBars)
         mNoResult = view.findViewById(R.id.mNoResult)
 
@@ -120,24 +120,24 @@ class MileageExpensesFragment() : Fragment() {
         }
 
         viewModel.responseMileageList?.value?.mileageList?.let {
-            mNotifyRecycler?.visibility = View.VISIBLE
+            recyclerView?.visibility = View.VISIBLE
             if (adapter == null) {
                 val linearLayoutManager = LinearLayoutManager(
                     context,
                     LinearLayoutManager.VERTICAL,
                     false
                 )
-                mNotifyRecycler?.layoutManager = linearLayoutManager
+                recyclerView?.layoutManager = linearLayoutManager
                 adapter =
                     MileageAdapter(viewModel.responseMileageList?.value?.mileageList)
-                mNotifyRecycler?.adapter = adapter
+                recyclerView?.adapter = adapter
             }else{
                 adapter?.listMileage = viewModel.responseMileageList?.value?.mileageList
                 adapter?.notifyDataSetChanged()
             }
         } ?: kotlin.run {
             mNoResult?.visibility = View.VISIBLE
-            mNotifyRecycler?.visibility = View.GONE
+            recyclerView?.visibility = View.GONE
         }
     }
 

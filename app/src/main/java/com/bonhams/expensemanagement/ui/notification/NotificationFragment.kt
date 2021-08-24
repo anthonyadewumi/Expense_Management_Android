@@ -23,7 +23,7 @@ class NotificationFragment() : Fragment() {
 
     private var contextActivity: BaseActivity? = null
     private var adapter: NotificationAdapter? = null
-    private var mNotifyRecycler: RecyclerView? = null
+    private var recyclerView: RecyclerView? = null
     private var mNoResult: TextView? = null
 
     override fun onCreateView(
@@ -33,7 +33,7 @@ class NotificationFragment() : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_notification, container, false)
         contextActivity = activity as? BaseActivity
-        mNotifyRecycler = view.findViewById(R.id.mNotifyRecycler)
+        recyclerView = view.findViewById(R.id.recyclerView)
         mNoResult = view.findViewById(R.id.mNoResult)
 
         setupRecyclerView()
@@ -42,17 +42,17 @@ class NotificationFragment() : Fragment() {
 
     private fun setupRecyclerView() {
         mNoResult?.visibility = View.GONE
-        mNotifyRecycler?.visibility = View.VISIBLE
+        recyclerView?.visibility = View.VISIBLE
         if (adapter == null) {
             val linearLayoutManager = LinearLayoutManager(
                 context,
                 LinearLayoutManager.VERTICAL,
                 false
             )
-            mNotifyRecycler?.layoutManager = linearLayoutManager
+            recyclerView?.layoutManager = linearLayoutManager
             adapter =
                 NotificationAdapter(getDummyNotifications()/*viewModelActivity.responseNotification?.value?.response?.dataNotificationList*/)
-            mNotifyRecycler?.adapter = adapter
+            recyclerView?.adapter = adapter
         } else {
             adapter?.listOrders =
                 getDummyNotifications()//viewModelActivity.responseNotification?.value?.response?.dataNotificationList

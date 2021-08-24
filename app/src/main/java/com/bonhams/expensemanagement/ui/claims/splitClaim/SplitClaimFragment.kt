@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
 import com.bonhams.expensemanagement.data.model.SpinnerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
@@ -33,7 +34,9 @@ class SplitClaimFragment() : Fragment() {
     private var btnSubmit: AppCompatButton? = null
     private var layoutSplitDetail: LinearLayout? = null
     private var layoutAddSplit: RelativeLayout? = null
-
+    private var spnCompany: Spinner? = null
+    private var spnDepartment: Spinner? = null
+    private var spnExpense: Spinner? = null
     private lateinit var viewModel: SplitClaimViewModel
 
     override fun onCreateView(
@@ -56,7 +59,7 @@ class SplitClaimFragment() : Fragment() {
 
         setupViewModel()
         setClickListeners()
-        initializeSpinnerItems()
+        setupSpinners()
 
         return view
     }
@@ -100,6 +103,57 @@ class SplitClaimFragment() : Fragment() {
         ).get(SplitClaimViewModel::class.java)
     }
 
+    private fun setupSpinners(){
+        initializeSpinnerItems()
+        // Company Adapter
+        val companyAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        spnCompany?.adapter = companyAdapter
+        spnCompany?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.expenseGroupList[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+        // Department Adapter
+        val departmentAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        spnDepartment?.adapter = departmentAdapter
+        spnDepartment?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.expenseGroupList[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+        // Expense Adapter
+        val expenseAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        spnExpense?.adapter = expenseAdapter
+        spnExpense?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val item = viewModel.expenseGroupList[position]
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+
     private fun setCreateClaimObserver(newClaimRequest: NewClaimRequest) {
         viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
@@ -137,9 +191,9 @@ class SplitClaimFragment() : Fragment() {
         val edtTaxCode = view.findViewById<EditText>(R.id.edtTaxCode)
 
         // Company Adapter
-        var companyAdapter: ArrayAdapter<SpinnerItem> = ArrayAdapter<SpinnerItem>(
+        val companyAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.expenseGroupList
         )
         spnCompany?.adapter = companyAdapter
@@ -153,9 +207,9 @@ class SplitClaimFragment() : Fragment() {
         }
 
         // Department Adapter
-        var departmentAdapter: ArrayAdapter<SpinnerItem> = ArrayAdapter<SpinnerItem>(
+        var departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.expenseGroupList
         )
         spnDepartment?.adapter = departmentAdapter
@@ -169,9 +223,9 @@ class SplitClaimFragment() : Fragment() {
         }
 
         // Expense Adapter
-        var expenseAdapter: ArrayAdapter<SpinnerItem> = ArrayAdapter<SpinnerItem>(
+        var expenseAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.expenseGroupList
         )
         spnExpense?.adapter = expenseAdapter

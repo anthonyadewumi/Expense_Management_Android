@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
+import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
 import com.bonhams.expensemanagement.data.model.SpinnerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
@@ -64,10 +65,10 @@ class NewClaimFragment() : Fragment() {
     private var attachments = "1, 2, 3"
 
     private lateinit var viewModel: NewClaimViewModel
-    private lateinit var expenseGroupAdapter: ArrayAdapter<SpinnerItem>
-    private lateinit var expenseTypeAdapter: ArrayAdapter<SpinnerItem>
-    private lateinit var departmentAdapter: ArrayAdapter<SpinnerItem>
-    private lateinit var currencyAdapter: ArrayAdapter<SpinnerItem>
+    private lateinit var expenseGroupAdapter: CustomSpinnerAdapter
+    private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
+    private lateinit var departmentAdapter: CustomSpinnerAdapter
+    private lateinit var currencyAdapter: CustomSpinnerAdapter
     private lateinit var attachmentsAdapter: AttachmentsAdapter
 
     override fun onCreateView(
@@ -141,9 +142,9 @@ class NewClaimFragment() : Fragment() {
         initializeSpinnerItems();
 
         // Expense Group Adapter
-        expenseGroupAdapter = ArrayAdapter<SpinnerItem>(
+        expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.expenseGroupList
         )
         spnExpenseGroup?.adapter = expenseGroupAdapter
@@ -157,9 +158,9 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Expense Type Adapter
-        expenseTypeAdapter = ArrayAdapter<SpinnerItem>(
+        expenseTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.expenseTypeList
         )
         spnExpenseType?.adapter = expenseTypeAdapter
@@ -173,9 +174,9 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Department Adapter
-        departmentAdapter = ArrayAdapter<SpinnerItem>(
+        departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.departmentList
         )
         spnDepartment?.adapter = departmentAdapter
@@ -189,9 +190,9 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Currency Adapter
-        currencyAdapter = ArrayAdapter<SpinnerItem>(
+        currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
-            R.layout.item_spinner, R.id.title,
+            R.layout.item_spinner,
             viewModel.currencyList
         )
         spnCurrency?.adapter = currencyAdapter

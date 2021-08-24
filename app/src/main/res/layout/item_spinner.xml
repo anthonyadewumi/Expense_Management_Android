@@ -8,11 +8,12 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_25ssp"
-        android:text="Spinner Title"
-        style="@style/TextRegular12"
+        android:layout_height="@dimen/_40ssp"
+        android:text="@string/search"
         android:textColor="@color/colorTextBlack"
-        android:textSize="@dimen/_13ssp"
-        android:gravity="center_vertical"/>
+        style="@style/TextRegular12"
+        android:padding="@dimen/_2ssp"
+        android:gravity="center_vertical"
+        android:layout_marginLeft="@dimen/_1sdp"/>
 
 </LinearLayout>
