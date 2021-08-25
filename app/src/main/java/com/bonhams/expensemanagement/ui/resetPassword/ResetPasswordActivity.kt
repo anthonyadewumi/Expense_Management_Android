@@ -16,9 +16,11 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_forgot_password.*
 import kotlinx.android.synthetic.main.activity_forgot_password.mContinue
 import kotlinx.android.synthetic.main.activity_forgot_password.mPassword
 import kotlinx.android.synthetic.main.activity_reset_password.*
+import kotlinx.android.synthetic.main.activity_reset_password.ivBack
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
@@ -45,6 +47,11 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     private fun setClickListeners(){
+        ivBack.setOnClickListener(View.OnClickListener {
+            finish()
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        })
+
         mContinue.setOnClickListener(View.OnClickListener {
             if(NoInternetUtils.isConnectedToInternet(this))
                 resetPassword()

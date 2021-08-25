@@ -7,7 +7,7 @@ import okhttp3.Response
 class RetrofitHeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response = chain.run {
         val response = proceed(
-            if(AppPreferences.isLoggedIn){
+            if(AppPreferences.isTokenAvailable){
                 request()
                     .newBuilder()
 //                    .addHeader("Content-Type", "application/json")

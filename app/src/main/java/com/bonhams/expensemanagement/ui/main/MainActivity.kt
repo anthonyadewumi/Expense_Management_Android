@@ -30,11 +30,13 @@ import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.BlankFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
 import com.bonhams.expensemanagement.ui.login.LoginActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
+import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
@@ -103,7 +105,7 @@ class MainActivity : BaseActivity() {
         // Reset app bar
         if (supportFragmentManager.backStackEntryCount == 1) {
             setupAppbar()
-            bottomNavigationView.selectedItemId = R.id.bottom_nav_home
+            showBottomNavbar(true)
         }
     }
 
@@ -191,10 +193,13 @@ class MainActivity : BaseActivity() {
         appbarTitle.visibility = View.GONE
         layoutAppBarMenu.visibility = View.VISIBLE
         layoutGreeting.visibility = View.VISIBLE
+        appbarGreeting.visibility = View.VISIBLE
         ivMenu.visibility = View.VISIBLE
         layoutBack.visibility = View.GONE
         layoutAppBarSearch.visibility = View.VISIBLE
         ivSearch.visibility = View.VISIBLE
+
+        appbarGreeting.text = "Hello ${AppPreferences.firstName}!"
     }
 
     private fun setupNavDrawer(){
@@ -451,6 +456,11 @@ class MainActivity : BaseActivity() {
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
                 }
+                else if(fragName.equals(SplitClaimFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.split_expenses))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
                 else if(fragName.equals(BlankFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.bonhams))
                     setupAppbar()
@@ -475,6 +485,11 @@ class MainActivity : BaseActivity() {
                     setAppbarTitle(getString(R.string.profile))
                     showAppbarBackButton(false)
                     showBottomNavbar(true)
+                }
+                else if(fragName.equals(ChangePasswordFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.change_password))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
                 }
             }
         }

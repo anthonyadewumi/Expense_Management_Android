@@ -40,6 +40,10 @@ class ForgotPasswordActivity : BaseActivity() {
     }
 
     private fun setClickListeners(){
+        ivBack.setOnClickListener(View.OnClickListener {
+            finish()
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        })
         mContinue.setOnClickListener(View.OnClickListener {
             if(NoInternetUtils.isConnectedToInternet(this))
                 forgotPassword()

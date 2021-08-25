@@ -26,9 +26,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                app:tabIndicatorFullWidth="false"
+                app:tabIndicatorFullWidth="true"
                 app:tabMaxWidth="@dimen/_100sdp"
                 app:tabGravity="start"
+                app:tabMode="fixed"
                 app:tabTextAppearance="@style/NavigationTabTextAppearance" />
 
             <ImageView

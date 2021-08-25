@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     tools:context=".ui.main.MainActivity"
-    android:background="@color/colorLightGray">
+    style="@style/scrollBarStyle"
+    android:background="#F2F3F4">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -47,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/merchant_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -71,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/expense_group"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -92,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/expense_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -113,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/company_number"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -137,7 +138,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/department"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -158,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/date_of_submission"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -181,7 +182,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/currency"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -202,7 +203,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -226,7 +227,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/tax"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -250,7 +251,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/net_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -274,7 +275,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/description"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -308,7 +309,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/attachments"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <RelativeLayout
@@ -366,7 +367,7 @@
                 android:textColor="@color/secondary"
                 android:textAllCaps="false"
                 android:textStyle="bold"
-                android:layout_marginTop="@dimen/_15sdp"/>
+                android:layout_marginTop="@dimen/_35sdp"/>
 
             <LinearLayout
                 android:id="@+id/mSubmitLay"

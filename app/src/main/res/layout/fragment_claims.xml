@@ -54,7 +54,9 @@
                 <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                style="@style/scrollBarStyle"/>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -78,7 +80,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:visibility="gone"
-        android:text="@string/no_notification_found"
+        android:text="@string/no_result_found"
         style="@style/TextRegular12"
         android:textColor="@color/colorTextDarkGray"
         app:layout_constraintBottom_toBottomOf="parent"

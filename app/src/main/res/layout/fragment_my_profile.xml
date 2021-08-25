@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     tools:context=".ui.main.MainActivity"
+    style="@style/scrollBarStyle"
     android:background="@color/colorLightGray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -91,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/first_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -112,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/last_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -133,7 +134,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/email"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -154,7 +155,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/phone_number"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -175,7 +176,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/company_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -196,7 +197,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/department_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -217,7 +218,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/car_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -238,7 +239,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/country"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -259,7 +260,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/mileage_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -280,7 +281,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/default_approver"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -311,7 +312,7 @@
                 android:id="@+id/mContinue"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@drawable/round_corner_theme" />
+                android:background="@color/secondary" />
 
             <LinearLayout
                 android:layout_width="match_parent"

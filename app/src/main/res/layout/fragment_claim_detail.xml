@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     tools:context=".ui.main.MainActivity"
+    style="@style/scrollBarStyle"
     android:background="@color/colorLightGray">
 
     <androidx.constraintlayout.widget.ConstraintLayout

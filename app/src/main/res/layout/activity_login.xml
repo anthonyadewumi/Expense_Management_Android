@@ -73,7 +73,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/please_login_to_continue"
             style="@style/TextRegular12"
-            android:textColor="@color/colorTextDarkGray"
+            android:textColor="@color/colorTextBlack"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintTop_toBottomOf="@id/mWelcomeMsg" />
 
@@ -125,27 +125,34 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageView
-            android:id="@+id/mRememberMeCheckbox"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:src="@drawable/ic_checkbox_uncheck_login"
-            android:tag="0"
-            app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
-            app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
-
-        <TextView
-            android:id="@+id/mLabelRemember"
+        <LinearLayout
+            android:id="@+id/layoutRememberMe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
+            android:orientation="horizontal"
             android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/remember_me"
-            style="@style/TextRegular12"
-            android:textColor="@color/colorTextGray"
-            app:layout_constraintLeft_toRightOf="@id/mRememberMeCheckbox"
-            app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
+            app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
+            app:layout_constraintTop_toBottomOf="@id/mPasswordTextField">
+
+            <ImageView
+                android:id="@+id/mRememberMeCheckbox"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_checkbox_uncheck_login"
+                android:tag="0" />
+
+            <TextView
+                android:id="@+id/mLabelRemember"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:text="@string/remember_me"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextGray"
+                app:layout_constraintLeft_toRightOf="@id/mRememberMeCheckbox"
+                app:layout_constraintTop_toBottomOf="@id/mPasswordTextField" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/mForgotPassword"
@@ -153,7 +160,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:text="@string/forgot_password"
+            android:text="@string/forgot_password_question"
             style="@style/TextRegular12"
             android:textColor="@color/colorTextBlack"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
@@ -165,10 +172,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_100sdp"
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
-            app:layout_constraintTop_toBottomOf="@id/mRememberMeCheckbox">
+            app:layout_constraintTop_toBottomOf="@id/layoutRememberMe">
 
             <ProgressBar
                 android:id="@+id/mProgressBars"

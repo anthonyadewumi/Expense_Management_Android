@@ -10,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,9 +33,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
-private const val TAG = "NotificationFragment"
-
-class ClaimsFragment() : Fragment(), ClaimsAdapter.OnClaimClickListener {
+class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -81,19 +78,19 @@ class ClaimsFragment() : Fragment(), ClaimsAdapter.OnClaimClickListener {
             HomeViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(HomeViewModel::class.java)
 
-        homeViewModel.datePicker.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        homeViewModel.datePicker.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: datePicker: $it")
         })
 
-        homeViewModel.statusPicker.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        homeViewModel.statusPicker.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: statusPicker: $it")
         })
 
-        viewModel.responseClaimsList?.observe(requireActivity(), Observer {
+        viewModel.responseClaimsList?.observe(requireActivity(), {
             setupRecyclerView()
         })
 
-        mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
             if(it){
                 tilSearchClaim?.visibility = View.VISIBLE
@@ -148,7 +145,7 @@ class ClaimsFragment() : Fragment(), ClaimsAdapter.OnClaimClickListener {
     }
 
     private fun getMileageListObserver(claimsRequest: ClaimsRequest){
-        viewModel.getClaimsList(claimsRequest).observe(viewLifecycleOwner, Observer {
+        viewModel.getClaimsList(claimsRequest).observe(viewLifecycleOwner, {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {

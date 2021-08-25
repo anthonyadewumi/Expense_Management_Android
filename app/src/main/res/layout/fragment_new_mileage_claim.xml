@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     tools:context=".ui.main.MainActivity"
+    style="@style/scrollBarStyle"
     android:background="@color/colorLightGray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/company_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -71,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/mileage_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -95,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/department"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -116,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/date_of_submission"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -139,7 +140,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/expense_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -160,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/merchant_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -201,7 +202,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/date_of_trip"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -224,7 +225,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/from"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -246,7 +247,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/to"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -268,7 +269,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/distance"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -289,7 +290,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/car_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -311,7 +312,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/claimed_miles"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -376,7 +377,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/currency"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <Spinner
@@ -397,7 +398,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/petrol_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -421,7 +422,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/park_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -445,7 +446,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -469,7 +470,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/tax"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -493,7 +494,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/net_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -517,7 +518,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/description"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <EditText
@@ -551,7 +552,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/attachments"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <RelativeLayout
@@ -604,7 +605,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_35sdp"
                 android:layout_marginBottom="@dimen/_40sdp"
                 app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
                 app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"

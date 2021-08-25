@@ -88,7 +88,8 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
     fun setResponse(response: LoginResponse) {
         if(response.success) {
             login?.value = response
-            AppPreferences.isLoggedIn = (response.userDetails?.token ?: "").trim().isNotEmpty()
+            AppPreferences.isLoggedIn = isRememberMe && (response.userDetails?.token ?: "").trim().isNotEmpty()
+            AppPreferences.isTokenAvailable = (response.userDetails?.token ?: "").trim().isNotEmpty()
             AppPreferences.userToken = response.userDetails?.token ?: ""
             AppPreferences.refreshToken = response.userDetails?.refresh_token ?: ""
             AppPreferences.userId = response.userDetails?.id ?: ""

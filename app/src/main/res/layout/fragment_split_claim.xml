@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     tools:context=".ui.main.MainActivity"
+    style="@style/scrollBarStyle"
     android:background="@color/colorLightGray">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,12 +44,21 @@
             app:layout_constraintTop_toBottomOf="@+id/guidelineTop">
 
             <TextView
+                android:id="@+id/tvOriginalExpense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/original_expense"
+                style="@style/TextMedium12"
+                android:textColor="@color/secondary"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/merchant_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                android:textColor="@color/colorTextBlack"
+                android:layout_marginTop="@dimen/_12sdp"/>
 
             <TextView
                 android:id="@+id/tvMerchantName"
@@ -69,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/date"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -92,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/user_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -114,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -187,7 +197,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_30sdp"
                 android:layout_marginBottom="@dimen/_40sdp"
                 app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
                 app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"

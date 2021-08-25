@@ -9,6 +9,7 @@ object AppPreferences {
     private const val PREFS_NAME = "expense_management_prefs"
     // list of app specific preferences
     private val IS_LOGGED_IN = Pair("is_logged_in", false)
+    private val IS_TOKEN_AVAILABLE = Pair("is_token_avail", false)
     private val FIREBASE_TOKEN = Pair("firebase_token", "")
     private val USER_ID = Pair("user_id", "")
     private val EMPLOYEE_ID = Pair("employee_id", "")
@@ -41,6 +42,14 @@ object AppPreferences {
         // custom setter to save a preference back to preferences file
         set(value) = prefs.edit {
             it.putBoolean(IS_LOGGED_IN.first, value)
+        }
+
+    var isTokenAvailable: Boolean
+        // custom getter to get a preference of a desired type, with a predefined default value
+        get() = prefs.getBoolean(IS_TOKEN_AVAILABLE.first, IS_TOKEN_AVAILABLE.second)
+        // custom setter to save a preference back to preferences file
+        set(value) = prefs.edit {
+            it.putBoolean(IS_TOKEN_AVAILABLE.first, value)
         }
 
     var fireBaseToken: String
