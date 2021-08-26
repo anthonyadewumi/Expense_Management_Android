@@ -1,5 +1,7 @@
 package com.bonhams.expensemanagement.utils
 
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,5 +24,13 @@ class Utils {
             val formatter = SimpleDateFormat(Constants.DD_MMM_YYYY_FORMAT)
             return formatter.format(date)
         }
+    }
+
+    // This extension allow to call a function directly on the View to load an image.
+    fun ImageView.loadImage(imageUrl: String) {
+        Glide.with(this)
+            .load(imageUrl)
+            .centerCrop()
+            .into(this)
     }
 }
