@@ -2,22 +2,24 @@ package com.bonhams.expensemanagement.ui.claims
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
+import androidx.paging.LoadState
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.ClaimsAdapter
+import com.bonhams.expensemanagement.adapters.ClaimsLoadStateAdapter
+import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
-import com.bonhams.expensemanagement.data.services.requests.ClaimsRequest
-import com.bonhams.expensemanagement.data.services.responses.ClaimDetail
-import com.bonhams.expensemanagement.data.services.responses.ClaimsResponse
 import com.bonhams.expensemanagement.databinding.FragmentClaimsBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
@@ -26,20 +28,17 @@ import com.bonhams.expensemanagement.ui.home.HomeViewModel
 import com.bonhams.expensemanagement.ui.home.HomeViewModelFactory
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
-import com.bonhams.expensemanagement.utils.Status
-import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import com.bonhams.expensemanagement.utils.Utils.Companion.showKeyboard
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 
 class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private var adapter: ClaimsAdapter? = null
-    /*private var tilSearchClaim: TextInputLayout? = null
-    private var edtSearchClaim: TextInputEditText? = null
-    private var swipeRefresh: SwipeRefreshLayout? = null
-    private var recyclerView: RecyclerView? = null
-    private var mNoResult: TextView? = null
-    private var mProgressBar: ProgressBar? = null*/
+    private lateinit var claimsAdapter: ClaimsAdapter
+
     private lateinit var viewModel: ClaimsViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var binding: FragmentClaimsBinding
@@ -53,11 +52,13 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_claims, container, false)
         val view = binding.root
         binding.lifecycleOwner = this
-
         contextActivity = activity as? BaseActivity
 
         setupViewModel()
-        setViews()
+        initAdapter()
+        initSwipeToRefresh()
+        initSearch()
+
 
         return view
     }
@@ -65,7 +66,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ClaimsViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+            ClaimsViewModelFactory(this, ApiHelper(RetrofitBuilder.apiService))
         ).get(ClaimsViewModel::class.java)
 
         homeViewModel = ViewModelProvider(requireActivity(),
@@ -80,93 +81,98 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
             Log.d(TAG, "setupViewModel: statusPicker: $it")
         })
 
-        viewModel.responseClaimsList?.observe(requireActivity(), {
-            setupRecyclerView()
-        })
 
         mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
             if(it){
                 binding.tilSearchClaim.visibility = View.VISIBLE
+                binding.edtSearchClaim.showKeyboard(contextActivity!!, true)
             }
             else{
                 binding.tilSearchClaim.visibility = View.GONE
-            }
-        })
-
-        contextActivity?.let {
-            if(NoInternetUtils.isConnectedToInternet(it))
-                getMileageListObserver(viewModel.getClaimsRequest(1, "test"))
-            else
-                Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun setViews() {
-        viewModel.responseClaimsList?.value?.claimsList?.let {
-
-        } ?: run {
-
-        }
-    }
-
-
-    private fun setupRecyclerView() {
-
-        binding.swipeRefresh.setOnRefreshListener {
-            binding.swipeRefresh.isRefreshing = false
-        }
-
-        viewModel.responseClaimsList?.value?.claimsList?.let {
-            binding.recyclerView.visibility = View.VISIBLE
-            if (adapter == null) {
-                val linearLayoutManager = LinearLayoutManager(
-                    context,
-                    LinearLayoutManager.VERTICAL,
-                    false
-                )
-                binding.recyclerView.layoutManager = linearLayoutManager
-                adapter = ClaimsAdapter(viewModel.responseClaimsList?.value?.claimsList, this)
-//                adapter?.setResponse(viewModel.responseClaimsList?.value?.claimsList)
-                binding.recyclerView.adapter = adapter
-            }else{
-                adapter?.setResponse(viewModel.responseClaimsList?.value?.claimsList)
-            }
-        } ?: kotlin.run {
-            binding.mNoResult.visibility = View.VISIBLE
-            binding.recyclerView.visibility = View.GONE
-        }
-    }
-
-    private fun getMileageListObserver(claimsRequest: ClaimsRequest){
-        viewModel.getClaimsList(claimsRequest).observe(viewLifecycleOwner, {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                setClaimsResponse(response)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                        binding.mProgressBars.visibility = View.GONE
-                    }
-                    Status.LOADING -> {
-                        binding.mProgressBars.visibility = View.VISIBLE
-                    }
-                }
+                binding.edtSearchClaim.setText("")
+                binding.edtSearchClaim.showKeyboard(contextActivity!!, false)
             }
         })
     }
 
-    private fun setClaimsResponse(claimsResponse: ClaimsResponse) {
-        viewModel.responseClaimsList?.value = claimsResponse
-        binding.mProgressBars.visibility = View.GONE
+    private fun initAdapter() {
+        claimsAdapter = ClaimsAdapter()
+        claimsAdapter.setupClaimListener(this)
+        binding.recyclerView.adapter = claimsAdapter.withLoadStateHeaderAndFooter(
+            header = ClaimsLoadStateAdapter(claimsAdapter),
+            footer = ClaimsLoadStateAdapter(claimsAdapter)
+        )
+
+        claimsAdapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading
+                && loadState.append.endOfPaginationReached && claimsAdapter.itemCount < 1) {
+                binding.mNoResult.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+            } else {
+                binding.mNoResult.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            claimsAdapter.loadStateFlow.collectLatest { loadStates ->
+                binding.swipeRefresh.isRefreshing = loadStates.mediator?.refresh is LoadState.Loading
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.claims.collectLatest {
+                claimsAdapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            claimsAdapter.loadStateFlow
+                // Use a state-machine to track LoadStates such that we only transition to
+                // NotLoading from a RemoteMediator load if it was also presented to UI.
+//                .asMergedLoadStates()
+                // Only emit when REFRESH changes, as we only want to react on loads replacing the
+                // list.
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where REFRESH completes i.e., NotLoading.
+                .filter { it.refresh is LoadState.NotLoading }
+                // Scroll to top is synchronous with UI updates, even if remote load was triggered.
+//                .collect { binding.recyclerView.scrollToPosition(0) }
+        }
     }
+
+    private fun initSwipeToRefresh() {
+        binding.swipeRefresh.setOnRefreshListener { claimsAdapter.refresh() }
+    }
+
+    private fun initSearch() {
+        binding.edtSearchClaim.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                updatedSubredditFromInput()
+                true
+            } else {
+                false
+            }
+        }
+        binding.edtSearchClaim.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                updatedSubredditFromInput()
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun updatedSubredditFromInput() {
+        binding.edtSearchClaim.text!!.trim().toString().let {
+            if (it.isNotBlank() && viewModel.shouldShowClaimList(it)) {
+                viewModel.showClaimsList(it)
+            }
+        }
+    }
+
 
     override fun onClaimItemClicked(claim: ClaimDetail?, position: Int) {
         Log.d(TAG, "onClaimItemClicked: $position")

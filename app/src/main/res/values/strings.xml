@@ -113,5 +113,6 @@
     <string name="no_result_found">No Result Found</string>
     <string name="split_expenses">Split Expenses</string>
     <string name="original_expense">Original Expense</string>
+    <string name="retry">Retry</string>
 
 </resources>

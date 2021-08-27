@@ -1,16 +1,24 @@
 package com.bonhams.expensemanagement.ui.mileageExpenses
 
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.savedstate.SavedStateRegistryOwner
 import com.bonhams.expensemanagement.data.services.ApiHelper
 
-class MileageExpensesViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory{
+class MileageExpensesViewModelFactory(owner: SavedStateRegistryOwner,
+                                      private val apiHelper: ApiHelper):
+    AbstractSavedStateViewModelFactory(owner, null) {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel?> create(
+        key: String,
+        modelClass: Class<T>,
+        handle: SavedStateHandle
+    ): T {
         if (modelClass.isAssignableFrom(MileageExpensesViewModel::class.java)) {
-            return MileageExpensesViewModel(MileageExpensesRepository(apiHelper)) as T
+            @Suppress("UNCHECKED_CAST")
+            return MileageExpensesViewModel(MileageExpensesByPageRepository(apiHelper), handle) as T
         }
-        throw IllegalArgumentException("Unknown class name")
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
-
 }

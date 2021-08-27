@@ -5,40 +5,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
-import com.bonhams.expensemanagement.data.services.responses.ClaimDetail
+import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
-class ClaimsAdapter(
-    var listClaims: List<ClaimDetail>?,
-    var claimListener: OnClaimClickListener
-) : RecyclerView.Adapter<ClaimsAdapter.ViewHolder>() {
+class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>(CLAIM_COMPARATOR) {
+
+    private lateinit var claimListener: OnClaimClickListener
+
+    fun setupClaimListener(listener: OnClaimClickListener){
+        claimListener = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context), R.layout.item_claims_and_mileage, parent, false))
+        return ViewHolder.create(parent)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val orderItem = listClaims?.get(position)
-        orderItem?.let { holder.bindItems(it, position, claimListener) }
-    }
-
-    fun setResponse(list: List<ClaimDetail>?) {
-        listClaims = list
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int {
-        return listClaims!!.size
+        val claimItem = getItem(position)
+        claimItem?.let { holder.bind(it, position, claimListener) }
     }
 
     class ViewHolder(itemBinding: ItemClaimsAndMileageBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        val binding: ItemClaimsAndMileageBinding = itemBinding
+        private val binding: ItemClaimsAndMileageBinding = itemBinding
 
-        fun bindItems(item: ClaimDetail, position: Int, claimListener: OnClaimClickListener) {
+        fun bind(item: ClaimDetail, position: Int, claimListener: OnClaimClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
             binding.tvSubmittedOn.text = "02 May"
             binding.tvTotalAmount.text = "$" + item.totalAmount
@@ -59,6 +55,23 @@ class ClaimsAdapter(
                 Log.d("ClaimsAdapter", "bindItems: 2222222")
                 claimListener.onClaimItemClicked(item, position)
             })
+        }
+
+        companion object {
+            fun create(parent: ViewGroup): ViewHolder {
+                return ViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context),
+                    R.layout.item_claims_and_mileage, parent, false))
+            }
+        }
+    }
+
+    companion object {
+        private val CLAIM_COMPARATOR = object : DiffUtil.ItemCallback<ClaimDetail>() {
+            override fun areItemsTheSame(oldItem: ClaimDetail, newItem: ClaimDetail): Boolean =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: ClaimDetail, newItem: ClaimDetail): Boolean =
+                oldItem == newItem
         }
     }
 

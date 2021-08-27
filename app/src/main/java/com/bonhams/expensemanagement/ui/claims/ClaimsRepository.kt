@@ -1,10 +1,11 @@
 package com.bonhams.expensemanagement.ui.claims
 
-import com.bonhams.expensemanagement.data.services.ApiHelper
+import androidx.paging.PagingData
+import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.data.services.requests.ClaimsRequest
+import kotlinx.coroutines.flow.Flow
 
 
-class ClaimsRepository(private val apiHelper: ApiHelper) {
-
-    suspend fun getClaimsList(claimsRequest: ClaimsRequest) = apiHelper.claimsList(claimsRequest)
+interface ClaimsRepository {
+    suspend fun getClaimsList(claimsRequest: ClaimsRequest) : Flow<PagingData<ClaimDetail>>
 }

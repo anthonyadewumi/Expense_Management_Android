@@ -1,10 +1,11 @@
 package com.bonhams.expensemanagement.ui.mileageExpenses
 
-import com.bonhams.expensemanagement.data.services.ApiHelper
+import androidx.paging.PagingData
+import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.data.services.requests.MileageExpenseRequest
+import kotlinx.coroutines.flow.Flow
 
 
-class MileageExpensesRepository(private val apiHelper: ApiHelper) {
-
-    suspend fun getMileageExpensesList(mileageRequest: MileageExpenseRequest) = apiHelper.mileageExpensesList(mileageRequest)
+interface MileageExpensesRepository {
+    suspend fun getMileageExpensesList(mileageRequest: MileageExpenseRequest): Flow<PagingData<MileageDetail>>
 }

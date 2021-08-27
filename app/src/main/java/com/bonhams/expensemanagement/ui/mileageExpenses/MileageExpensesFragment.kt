@@ -2,72 +2,68 @@ package com.bonhams.expensemanagement.ui.mileageExpenses
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.view.inputmethod.EditorInfo
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
+import androidx.paging.LoadState
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.MileageAdapter
+import com.bonhams.expensemanagement.adapters.MileageExpensesLoadStateAdapter
+import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
-import com.bonhams.expensemanagement.data.services.requests.MileageExpenseRequest
-import com.bonhams.expensemanagement.data.services.responses.MileageListResponse
+import com.bonhams.expensemanagement.databinding.FragmentClaimsBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.home.HomeViewModel
 import com.bonhams.expensemanagement.ui.home.HomeViewModelFactory
 import com.bonhams.expensemanagement.ui.main.MainViewModel
-import com.bonhams.expensemanagement.utils.Status
-import com.google.android.material.textfield.TextInputEditText
+import com.bonhams.expensemanagement.utils.Utils.Companion.showKeyboard
 import com.google.android.material.textfield.TextInputLayout
-import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filter
 
-class MileageExpensesFragment() : Fragment() {
+class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseClickListener {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
     private var tilSearchClaim: TextInputLayout? = null
-    private var edtSearchClaim: TextInputEditText? = null
-    private var adapter: MileageAdapter? = null
-    private var swipeRefresh: SwipeRefreshLayout? = null
-    private var recyclerView: RecyclerView? = null
-    private var mNoResult: TextView? = null
-    private var mProgressBar: ProgressBar? = null
+    private lateinit var adapter: MileageAdapter
     private lateinit var viewModel: MileageExpensesViewModel
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var binding: FragmentClaimsBinding
     private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_claims, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_claims, container, false)
+        val view = binding.root
+        binding.lifecycleOwner = this
+
         contextActivity = activity as? BaseActivity
-        tilSearchClaim = view.findViewById(R.id.tilSearchClaim)
-        edtSearchClaim = view.findViewById(R.id.edtSearchClaim)
-        swipeRefresh = view.findViewById(R.id.swipeRefresh)
-        recyclerView = view.findViewById(R.id.recyclerView)
-        mProgressBar = view.findViewById(R.id.mProgressBars)
-        mNoResult = view.findViewById(R.id.mNoResult)
 
         setupViewModel()
-        setViews()
-
+        initAdapter()
+        initSwipeToRefresh()
+        initSearch()
+        
         return view
     }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
-            MileageExpensesViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+            MileageExpensesViewModelFactory(this, ApiHelper(RetrofitBuilder.apiService))
         ).get(MileageExpensesViewModel::class.java)
 
         homeViewModel = ViewModelProvider(requireActivity(),
@@ -82,92 +78,104 @@ class MileageExpensesFragment() : Fragment() {
             Log.d(TAG, "setupViewModel: statusPicker: $it")
         })
 
-        mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
             if(it){
-                tilSearchClaim?.visibility = View.VISIBLE
+                binding.tilSearchClaim.visibility = View.VISIBLE
+                binding.edtSearchClaim.showKeyboard(contextActivity!!, true)
             }
             else{
-                tilSearchClaim?.visibility = View.GONE
+                binding.tilSearchClaim.visibility = View.GONE
+                binding.edtSearchClaim.setText("")
+                binding.edtSearchClaim.showKeyboard(contextActivity!!, false)
             }
         })
-
-        viewModel.responseMileageList?.observe(requireActivity(), Observer {
-            Log.d(TAG, "setupViewModel: ${viewModel.responseMileageList?.value?.mileageList?.size}")
-            setupRecyclerView()
-        })
-
-        contextActivity?.let {
-            if(NoInternetUtils.isConnectedToInternet(it))
-                getMileageListObserver(viewModel.getMileageListRequest(1, ""))
-            else
-                Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
-        }
+        
     }
 
-    private fun setViews() {
-        viewModel.responseMileageList?.value?.mileageList?.let {
+    private fun initAdapter() {
+        adapter = MileageAdapter()
+        adapter.setupClaimListener(this)
+        binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = MileageExpensesLoadStateAdapter(adapter),
+            footer = MileageExpensesLoadStateAdapter(adapter)
+        )
 
-        } ?: run {
-
-        }
-    }
-
-
-    private fun setupRecyclerView() {
-        swipeRefresh?.setOnRefreshListener {
-            swipeRefresh?.isRefreshing = false
-        }
-
-        viewModel.responseMileageList?.value?.mileageList?.let {
-            recyclerView?.visibility = View.VISIBLE
-            if (adapter == null) {
-                val linearLayoutManager = LinearLayoutManager(
-                    context,
-                    LinearLayoutManager.VERTICAL,
-                    false
-                )
-                recyclerView?.layoutManager = linearLayoutManager
-                adapter =
-                    MileageAdapter(viewModel.responseMileageList?.value?.mileageList)
-                recyclerView?.adapter = adapter
-            }else{
-                adapter?.listMileage = viewModel.responseMileageList?.value?.mileageList
-                adapter?.notifyDataSetChanged()
+        adapter.addLoadStateListener { loadState ->
+            if (loadState.source.refresh is LoadState.NotLoading
+                && loadState.append.endOfPaginationReached && adapter.itemCount < 1) {
+                binding.mNoResult.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
+            } else {
+                binding.mNoResult.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
             }
-        } ?: kotlin.run {
-            mNoResult?.visibility = View.VISIBLE
-            recyclerView?.visibility = View.GONE
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                binding.swipeRefresh.isRefreshing = loadStates.mediator?.refresh is LoadState.Loading
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.mileageExpenses.collectLatest {
+                adapter.submitData(it)
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow
+                // Use a state-machine to track LoadStates such that we only transition to
+                // NotLoading from a RemoteMediator load if it was also presented to UI.
+//                .asMergedLoadStates()
+                // Only emit when REFRESH changes, as we only want to react on loads replacing the
+                // list.
+                .distinctUntilChangedBy { it.refresh }
+                // Only react to cases where REFRESH completes i.e., NotLoading.
+                .filter { it.refresh is LoadState.NotLoading }
+            // Scroll to top is synchronous with UI updates, even if remote load was triggered.
+//                .collect { binding.recyclerView.scrollToPosition(0) }
         }
     }
 
-    private fun getMileageListObserver(mileageExpenseRequest: MileageExpenseRequest){
-        viewModel.getMileageExpensesList(mileageExpenseRequest).observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                setMileageResponse(response)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                        mProgressBar?.visibility = View.GONE
-                    }
-                    Status.LOADING -> {
-                        mProgressBar?.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })
+    private fun initSwipeToRefresh() {
+        binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
     }
 
-    private fun setMileageResponse(mileageListResponse: MileageListResponse) {
-        viewModel.responseMileageList?.value = mileageListResponse
-        mProgressBar?.visibility = View.GONE
+    private fun initSearch() {
+        binding.edtSearchClaim.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                updatedSubredditFromInput()
+                true
+            } else {
+                false
+            }
+        }
+        binding.edtSearchClaim.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                updatedSubredditFromInput()
+                true
+            } else {
+                false
+            }
+        }
     }
+
+    private fun updatedSubredditFromInput() {
+        binding.edtSearchClaim.text!!.trim().toString().let {
+            if (it.isNotBlank() && viewModel.shouldShowExpensesList(it)) {
+                viewModel.showExpensesList(it)
+            }
+        }
+    }
+
+    override fun onMileageExpenseItemClicked(claim: MileageDetail?, position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onMileageExpenseCreateCopyClicked(claim: MileageDetail?, position: Int) {
+        TODO("Not yet implemented")
+    }
+
 }

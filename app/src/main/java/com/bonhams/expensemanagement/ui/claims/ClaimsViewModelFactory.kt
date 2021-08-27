@@ -1,16 +1,26 @@
 package com.bonhams.expensemanagement.ui.claims
 
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.savedstate.SavedStateRegistryOwner
 import com.bonhams.expensemanagement.data.services.ApiHelper
 
-class ClaimsViewModelFactory(private val apiHelper: ApiHelper) : ViewModelProvider.Factory{
+class ClaimsViewModelFactory(
+    owner: SavedStateRegistryOwner,
+    private val apiHelper: ApiHelper) :
+    AbstractSavedStateViewModelFactory(owner, null) {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel?> create(
+        key: String,
+        modelClass: Class<T>,
+        handle: SavedStateHandle
+    ): T {
         if (modelClass.isAssignableFrom(ClaimsViewModel::class.java)) {
-            return ClaimsViewModel(ClaimsRepository(apiHelper)) as T
+            @Suppress("UNCHECKED_CAST")
+            return ClaimsViewModel(ClaimsByPageRepository(apiHelper), handle) as T
         }
-        throw IllegalArgumentException("Unknown class name")
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 
 }

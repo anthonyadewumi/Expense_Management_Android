@@ -45,7 +45,9 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/round_border_gray"
                 android:hint="@string/search"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionSearch"
+                android:inputType="textNoSuggestions"
+                android:selectAllOnFocus="true"
                 style="@style/TextRegular12"
                 android:textSize="@dimen/_13ssp"
                 android:paddingTop="12dp"
@@ -64,6 +66,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
+                app:layoutManager="LinearLayoutManager"
                 style="@style/scrollBarStyle"/>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

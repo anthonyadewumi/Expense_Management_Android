@@ -1,5 +1,6 @@
 package com.bonhams.expensemanagement.data.services.responses
 
+import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.google.gson.annotations.SerializedName
 
 class ClaimsResponse {
@@ -9,22 +10,4 @@ class ClaimsResponse {
     var message: String? = ""
     @SerializedName("data")
     var claimsList: List<ClaimDetail>? = null
-}
-
-class ClaimDetail() {
-    val title: String = ""
-    val description: String = ""
-    val totalAmount: String = ""
-    val id: String = ""
-    val reportingMStatus: String = ""
-    val financeMStatus: String = ""
-    val group: Currency? = null
-    val type: Currency? = null
-    val companyName: String = ""
-    val department: String = ""
-    val currency: Currency? = null
-    val tax: String = ""
-    val netAmount: String = ""
-    val merchant: String = ""
-    val attachments: List<String>? = null
 }
