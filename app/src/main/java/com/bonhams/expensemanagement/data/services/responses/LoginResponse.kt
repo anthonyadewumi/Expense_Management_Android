@@ -12,20 +12,26 @@ class LoginResponse {
 }
 
 class UserDetails() {
-    var name: String? = null
-    var id: String? = null
-    var profileImage: String? = null
-    var fname: String? = null
-    var lname: String? = null
-    @SerializedName("userId")
-    var email: String? = null
-    var countryCode: String? = null
-    var companyName: String? = null
-    var departmentName: String? = null
-    var carType: String? = null
-    var mileageType: String? = null
-    var approver: String? = null
-    var employId: String? = null
-    var token: String? = null
-    var refresh_token: String? = null
+    val id: String = ""
+    val name: String = ""
+    val profileImage: String = ""
+    val fname: String = ""
+    val lname: String = ""
+    val email: String = ""
+    @SerializedName("contact_no")
+    val contactNo: String = ""
+    @SerializedName("user_type")
+    val userType: String = ""
+    val companyName: String = ""
+    val departmentName: String = ""
+    val carType: String = ""
+    val mileageType: String = ""
+    @SerializedName("employId")
+    val employID: String = ""
+    val isReset: Long = 0
+    val approver: String = ""
+    val countryCode: String = ""
+    val token: String = ""
+    @SerializedName("refresh_token")
+    val refreshToken: String = ""
 }

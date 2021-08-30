@@ -91,9 +91,9 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
             AppPreferences.isLoggedIn = isRememberMe && (response.userDetails?.token ?: "").trim().isNotEmpty()
             AppPreferences.isTokenAvailable = (response.userDetails?.token ?: "").trim().isNotEmpty()
             AppPreferences.userToken = response.userDetails?.token ?: ""
-            AppPreferences.refreshToken = response.userDetails?.refresh_token ?: ""
+            AppPreferences.refreshToken = response.userDetails?.refreshToken ?: ""
             AppPreferences.userId = response.userDetails?.id ?: ""
-            AppPreferences.employeeId = response.userDetails?.employId ?: ""
+            AppPreferences.employeeId = response.userDetails?.employID ?: ""
             AppPreferences.fullName = response.userDetails?.name ?: ""
             AppPreferences.firstName = response.userDetails?.fname ?: ""
             AppPreferences.lastName = response.userDetails?.lname ?: ""

@@ -16,5 +16,6 @@ data class ClaimDetail(
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",
-    val attachments: List<String>? = null
+    val attachments: String = ""
+//    val attachments: List<String>? = null
 )

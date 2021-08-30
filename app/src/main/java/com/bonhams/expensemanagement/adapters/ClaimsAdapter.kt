@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
+import com.bonhams.expensemanagement.utils.Constants
 import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>(CLAIM_COMPARATOR) {
@@ -38,13 +39,17 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
             binding.tvSubmittedOn.text = "02 May"
             binding.tvTotalAmount.text = "$" + item.totalAmount
-            binding.tvStatus.text = item.reportingMStatus.replaceFirstChar(Char::uppercase)
+            if(!item.reportingMStatus.isNullOrEmpty()) {
+                binding.tvStatus.text =
+                    item.reportingMStatus.replaceFirstChar(Char::uppercase)
 
-            when {
-                item.reportingMStatus.equals("Pending", true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
-                item.reportingMStatus.equals("Approved", true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
-                else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
+                when {
+                    item.reportingMStatus.equals(Constants.STATUS_PENDING, true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                    item.reportingMStatus.equals(Constants.STATUS_APPROVED, true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                    else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
+                }
             }
+
 
             binding.tvCreateCopy.setOnClickListener(View.OnClickListener {
                 Log.d("ClaimsAdapter", "bindItems: 1111111")

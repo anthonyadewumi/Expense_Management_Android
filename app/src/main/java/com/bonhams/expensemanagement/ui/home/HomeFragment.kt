@@ -17,7 +17,7 @@ import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
-import com.bonhams.expensemanagement.utils.ClaimStatus
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
@@ -152,15 +152,15 @@ class HomeFragment : Fragment() {
 
             bottomOptionPending.setOnClickListener {
                 dialog.dismiss()
-                viewModel.statusPicker.value = ClaimStatus.PENDING
+                viewModel.statusPicker.value = Constants.STATUS_PENDING
             }
             bottomOptionApproved.setOnClickListener {
                 dialog.dismiss()
-                viewModel.statusPicker.value = ClaimStatus.APPROVED
+                viewModel.statusPicker.value = Constants.STATUS_APPROVED
             }
             bottomOptionRejected.setOnClickListener {
                 dialog.dismiss()
-                viewModel.statusPicker.value = ClaimStatus.REJECTED
+                viewModel.statusPicker.value = Constants.STATUS_REJECTED
             }
             bottomOptionCancel.setOnClickListener {
                 dialog.dismiss()

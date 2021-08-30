@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.paging.LoadState
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.ClaimsAdapter
@@ -149,7 +148,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
     private fun initSearch() {
         binding.edtSearchClaim.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEARCH) {
-                updatedSubredditFromInput()
+                updatedClaimsFromInput()
                 true
             } else {
                 false
@@ -157,7 +156,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
         }
         binding.edtSearchClaim.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                updatedSubredditFromInput()
+                updatedClaimsFromInput()
                 true
             } else {
                 false
@@ -165,14 +164,13 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
         }
     }
 
-    private fun updatedSubredditFromInput() {
+    private fun updatedClaimsFromInput() {
         binding.edtSearchClaim.text!!.trim().toString().let {
-            if (it.isNotBlank() && viewModel.shouldShowClaimList(it)) {
+            if (/*it.isNotBlank() &&*/ viewModel.shouldShowClaimList(it)) {
                 viewModel.showClaimsList(it)
             }
         }
     }
-
 
     override fun onClaimItemClicked(claim: ClaimDetail?, position: Int) {
         Log.d(TAG, "onClaimItemClicked: $position")

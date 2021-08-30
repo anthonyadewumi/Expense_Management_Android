@@ -12,7 +12,7 @@ data class MileageDetail (
     val type: String = "",
     val companyname: String = "",
     val department: String = "",
-    val currency: Currency? = null,
+    val currency: String = "", //: Currency? = null,
     val tax: String? = null,
     val netAmount: String? = null,
     val merchant: String = "",
@@ -24,5 +24,5 @@ data class MileageDetail (
     val claimMileage: String = "",
     val parking: String = "",
     val petrolAmount: String = "",
-    val carType: CarType? = null
+    val carType: String = ""
 )

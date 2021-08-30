@@ -33,6 +33,7 @@ class ResetPasswordActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_reset_password)
+        binding.lifecycleOwner = this
 
         setClickListeners()
         setupViewModel()

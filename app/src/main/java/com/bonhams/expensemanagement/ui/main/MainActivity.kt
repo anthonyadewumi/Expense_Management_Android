@@ -544,10 +544,3 @@ class MainActivity : BaseActivity() {
         }.build()
     }
 }
-
-/*
-1. Hired Signed APK
-2. Inkclick Payment issue
-3.
-
-* */

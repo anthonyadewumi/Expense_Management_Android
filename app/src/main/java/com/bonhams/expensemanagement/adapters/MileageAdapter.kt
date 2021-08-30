@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
+import com.bonhams.expensemanagement.utils.Constants
 import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 
@@ -43,8 +44,8 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
             binding.tvStatus.text = item.reportMStatus.replaceFirstChar(Char::uppercase)
 
             when {
-                item.reportMStatus.equals("Pending", true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
-                item.reportMStatus.equals("Approved", true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                item.reportMStatus.equals(Constants.STATUS_PENDING, true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                item.reportMStatus.equals(Constants.STATUS_APPROVED, true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
                 else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
             }
 

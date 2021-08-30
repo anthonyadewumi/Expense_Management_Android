@@ -33,6 +33,7 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        binding.lifecycleOwner = this
 
         setupViewModel()
         setClickListeners()
@@ -169,7 +170,15 @@ class LoginActivity : BaseActivity() {
 
     private fun checkUserData(){
         viewModel.login?.value?.userDetails?.let {
-            showResetPassword()
+            viewModel.login?.value?.userDetails?.isReset?.let {
+                if(it == 0L)
+                    showResetPassword()
+                else
+                    gotoDashboard()
+            }
+            ?: kotlin.run {
+                showResetPassword()
+            }
         } ?: kotlin.run {
 
         }
