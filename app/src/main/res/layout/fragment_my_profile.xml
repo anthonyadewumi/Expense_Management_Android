@@ -316,28 +316,27 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_height="@dimen/_30sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="center_vertical"
                     android:scaleType="centerInside"
-                    android:padding="@dimen/_5sdp"
+                    android:padding="@dimen/_3sdp"
                     android:src="@drawable/ic_settings"
                     tools:ignore="ContentDescription"
                     app:tint="@color/secondary"/>
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="35sp"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="7sp"
                     android:gravity="center_vertical"
                     android:text="@string/settings_colon"
-                    android:textSize="18sp"
+                    style="@style/TextMedium12"
                     android:textColor="@color/secondary"/>
 
             </LinearLayout>
@@ -345,8 +344,7 @@
             <RelativeLayout
                 android:id="@+id/layoutChangePassword"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_5sdp">
+                android:layout_height="@dimen/_30sdp">
 
                 <TextView
                     android:id="@+id/tvChangePassword"
@@ -376,8 +374,8 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginTop="@dimen/_5sdp">
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginBottom="@dimen/_20sdp">
 
                 <TextView
                     android:id="@+id/tvNotifications"
@@ -394,7 +392,7 @@
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/notificationSwitch"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_35sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:layout_gravity="center_vertical"
                     tools:ignore="ContentDescription"
                     app:tint="@color/secondary"

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
@@ -12,15 +13,11 @@ import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.ResetPasswordRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
+import com.bonhams.expensemanagement.databinding.ActivityResetPasswordBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_forgot_password.*
-import kotlinx.android.synthetic.main.activity_forgot_password.mContinue
-import kotlinx.android.synthetic.main.activity_forgot_password.mPassword
-import kotlinx.android.synthetic.main.activity_reset_password.*
-import kotlinx.android.synthetic.main.activity_reset_password.ivBack
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
@@ -31,10 +28,12 @@ class ResetPasswordActivity : BaseActivity() {
 
     private lateinit var viewModel: ResetPasswordViewModel
     private val TAG = javaClass.simpleName
+    private lateinit var binding: ActivityResetPasswordBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_reset_password)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_reset_password)
+//        setContentView(R.layout.activity_reset_password)
 
         setClickListeners()
         setupViewModel()
@@ -47,12 +46,12 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     private fun setClickListeners(){
-        ivBack.setOnClickListener(View.OnClickListener {
+        binding.ivBack.setOnClickListener(View.OnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         })
 
-        mContinue.setOnClickListener(View.OnClickListener {
+        binding.mContinue.setOnClickListener(View.OnClickListener {
             if(NoInternetUtils.isConnectedToInternet(this))
                 resetPassword()
             else
@@ -72,8 +71,8 @@ class ResetPasswordActivity : BaseActivity() {
             return
         }
 
-        mContinue!!.visibility = View.GONE
-        val password = mPassword.text.toString().trim()
+        binding.mContinue!!.visibility = View.GONE
+        val password = binding.mPassword.text.toString().trim()
         val resetPasswordRequest = viewModel.getForgotPasswordRequest(password)
         setResetPasswordObserver(resetPasswordRequest)
     }
@@ -93,13 +92,13 @@ class ResetPasswordActivity : BaseActivity() {
                         }
                     }
                     Status.ERROR -> {
-                        mProgressBars.visibility = View.GONE
-                        mContinue.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.mContinue.visibility = View.VISIBLE
                         Log.e(TAG, "setupObservers: ${it.message}")
                         it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-                        mProgressBars.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.VISIBLE
                     }
                 }
             }
@@ -107,14 +106,14 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     private fun validateResetPassword(): Boolean {
-        mPassword!!.error = viewModel.validatePassword(
-            mPassword.text.toString().trim(),
+        binding.mPassword!!.error = viewModel.validatePassword(
+            binding.mPassword.text.toString().trim(),
             resources.getString(R.string.validate_password)
         )
 
-        mConfirmPassword!!.error = viewModel.validateConfirmPassword(
-            mPassword.text.toString().trim(),
-            mConfirmPassword.text.toString().trim(),
+        binding.mConfirmPassword!!.error = viewModel.validateConfirmPassword(
+            binding.mPassword.text.toString().trim(),
+            binding.mConfirmPassword.text.toString().trim(),
             resources.getString(R.string.validate_password_not_match)
         )
 
@@ -122,8 +121,8 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     private fun setResponse(commonResponse: CommonResponse) {
-        mProgressBars.visibility = View.GONE
-        mContinue.visibility = View.VISIBLE
+        binding.mProgressBars.visibility = View.GONE
+        binding.mContinue.visibility = View.VISIBLE
         Toast.makeText(this, commonResponse.message, Toast.LENGTH_SHORT).show()
 
         val intent = Intent(this, MainActivity::class.java)
@@ -133,13 +132,13 @@ class ResetPasswordActivity : BaseActivity() {
     }
 
     private fun onResetPasswordFailed() {
-        mContinue!!.isEnabled = true
+        binding.mContinue!!.isEnabled = true
     }
 
     private fun setNoInternetSnackbar(){
         // No Internet Snackbar: Fire
         NoInternetSnackbarFire.Builder(
-            resetPassMainLayout,
+            binding.resetPassMainLayout,
             lifecycle
         ).apply {
             snackbarProperties.apply {

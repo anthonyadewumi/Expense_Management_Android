@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,7 @@ import com.bonhams.expensemanagement.adapters.NavDrawerAdapter
 import com.bonhams.expensemanagement.data.model.NavDrawerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
+import com.bonhams.expensemanagement.databinding.ActivityMainBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.BlankFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
@@ -42,9 +44,6 @@ import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.app_bar_main.view.*
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 
@@ -65,13 +64,15 @@ class MainActivity : BaseActivity() {
         NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5),
         NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6),
     )
-
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+//        setContentView(R.layout.activity_main)
+
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         setupNavDrawer()
         setupViewModel()
         setupClickListeners()
@@ -86,8 +87,8 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (navDrawer.isDrawerOpen(GravityCompat.START)) {
-            navDrawer.closeDrawer(GravityCompat.START)
+        if (binding.navDrawer.isDrawerOpen(GravityCompat.START)) {
+            binding.navDrawer.closeDrawer(GravityCompat.START)
         } else {
             // Checking for fragment count on back stack
             if (supportFragmentManager.backStackEntryCount > 0) {
@@ -111,7 +112,7 @@ class MainActivity : BaseActivity() {
 
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
-            bottomNavigationView.menu.setGroupCheckable(0, true, true)
+            binding.bottomNavigationView.menu.setGroupCheckable(0, true, true)
             when (menuItem.itemId) {
                 R.id.bottom_nav_home -> {
                     setupAppbar()
@@ -122,6 +123,7 @@ class MainActivity : BaseActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_camera -> {
+                    setupAppbar()
                     setAppbarTitle(getString(R.string.scan_receipt))
                     showBottomNavbar(true)
                     val fragment = BlankFragment()
@@ -138,6 +140,8 @@ class MainActivity : BaseActivity() {
                 }
                 R.id.bottom_nav_notifications -> {
                     setAppbarTitle(getString(R.string.notifications))
+                    showAppbarBackButton(false)
+                    showAppbarMore(true)
                     showBottomNavbar(true)
                     val fragment = NotificationFragment()
                     changeFragment(fragment)
@@ -145,6 +149,8 @@ class MainActivity : BaseActivity() {
                 }
                 R.id.bottom_nav_my_profile -> {
                     setAppbarTitle(getString(R.string.profile))
+                    hideAppbarBackAndMenu(true)
+                    showAppbarEdit(true)
                     showBottomNavbar(true)
                     val fragment = MyProfileFragment()
                     changeFragment(fragment)
@@ -155,25 +161,25 @@ class MainActivity : BaseActivity() {
         }
 
     private fun setupClickListeners(){
-        layoutBack.setOnClickListener(View.OnClickListener {
+        binding.appBar.layoutBack.setOnClickListener(View.OnClickListener {
             if (supportFragmentManager.backStackEntryCount > 0) {
                 backButtonPressed()
             }
         })
 
-        ivMenu.setOnClickListener(View.OnClickListener {
-            if (!navDrawer.isDrawerOpen(GravityCompat.START)) {
-                navDrawer.openDrawer(GravityCompat.START)
+        binding.appBar.ivMenu.setOnClickListener(View.OnClickListener {
+            if (!binding.navDrawer.isDrawerOpen(GravityCompat.START)) {
+                binding.navDrawer.openDrawer(GravityCompat.START)
             }
         })
 
-        ivSearch.setOnClickListener(View.OnClickListener {
+        binding.appBar.ivSearch.setOnClickListener(View.OnClickListener {
             Log.d(TAG, "setupClickListeners: appbarSearchClick")
             viewModel.appbarSearchClick?.value = viewModel.appbarSearchClick?.value?.not()
             Log.d(TAG, "setupClickListeners: appbarSearchClick: ${viewModel.appbarSearchClick?.value}")
         })
 
-        appbarEdit.setOnClickListener(View.OnClickListener {
+        binding.appBar.appbarEdit.setOnClickListener(View.OnClickListener {
             viewModel.appbarEditClick?.value = true
         })
     }
@@ -190,35 +196,37 @@ class MainActivity : BaseActivity() {
     }
     
     private fun setupAppbar(){
-        appbarTitle.visibility = View.GONE
-        layoutAppBarMenu.visibility = View.VISIBLE
-        layoutGreeting.visibility = View.VISIBLE
-        appbarGreeting.visibility = View.VISIBLE
-        ivMenu.visibility = View.VISIBLE
-        layoutBack.visibility = View.GONE
-        layoutAppBarSearch.visibility = View.VISIBLE
-        ivSearch.visibility = View.VISIBLE
+        binding.appBar.appbarTitle.visibility = View.GONE
+        binding.appBar.layoutAppBarMenu.visibility = View.VISIBLE
+        binding.appBar.layoutGreeting.visibility = View.VISIBLE
+        binding.appBar.appbarGreeting.visibility = View.VISIBLE
+        binding.appBar.ivMenu.visibility = View.VISIBLE
+        binding.appBar.layoutBack.visibility = View.GONE
+        binding.appBar.layoutAppBarSearch.visibility = View.VISIBLE
+        binding.appBar.ivSearch.visibility = View.VISIBLE
+        binding.appBar.ivMore.visibility = View.GONE
+        binding.appBar.appbarEdit.visibility = View.GONE
 
-        appbarGreeting.text = "Hello ${AppPreferences.firstName}!"
+        binding.appBar.appbarGreeting.text = "Hello ${AppPreferences.firstName}!"
     }
 
     private fun setupNavDrawer(){
-        navDrawerTitle.text = AppPreferences.fullName
-        navDrawerDescription.text = AppPreferences.email
-        tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
+        binding.navDrawerTitle.text = AppPreferences.fullName
+        binding.navDrawerDescription.text = AppPreferences.email
+        binding.tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
         Glide.with(this)
             .load(AppPreferences.profilePic)
             .error(R.drawable.ic_default_user)
             .fallback(R.drawable.ic_default_user)
             .circleCrop()
-            .into(navDrawerProfilePic);
+            .into(binding.navDrawerProfilePic);
 
         // Setup Recyclerview's Layout
-        navDrawerRv.layoutManager = LinearLayoutManager(this)
-        navDrawerRv.setHasFixedSize(true)
+        binding.navDrawerRv.layoutManager = LinearLayoutManager(this)
+        binding.navDrawerRv.setHasFixedSize(true)
 
         // Add Item Touch Listener
-        navDrawerRv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
+        binding.navDrawerRv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
             override fun onClick(view: View, position: Int) {
                 Log.d(TAG, "navDrawerRv onClick: $position")
                 Log.d(TAG, "navDrawerRv onClick code: ${navDrawerItems[position].code}")
@@ -254,7 +262,7 @@ class MainActivity : BaseActivity() {
                     5 -> { // My Account
                         setAppbarTitle(getString(R.string.profile))
                         setupAppbar()
-                        bottomNavigationView.selectedItemId = R.id.bottom_nav_my_profile
+                        binding.bottomNavigationView.selectedItemId = R.id.bottom_nav_my_profile
                     }
                     6 -> { // Logout
                         showLogoutAlert()
@@ -268,14 +276,14 @@ class MainActivity : BaseActivity() {
                 }
 
                 Handler(Looper.getMainLooper()).postDelayed({
-                    navDrawer.closeDrawer(GravityCompat.START)
+                    binding.navDrawer.closeDrawer(GravityCompat.START)
                 }, 200)
             }
         }))
 
 //        updateAdapter(0)
         navDrawerAdapter = NavDrawerAdapter(navDrawerItems, -1)
-        navDrawerRv.adapter = navDrawerAdapter
+        binding.navDrawerRv.adapter = navDrawerAdapter
         navDrawerAdapter.notifyDataSetChanged()
     }
 
@@ -384,36 +392,51 @@ class MainActivity : BaseActivity() {
     * App bar functions
     * */
     fun setAppbarTitle(title: String){
-        appbarTitle.visibility = View.VISIBLE
-        appbarTitle.text = title
-        layoutGreeting.visibility = View.GONE
-        ivMenu.visibility = View.VISIBLE
-        layoutBack.visibility = View.GONE
-        layoutAppBarSearch.visibility = View.VISIBLE
+        binding.appBar.appbarTitle.visibility = View.VISIBLE
+        binding.appBar.appbarTitle.text = title
+        binding.appBar.layoutGreeting.visibility = View.GONE
+        binding.appBar.ivMenu.visibility = View.VISIBLE
+        binding.appBar.layoutBack.visibility = View.GONE
+        binding.appBar.layoutAppBarSearch.visibility = View.VISIBLE
     }
 
     fun showAppbarBackButton(show: Boolean){
-        appbarTitle.visibility = View.VISIBLE//if(show) View.VISIBLE else View.INVISIBLE
-        layoutGreeting.visibility = View.GONE
-        ivMenu.visibility = View.GONE
-        layoutBack.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.appbarTitle.visibility = View.VISIBLE//if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.layoutGreeting.visibility = View.GONE
+        binding.appBar.layoutAppBarMenu.visibility = View.VISIBLE
+        binding.appBar.ivMenu.visibility = View.GONE
+        binding.appBar.layoutBack.visibility = if(show) View.VISIBLE else View.INVISIBLE
         showAppbarSearch(false)
     }
 
+    fun hideAppbarBackAndMenu(hide: Boolean){
+        binding.appBar.layoutAppBarMenu.visibility = if(!hide) View.VISIBLE else View.INVISIBLE
+    }
+
     fun showAppbarSearch(show: Boolean){
-        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
-        ivSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
-        appbarEdit.visibility = View.GONE
+        binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.ivSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.ivMore.visibility = View.GONE
+        binding.appBar.appbarEdit.visibility = View.GONE
     }
 
     fun showAppbarEdit(show: Boolean){
-        layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
-        appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
-        ivSearch.visibility = View.GONE
+        binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
+        binding.appBar.ivSearch.visibility = View.GONE
+        binding.appBar.ivMore.visibility = View.GONE
+    }
+
+
+    fun showAppbarMore(show: Boolean){
+        binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.ivMore.visibility = if(show) View.VISIBLE else View.GONE
+        binding.appBar.ivSearch.visibility = View.GONE
+        binding.appBar.appbarEdit.visibility = View.GONE
     }
 
     fun showBottomNavbar(show: Boolean){
-        bottomNavigationView.visibility = if(show) View.VISIBLE else View.GONE
+        binding.bottomNavigationView.visibility = if(show) View.VISIBLE else View.GONE
     }
 
     /*
@@ -480,10 +503,12 @@ class MainActivity : BaseActivity() {
                     setAppbarTitle(getString(R.string.notifications))
                     showAppbarBackButton(false)
                     showBottomNavbar(true)
+                    showAppbarMore(true)
                 }
                 else if(fragName.equals(MyProfileFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.profile))
-                    showAppbarBackButton(false)
+                    hideAppbarBackAndMenu(true)
+                    showAppbarEdit(true)
                     showBottomNavbar(true)
                 }
                 else if(fragName.equals(ChangePasswordFragment::class.java.simpleName, true)){
@@ -501,7 +526,7 @@ class MainActivity : BaseActivity() {
     private fun setNoInternetSnackbar(){
         // No Internet Snackbar: Fire
         NoInternetSnackbarFire.Builder(
-            navDrawer,
+            binding.navDrawer,
             lifecycle
         ).apply {
             snackbarProperties.apply {
@@ -521,3 +546,10 @@ class MainActivity : BaseActivity() {
         }.build()
     }
 }
+
+/*
+1. Hired Signed APK
+2. Inkclick Payment issue
+3.
+
+* */

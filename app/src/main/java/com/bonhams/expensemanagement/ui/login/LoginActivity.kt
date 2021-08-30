@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
@@ -12,6 +13,7 @@ import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.LoginRequest
 import com.bonhams.expensemanagement.data.services.responses.LoginResponse
+import com.bonhams.expensemanagement.databinding.ActivityLoginBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
@@ -19,8 +21,6 @@ import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.*
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
@@ -28,10 +28,12 @@ import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 class LoginActivity : BaseActivity() {
     private lateinit var viewModel: LoginViewModel
     private val TAG = javaClass.simpleName
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+//        setContentView(R.layout.activity_login)
 
         setupViewModel()
         setClickListeners()
@@ -39,28 +41,28 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun setClickListeners(){
-        mContinue.setOnClickListener {
+        binding.mContinue.setOnClickListener {
             if(NoInternetUtils.isConnectedToInternet(this))
                 login()
             else
                 Toast.makeText(this, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
         }
-        layoutRememberMe.setOnClickListener {
+        binding.layoutRememberMe.setOnClickListener {
             setRememberMe()
         }
-        mForgotPassword.setOnClickListener {
+        binding.mForgotPassword.setOnClickListener {
             onForgotPasswordClick()
         }
     }
 
     private fun setRememberMe(){
-        if (mRememberMeCheckbox.tag == 0){
-            mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_checked_login)
-            mRememberMeCheckbox.setTag(1)
+        if (binding.mRememberMeCheckbox.tag == 0){
+            binding.mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_checked_login)
+            binding.mRememberMeCheckbox.setTag(1)
             viewModel.isRememberMe = true
         }else{
-            mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_uncheck_login)
-            mRememberMeCheckbox.setTag(0)
+            binding.mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_uncheck_login)
+            binding.mRememberMeCheckbox.setTag(0)
             viewModel.isRememberMe = false
         }
     }
@@ -85,12 +87,12 @@ class LoginActivity : BaseActivity() {
                         }
                     }
                     Status.ERROR -> {
-                        mProgressBars.visibility = View.GONE
-                        mContinue.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.mContinue.visibility = View.VISIBLE
                         it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-                        mProgressBars.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.VISIBLE
                     }
                 }
             }
@@ -98,16 +100,16 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun setResponse(response: LoginResponse) {
-        mProgressBars.visibility = View.GONE
-        mContinue.visibility = View.VISIBLE
+        binding.mProgressBars.visibility = View.GONE
+        binding.mContinue.visibility = View.VISIBLE
         viewModel.setResponse(response)
 
         if(response.success){
 //            showResetPassword()
         }
         else{
-            mProgressBars.visibility = View.GONE
-            mContinue.visibility = View.VISIBLE
+            binding.mProgressBars.visibility = View.GONE
+            binding.mContinue.visibility = View.VISIBLE
             Toast.makeText(this, "${response.message}", Toast.LENGTH_SHORT).show()
         }
     }
@@ -122,21 +124,21 @@ class LoginActivity : BaseActivity() {
             return
         }
         hideKeyboard()
-        mContinue!!.visibility = View.GONE
-        val email = mEmailTextField.editText!!.text.toString().trim()
-        val password = mPasswordTextField.editText!!.text.toString().trim()
+        binding.mContinue!!.visibility = View.GONE
+        val email = binding.mEmailTextField.editText!!.text.toString().trim()
+        val password = binding.mPasswordTextField.editText!!.text.toString().trim()
         val loginRequest = viewModel.getLoginRequest(email, password)
         setLoginObserver(loginRequest)
     }
 
     private fun validateLoginDetails(): Boolean {
-        mEmailTextField!!.error = viewModel.validateEmail(
-            mEmailTextField.editText!!.text.toString().trim(),
+        binding.mEmailTextField!!.error = viewModel.validateEmail(
+            binding.mEmailTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_email)
         )
 
-        mPasswordTextField!!.error = viewModel.validatePassword(
-            mPasswordTextField.editText!!.text.toString().trim(),
+        binding.mPasswordTextField!!.error = viewModel.validatePassword(
+            binding.mPasswordTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_password)
         )
 
@@ -144,7 +146,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun onLoginFailed() {
-        mContinue!!.isEnabled = true
+        binding.mContinue!!.isEnabled = true
     }
 
     private fun setupViewModel() {
@@ -196,7 +198,7 @@ class LoginActivity : BaseActivity() {
     private fun setNoInternetSnackbar(){
         // No Internet Snackbar: Fire
         NoInternetSnackbarFire.Builder(
-            mainLayout,
+            binding.mainLayout,
             lifecycle
         ).apply {
             snackbarProperties.apply {

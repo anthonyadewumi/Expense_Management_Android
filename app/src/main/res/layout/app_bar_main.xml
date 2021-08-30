@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+    </data>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -121,7 +125,7 @@
                 android:layout_gravity="end"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:visibility="invisible">
+                android:visibility="visible">
 
                 <ImageView
                     android:id="@+id/ivSearch"
@@ -129,7 +133,16 @@
                     android:layout_height="@dimen/_30sdp"
                     android:padding="@dimen/_5sdp"
                     android:src="@drawable/ic_search"
-                    android:visibility="visible"/>
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/ivMore"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/ic_more"
+                    android:rotation="90"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/appbarEdit"
@@ -158,3 +171,4 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
