@@ -29,7 +29,6 @@ class ForgotPasswordActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_forgot_password)
-//        setContentView(R.layout.activity_forgot_password)
 
         setupViewModel()
         setClickListeners()
