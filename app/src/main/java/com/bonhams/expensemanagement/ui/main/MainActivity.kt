@@ -31,6 +31,7 @@ import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.databinding.ActivityMainBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.BlankFragment
+import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
@@ -481,6 +482,12 @@ class MainActivity : BaseActivity() {
                     setAppbarTitle(getString(R.string.split_expenses))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
+                }
+                else if(fragName.equals(ClaimDetailFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.claim_details))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                    showAppbarMore(true)
                 }
                 else if(fragName.equals(BlankFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.bonhams))

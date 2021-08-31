@@ -48,8 +48,8 @@ data class ClaimDetail(
     val currencyTypeID: String = "",
     @SerializedName("currency_type_name")
     val currencyTypeName: String = "",
-    val tax: Long? = null,
-    val netAmount: Long? = null,
+    val tax: String = "",
+    val netAmount: String = "",
     val merchant: String? = null,
     val attachments: String? = null
 )

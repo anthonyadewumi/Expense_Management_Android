@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_attachment.view.*
 
 
 class AttachmentsAdapter(
-    var listAttachments: List<String>?
+    var listAttachments: List<String?>?
 ) : RecyclerView.Adapter<AttachmentsAdapter.ViewHolder>() {
 
     init {

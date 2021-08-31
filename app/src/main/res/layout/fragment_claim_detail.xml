@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+
+<androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -52,6 +57,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvMerchantName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -73,6 +79,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvExpenseGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -94,6 +101,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvExpenseType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -115,6 +123,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvCompanyNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -136,6 +145,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvDepartment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -157,6 +167,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvDateOfSubmission"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -178,6 +189,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvCurrency"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -199,6 +211,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvTotalAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -220,6 +233,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvTax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -241,6 +255,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvNetAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -262,6 +277,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvRMStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -283,6 +299,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvFMStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -304,6 +321,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
+                android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_80sdp"
                 android:hint="@string/description"
@@ -328,6 +346,7 @@
                 android:layout_marginTop="@dimen/_5sdp"/>
 
             <TextView
+                android:id="@+id/tvAttachments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/attachments"
@@ -346,3 +365,4 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
+</layout>
