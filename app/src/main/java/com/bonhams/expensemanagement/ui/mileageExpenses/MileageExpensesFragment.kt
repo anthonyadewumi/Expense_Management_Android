@@ -23,9 +23,11 @@ import com.bonhams.expensemanagement.databinding.FragmentClaimsBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.home.HomeViewModel
 import com.bonhams.expensemanagement.ui.home.HomeViewModelFactory
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
+import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
+import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.utils.Utils.Companion.showKeyboard
-import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -34,7 +36,6 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private var tilSearchClaim: TextInputLayout? = null
     private lateinit var adapter: MileageAdapter
     private lateinit var viewModel: MileageExpensesViewModel
     private lateinit var homeViewModel: HomeViewModel
@@ -71,22 +72,24 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
 
         homeViewModel.datePicker.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             Log.d(TAG, "setupViewModel: datePicker: $it")
+            updatedClaimsFromStatus(null, it)
         })
 
         homeViewModel.statusPicker.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             Log.d(TAG, "setupViewModel: statusPicker: $it")
+            updatedClaimsFromStatus(it as String?, null)
         })
 
         mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
             if(it){
                 binding.tilSearchClaim.visibility = View.VISIBLE
-                binding.edtSearchClaim.showKeyboard(contextActivity!!, true)
+                binding.edtSearchClaim.showKeyboard(contextActivity, true)
             }
             else{
                 binding.tilSearchClaim.visibility = View.GONE
                 binding.edtSearchClaim.setText("")
-                binding.edtSearchClaim.showKeyboard(contextActivity!!, false)
+                binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
         })
         
@@ -139,7 +142,11 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
     }
 
     private fun initSwipeToRefresh() {
-        binding.swipeRefresh.setOnRefreshListener { adapter.refresh() }
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.resetFilters()
+            homeViewModel.resetFilters()
+//            adapter.refresh()
+        }
     }
 
     private fun initSearch() {
@@ -169,12 +176,22 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
         }
     }
 
+    private fun updatedClaimsFromStatus(status: String?, date: Any?) {
+        binding.edtSearchClaim.text!!.trim().toString().let {
+            viewModel.showExpensesList(it, status, date)
+        }
+    }
+
     override fun onMileageExpenseItemClicked(claim: MileageDetail?, position: Int) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "onMileageExpenseItemClicked: $position")
+        val fragment = MileageDetailFragment()
+        (contextActivity as? MainActivity)?.addFragment(fragment)
     }
 
     override fun onMileageExpenseCreateCopyClicked(claim: MileageDetail?, position: Int) {
-        TODO("Not yet implemented")
+        Log.d(TAG, "onMileageExpenseCreateCopyClicked: $position")
+        val fragment = NewMileageClaimFragment()
+        (contextActivity as? MainActivity)?.addFragment(fragment)
     }
 
 }

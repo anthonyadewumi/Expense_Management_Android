@@ -1,28 +1,34 @@
 package com.bonhams.expensemanagement.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class MileageDetail (
+    val id: String = "",
     val title: String = "",
     val description: String = "",
     val totalAmount: String = "",
-    val id: String = "",
-    val reportMStatus: String = "",
+    val submittedOn: String = "",
+    val status: String = "",
+    val reportingMStatus: String = "",
     val financeMStatus: String = "",
-    val comapnyname: String = "",
-    val group: Currency? = null,
     val type: String = "",
-    val companyname: String = "",
+    @SerializedName("companyname")
+    val companyName: String = "",
     val department: String = "",
-    val currency: String = "", //: Currency? = null,
-    val tax: String? = null,
-    val netAmount: String? = null,
+    @SerializedName("currency_id")
+    val currencyID: String = "",
+    val currency: String = "",
+    val tax: String = "",
+    val netAmount: String = "",
     val merchant: String = "",
-    val attachments: List<String>? = null,
-    val trip: Trip? = null,
-    val to: From? = null,
-    val from: From? = null,
+    val tripDate: String = "",
+    val isRoundTrip: String = "",
+    val fromLocation: String = "",
+    val toLocation: String = "",
     val distance: String = "",
-    val claimMileage: String = "",
+    val claimedMileage: String = "",
     val parking: String = "",
     val petrolAmount: String = "",
-    val carType: String = ""
+    val carType: String = "",
+    val createdBy: String? = null
 )

@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 app:tabIndicatorFullWidth="true"
-                app:tabMaxWidth="@dimen/_100sdp"
+                app:tabMaxWidth="@dimen/_110sdp"
                 app:tabGravity="start"
                 app:tabMode="fixed"
                 app:tabTextAppearance="@style/NavigationTabTextAppearance" />

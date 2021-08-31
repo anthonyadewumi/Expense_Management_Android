@@ -13,6 +13,7 @@ import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.Utils
 import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 
@@ -39,13 +40,13 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
 
         fun bind(item: MileageDetail, position: Int, mileageListener: OnMileageExpenseClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
-            binding.tvSubmittedOn.text = "02 May"
-            binding.tvTotalAmount.text = "$" + item.totalAmount
-            binding.tvStatus.text = item.reportMStatus.replaceFirstChar(Char::uppercase)
+            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
+            binding.tvTotalAmount.text = item.currency + item.totalAmount
+            binding.tvStatus.text = item.status.replaceFirstChar(Char::uppercase)
 
             when {
-                item.reportMStatus.equals(Constants.STATUS_PENDING, true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
-                item.reportMStatus.equals(Constants.STATUS_APPROVED, true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                item.status.equals(Constants.STATUS_PENDING, true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                item.status.equals(Constants.STATUS_APPROVED, true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
                 else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
             }
 

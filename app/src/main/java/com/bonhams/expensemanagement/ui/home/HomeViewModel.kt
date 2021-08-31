@@ -5,7 +5,13 @@ import androidx.lifecycle.ViewModel
 
 class HomeViewModel(private val homeRepository: HomeRepository) : ViewModel() {
 
-    val datePicker = MutableLiveData<Any>()
-    val statusPicker = MutableLiveData<Any>()
+    val dateRange = MutableLiveData<Any?>()
+    val datePicker = MutableLiveData<Any?>()
+    val statusPicker = MutableLiveData<Any?>()
 
+    fun resetFilters() {
+        statusPicker.value = null
+        dateRange.value = null
+        datePicker.value = null
+    }
 }

@@ -37,7 +37,6 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
     private lateinit var claimsAdapter: ClaimsAdapter
-
     private lateinit var viewModel: ClaimsViewModel
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var binding: FragmentClaimsBinding
@@ -74,10 +73,12 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
 
         homeViewModel.datePicker.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: datePicker: $it")
+            updatedClaimsFromStatus(null, it)
         })
 
         homeViewModel.statusPicker.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: statusPicker: $it")
+            updatedClaimsFromStatus(it as String?, null)
         })
 
 
@@ -85,12 +86,12 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
             if(it){
                 binding.tilSearchClaim.visibility = View.VISIBLE
-                binding.edtSearchClaim.showKeyboard(contextActivity!!, true)
+                binding.edtSearchClaim.showKeyboard(contextActivity, true)
             }
             else{
                 binding.tilSearchClaim.visibility = View.GONE
                 binding.edtSearchClaim.setText("")
-                binding.edtSearchClaim.showKeyboard(contextActivity!!, false)
+                binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
         })
     }
@@ -142,7 +143,11 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
     }
 
     private fun initSwipeToRefresh() {
-        binding.swipeRefresh.setOnRefreshListener { claimsAdapter.refresh() }
+        binding.swipeRefresh.setOnRefreshListener {
+            viewModel.resetFilters()
+            homeViewModel.resetFilters()
+            // claimsAdapter.refresh()
+        }
     }
 
     private fun initSearch() {
@@ -168,7 +173,14 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
         binding.edtSearchClaim.text!!.trim().toString().let {
             if (/*it.isNotBlank() &&*/ viewModel.shouldShowClaimList(it)) {
                 viewModel.showClaimsList(it)
+                binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
+        }
+    }
+
+    private fun updatedClaimsFromStatus(status: String?, date: Any?) {
+        binding.edtSearchClaim.text!!.trim().toString().let {
+            viewModel.showClaimsList(it, status, date)
         }
     }
 

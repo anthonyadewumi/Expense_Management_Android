@@ -119,13 +119,15 @@ class HomeFragment : Fragment() {
                 .setTheme(R.style.Widget_AppTheme_MaterialDatePicker)
                 .setInputMode(INPUT_MODE_CALENDAR)
                 .setCalendarConstraints(constraintsBuilder.build())
+                .setSelection(viewModel.dateRange.value as androidx.core.util.Pair<Long, Long>?)
                 .build()
 
         dateRangePicker.addOnPositiveButtonClickListener(MaterialPickerOnPositiveButtonClickListener {
             val startDate: Long = it.first
             val endDate: Long = it.second
             Log.d(TAG, "showDateRangePicker: start Date: ${Utils.getDateInDisplayFormat(startDate)}   end Date: ${Utils.getDateInDisplayFormat(endDate)}")
-            viewModel.datePicker.value = Pair(Utils.getDateInDisplayFormat(startDate), Utils.getDateInDisplayFormat(endDate))
+            viewModel.dateRange.value = it
+            viewModel.datePicker.value = Pair(Utils.getDateInServerRequestFormat(startDate), Utils.getDateInServerRequestFormat(endDate))
         })
 
         dateRangePicker.addOnCancelListener {

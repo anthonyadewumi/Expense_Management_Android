@@ -5,7 +5,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.data.services.requests.MileageExpenseRequest
-import com.bonhams.expensemanagement.data.services.responses.MileageListResponse
 import com.bonhams.expensemanagement.utils.Constants
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -15,10 +14,11 @@ import kotlinx.coroutines.flow.*
 class MileageExpensesViewModel(private val mileageExpensesByPageRepository: MileageExpensesByPageRepository,
                                private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    var responseMileageList: MutableLiveData<MileageListResponse>? = null
+    private val datePicker = MutableLiveData<Any?>()
+    private val statusPicker = MutableLiveData<Any?>()
 
     companion object {
-        const val KEY_CLAIMS = "claims_list"
+        const val KEY_CLAIMS = "expenses_list"
         const val DEFAULT_CLAIMS = ""
     }
 
@@ -52,11 +52,34 @@ class MileageExpensesViewModel(private val mileageExpensesByPageRepository: Mile
         savedStateHandle.set(KEY_CLAIMS, search)
     }
 
+    fun showExpensesList(search: String, status: String?, date: Any?) {
+
+        if(status != null)
+            statusPicker.value = status
+        if(date != null)
+            datePicker.value = date
+
+        clearListCh.offer(Unit)
+        savedStateHandle.set(KEY_CLAIMS, search)
+    }
+
+    fun resetFilters() {
+        statusPicker.value = null
+        datePicker.value = null
+
+        clearListCh.offer(Unit)
+        savedStateHandle.set(KEY_CLAIMS, "")
+    }
+
+
     fun getMileageListRequest(search: String): MileageExpenseRequest {
         val expenseRequest = MileageExpenseRequest()
         expenseRequest.searchKey = search
         expenseRequest.page = 1
         expenseRequest.numberOfItems = Constants.NETWORK_PAGE_SIZE
+        expenseRequest.status = statusPicker.value as String?
+        expenseRequest.fromDate = (datePicker.value as Pair<*, *>?)?.first as String?
+        expenseRequest.toDate  = (datePicker.value as Pair<*, *>?)?.second as String?
         return expenseRequest
     }
 }

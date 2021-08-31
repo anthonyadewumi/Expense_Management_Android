@@ -9,4 +9,10 @@ class MileageExpenseRequest {
     var numberOfItems: Int = 10
     @SerializedName("searchKey")
     var searchKey: String? = ""
+    @SerializedName("from")
+    var fromDate: String? = null
+    @SerializedName("to")
+    var toDate: String? = null
+    @SerializedName("status")
+    var status: String? = null
 }

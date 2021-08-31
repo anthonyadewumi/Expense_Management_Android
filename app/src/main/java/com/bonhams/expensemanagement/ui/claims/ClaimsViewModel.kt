@@ -1,9 +1,6 @@
 package com.bonhams.expensemanagement.ui.claims
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.bonhams.expensemanagement.data.model.ClaimDetail
@@ -17,6 +14,9 @@ import kotlinx.coroutines.flow.*
 class ClaimsViewModel(private val claimsByPageRepository: ClaimsByPageRepository,
                       private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val datePicker = MutableLiveData<Any?>()
+    private val statusPicker = MutableLiveData<Any?>()
 
     companion object {
         const val KEY_CLAIMS = "claims_list"
@@ -54,11 +54,34 @@ class ClaimsViewModel(private val claimsByPageRepository: ClaimsByPageRepository
         savedStateHandle.set(KEY_CLAIMS, search)
     }
 
+    fun showClaimsList(search: String, status: String?, date: Any?) {
+
+        if(status != null)
+            statusPicker.value = status
+        if(date != null)
+            datePicker.value = date
+
+        clearListCh.offer(Unit)
+        savedStateHandle.set(KEY_CLAIMS, search)
+    }
+
+    fun resetFilters() {
+
+        statusPicker.value = null
+        datePicker.value = null
+
+        clearListCh.offer(Unit)
+        savedStateHandle.set(KEY_CLAIMS, "")
+    }
+
     private fun getClaimsRequest(search: String): ClaimsRequest {
         val claimListRequest = ClaimsRequest()
         claimListRequest.searchKey = search
         claimListRequest.page = 1
         claimListRequest.numberOfItems = Constants.NETWORK_PAGE_SIZE
+        claimListRequest.status = statusPicker.value as String?
+        claimListRequest.fromDate = (datePicker.value as Pair<*, *>?)?.first as String?
+        claimListRequest.toDate  = (datePicker.value as Pair<*, *>?)?.second as String?
         return claimListRequest
     }
 }

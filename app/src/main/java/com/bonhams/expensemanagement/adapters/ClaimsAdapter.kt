@@ -12,6 +12,7 @@ import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.Utils
 import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>(CLAIM_COMPARATOR) {
@@ -37,8 +38,8 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
 
         fun bind(item: ClaimDetail, position: Int, claimListener: OnClaimClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
-            binding.tvSubmittedOn.text = "02 May"
-            binding.tvTotalAmount.text = "$" + item.totalAmount
+            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
+            binding.tvTotalAmount.text = item.currencyTypeName + item.totalAmount
             if(!item.reportingMStatus.isNullOrEmpty()) {
                 binding.tvStatus.text =
                     item.reportingMStatus.replaceFirstChar(Char::uppercase)
