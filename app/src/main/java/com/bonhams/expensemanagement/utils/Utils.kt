@@ -31,10 +31,24 @@ class Utils {
 
         fun getFormattedDate(dateStr: String, inputFormat: String): String {
             val inputFormatter = SimpleDateFormat(inputFormat)
-            val date = inputFormatter.parse(dateStr)
-            date?.let {
-                val formatter = SimpleDateFormat(Constants.DD_MMM_YYYY_FORMAT)
-                return formatter.format(date)
+            if (dateStr.trim().isNotEmpty()) {
+                val date = inputFormatter.parse(dateStr)
+                date?.let {
+                    val formatter = SimpleDateFormat(Constants.DD_MMM_YYYY_FORMAT)
+                    return formatter.format(date)
+                }
+            }
+            return dateStr
+        }
+
+        fun getDateInServerRequestFormat(dateStr: String, inputFormat: String): String {
+            val inputFormatter = SimpleDateFormat(inputFormat)
+            if (dateStr.trim().isNotEmpty()) {
+                val date = inputFormatter.parse(dateStr)
+                date?.let {
+                    val formatter = SimpleDateFormat(Constants.YYYY_MM_DD_SERVER_REQUEST_FORMAT)
+                    return formatter.format(date)
+                }
             }
             return dateStr
         }
@@ -49,6 +63,14 @@ class Utils {
             val date = Date(epoch)
             val formatter = SimpleDateFormat(Constants.YYYY_MM_DD_SERVER_REQUEST_FORMAT)
             return formatter.format(date)
+        }
+
+        fun String.capitalizeFirstLetter(): String{
+            return if(!this.isNullOrEmpty() && this.trim().isNotEmpty()){
+                this.replaceFirstChar(Char::uppercase)
+            } else{
+                ""
+            }
         }
 
         // This extension allow to call a function directly on the View to load an image.

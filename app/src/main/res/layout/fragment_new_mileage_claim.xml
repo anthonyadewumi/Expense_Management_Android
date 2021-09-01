@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+
+    </data>
+<androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -70,7 +74,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/mileage_type"
+                android:text="@string/mileage_type_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -94,7 +98,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/department"
+                android:text="@string/department_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -138,7 +142,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/expense_type"
+                android:text="@string/expense_type_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -159,7 +163,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/merchant_name"
+                android:text="@string/merchant_name_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -190,10 +194,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="35sp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="7sp"
                 android:gravity="center_vertical"
                 android:text="@string/trip_details_colon"
-                android:textSize="18sp"
+                style="@style/TextMedium12"
                 android:textColor="@color/secondary"
                 android:layout_marginTop="@dimen/_5sdp"/>
 
@@ -223,7 +226,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/from"
+                android:text="@string/from_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -245,7 +248,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/to"
+                android:text="@string/to_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -267,7 +270,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/distance"
+                android:text="@string/distance_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -288,7 +291,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/car_type"
+                android:text="@string/car_type_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -310,7 +313,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/claimed_miles"
+                android:text="@string/claimed_miles_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -375,7 +378,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/currency"
+                android:text="@string/currency_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -444,7 +447,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/total_amount"
+                android:text="@string/total_amount_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -468,7 +471,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tax"
+                android:text="@string/tax_star"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -586,7 +589,7 @@
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
                     app:tint="@color/secondary"
-                    android:src="@drawable/ic_nav_expense_plus"
+                    android:src="@drawable/ic_split_plus"
                     android:padding="@dimen/_5sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"/>
@@ -636,3 +639,4 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
+</layout>

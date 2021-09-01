@@ -66,7 +66,7 @@ class ClaimDetailFragment() : Fragment() {
         binding.tvFMStatus.text = claimDetail.financeMStatus
         binding.tvDescription.text = claimDetail.description
 
-        if(claimDetail.attachments?.trim().isNullOrEmpty())
+        if(claimDetail.attachments.trim().isEmpty())
             viewModel.attachmentsList.add(claimDetail.attachments)
     }
 

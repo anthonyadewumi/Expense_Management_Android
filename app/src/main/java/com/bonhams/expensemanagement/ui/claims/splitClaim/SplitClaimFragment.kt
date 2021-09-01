@@ -5,19 +5,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.appcompat.widget.AppCompatButton
+import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
-import com.bonhams.expensemanagement.data.model.SpinnerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
+import com.bonhams.expensemanagement.databinding.FragmentSplitClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
@@ -26,50 +32,40 @@ class SplitClaimFragment() : Fragment() {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private var tvMerchantName: TextView? = null
-    private var tvDate: TextView? = null
-    private var tvUserName: TextView? = null
-    private var tvTotalAmount: TextView? = null
-    private var mProgressBar: ProgressBar? = null
-    private var btnSubmit: AppCompatButton? = null
-    private var layoutSplitDetail: LinearLayout? = null
-    private var layoutAddSplit: RelativeLayout? = null
-    private var spnCompany: Spinner? = null
-    private var spnDepartment: Spinner? = null
-    private var spnExpense: Spinner? = null
+
+    private lateinit var binding: FragmentSplitClaimBinding
     private lateinit var viewModel: SplitClaimViewModel
+    private lateinit var newClaimViewModel: NewClaimViewModel
+    private lateinit var claimRequest: NewClaimRequest
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_split_claim, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_split_claim, container, false)
+        val view = binding.root
+        binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
-
-        tvMerchantName = view.findViewById(R.id.tvMerchantName)
-        tvDate = view.findViewById(R.id.tvDate)
-        tvUserName = view.findViewById(R.id.tvUserName)
-        tvTotalAmount = view.findViewById(R.id.tvTotalAmount)
-        mProgressBar = view.findViewById(R.id.mProgressBars)
-        btnSubmit = view.findViewById(R.id.btnSubmit)
-        layoutSplitDetail = view.findViewById(R.id.layoutSplitDetail)
-        layoutAddSplit = view.findViewById(R.id.layoutAddSplit)
-
 
         setupViewModel()
         setClickListeners()
         setupSpinners()
+        setupView()
 
         return view
     }
 
+    fun setClaimRequestDetail(request: NewClaimRequest){
+        claimRequest = request
+    }
+
     private fun setClickListeners(){
-        layoutAddSplit?.setOnClickListener(View.OnClickListener {
+        binding.layoutAddSplit.setOnClickListener(View.OnClickListener {
             createNewSplitLayout()
         })
 
-        btnSubmit?.setOnClickListener(View.OnClickListener {
+        binding.btnSubmit.setOnClickListener(View.OnClickListener {
             contextActivity?.let {
                 if(NoInternetUtils.isConnectedToInternet(it))
                     createNewClaim()
@@ -79,43 +75,35 @@ class SplitClaimFragment() : Fragment() {
         })
     }
 
-    private fun initializeSpinnerItems(){
-        viewModel.expenseGroupList =
-            listOf(SpinnerItem("1", "Group 1"), SpinnerItem("2", "Group 2"),
-                SpinnerItem("3", "Group 3"), SpinnerItem("4", "Group 4"))
-
-        viewModel.expenseTypeList =
-            listOf(SpinnerItem("1", "Group Type 1"), SpinnerItem("2", "Group Type 2"),
-                SpinnerItem("3", "Group Type 3"), SpinnerItem("4", "Group Type 4"))
-
-        viewModel.departmentList =
-            listOf(SpinnerItem("1", "Department 1"), SpinnerItem("2", "Department 2"),
-                SpinnerItem("3", "Department 3"), SpinnerItem("4", "Department 4"))
-
-        viewModel.currencyList =
-            listOf(SpinnerItem("1", "Currency 1"), SpinnerItem("2", "Currency 2"),
-                SpinnerItem("3", "Currency 3"), SpinnerItem("4", "Currency 4"))
+    private fun setupView(){
+        binding.tvMerchantName.text = claimRequest.merchantName
+        binding.tvDate.text = claimRequest.dateSubmitted
+        binding.tvUserName.text = AppPreferences.fullName
+        binding.tvTotalAmount.text = claimRequest.totalAmount
     }
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
             SplitClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(SplitClaimViewModel::class.java)
+
+        newClaimViewModel = ViewModelProvider(requireActivity(),
+            NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(NewClaimViewModel::class.java)
     }
 
     private fun setupSpinners(){
-        initializeSpinnerItems()
         // Company Adapter
         val companyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            viewModel.expenseGroupList
+            newClaimViewModel.companyList
         )
-        spnCompany?.adapter = companyAdapter
-        spnCompany?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnCompany.adapter = companyAdapter
+        binding.spnCompany.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
+                val item = newClaimViewModel.companyList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -125,13 +113,13 @@ class SplitClaimFragment() : Fragment() {
         val departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            viewModel.expenseGroupList
+            newClaimViewModel.departmentList
         )
-        spnDepartment?.adapter = departmentAdapter
-        spnDepartment?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnDepartment.adapter = departmentAdapter
+        binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
+                val item = newClaimViewModel.departmentList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -141,13 +129,13 @@ class SplitClaimFragment() : Fragment() {
         val expenseAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            viewModel.expenseGroupList
+            newClaimViewModel.expenseTypeList
         )
-        spnExpense?.adapter = expenseAdapter
-        spnExpense?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnExpense.adapter = expenseAdapter
+        binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
+                val item = newClaimViewModel.expenseTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -169,13 +157,13 @@ class SplitClaimFragment() : Fragment() {
                         }
                     }
                     Status.ERROR -> {
-                        mProgressBar?.visibility = View.GONE
-                        btnSubmit?.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.btnSubmit.visibility = View.VISIBLE
                         Log.e(TAG, "setChangePasswordObserver: ${it.message}")
                         it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-                        mProgressBar?.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.VISIBLE
                     }
                 }
             }
@@ -194,13 +182,13 @@ class SplitClaimFragment() : Fragment() {
         val companyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            viewModel.expenseGroupList
+            newClaimViewModel.expenseGroupList
         )
         spnCompany?.adapter = companyAdapter
         spnCompany?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
+                val item = newClaimViewModel.expenseGroupList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -210,13 +198,13 @@ class SplitClaimFragment() : Fragment() {
         var departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            viewModel.expenseGroupList
+            newClaimViewModel.expenseGroupList
         )
         spnDepartment?.adapter = departmentAdapter
         spnDepartment?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
+                val item = newClaimViewModel.expenseGroupList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -226,19 +214,19 @@ class SplitClaimFragment() : Fragment() {
         var expenseAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            viewModel.expenseGroupList
+            newClaimViewModel.expenseGroupList
         )
         spnExpense?.adapter = expenseAdapter
         spnExpense?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
+                val item = newClaimViewModel.expenseGroupList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
-        layoutSplitDetail?.addView(view)
+        binding.layoutSplitDetail.addView(view)
     }
 
     private fun createNewClaim() {
@@ -247,25 +235,8 @@ class SplitClaimFragment() : Fragment() {
             return
         }
 
-//        attachments = viewModel.attachmentsList.joinToString { it }
-
-//        btnSubmit?.visibility = View.GONE
-        /*val changePasswordRequest = viewModel.getNewClaimRequest(
-            edtMerchantName?.text.toString().trim(),
-            viewModel.expenseGroupList[spnExpenseGroup?.selectedItemPosition!!].id,
-            viewModel.expenseTypeList[spnExpenseType?.selectedItemPosition!!].id,
-            edtCompanyNumber?.text.toString().trim(),
-            viewModel.departmentList[spnDepartment?.selectedItemPosition!!].id,
-            Utils.getFormattedDate(tvDateOfSubmission?.text.toString().trim(), Constants.DD_MMM_YYYY_FORMAT),
-            viewModel.currencyList[spnCurrency?.selectedItemPosition!!].id,
-            edtTotalAmount?.text.toString().trim(),
-            edtTax?.text.toString().trim(),
-            edtNetAmount?.text.toString().trim(),
-            edtDescription?.text.toString().trim(),
-            attachments,
-            attachments
-        )
-        setCreateClaimObserver(changePasswordRequest)*/
+        binding.btnSubmit.visibility = View.GONE
+        setCreateClaimObserver(claimRequest)
     }
 
     private fun validateCreateClaim(): Boolean {
@@ -292,13 +263,13 @@ class SplitClaimFragment() : Fragment() {
     }
 
     private fun setResponse(commonResponse: CommonResponse) {
-        mProgressBar?.visibility = View.GONE
-        btnSubmit?.visibility = View.VISIBLE
+        binding.mProgressBars.visibility = View.GONE
+        binding.btnSubmit.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
     }
 
     private fun onCreateClaimFailed() {
-        btnSubmit?.isEnabled = true
+        binding.btnSubmit.isEnabled = true
     }
 
 }

@@ -20,5 +20,7 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) = apiService.changePassword(changePasswordRequest)
 
+    suspend fun dropdownData() = apiService.dropdownData()
+
     suspend fun logoutUser() = apiService.logoutUser()
 }

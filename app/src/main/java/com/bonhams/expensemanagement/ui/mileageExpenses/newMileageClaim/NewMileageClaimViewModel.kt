@@ -2,16 +2,33 @@ package com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.utils.Resource
 import kotlinx.coroutines.Dispatchers
 
 class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageClaimRepository) : ViewModel() {
 
+    lateinit var departmentList: List<Department>
+    lateinit var expenseTypeList: List<ExpenseType>
+    lateinit var distanceList: List<ExpenseGroup>
+    lateinit var carTypeList: List<CarType>
+    lateinit var currencyList: List<Currency>
+    var attachmentsList: MutableList<String> = mutableListOf()
+
     fun createNewMileageClaim(mileageClaimRequest: NewMileageClaimRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
             emit(Resource.success(data = mileageClaimRepository.createNewMileageClaim(mileageClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
+    fun getDropDownData() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mileageClaimRepository.dropdownData()))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }

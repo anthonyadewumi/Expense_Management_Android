@@ -1,6 +1,6 @@
 package com.bonhams.expensemanagement.data.model
 
-data class CarType (
+data class MileageType (
     val id: String = "",
-    val type: String = "",
+    val type: String = ""
 )

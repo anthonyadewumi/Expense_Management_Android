@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.bonhams.expensemanagement.R
-import com.bonhams.expensemanagement.data.model.SpinnerItem
+import com.bonhams.expensemanagement.data.model.*
 
-class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource: List<SpinnerItem>) :
-    ArrayAdapter<SpinnerItem>(context, mResource, dataSource) {
+class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource: List<Any>) :
+    ArrayAdapter<Any>(context, mResource, dataSource) {
 
     private val mInflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -30,8 +30,38 @@ class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource
     private fun createItemView(position: Int, parent: ViewGroup): View {
         val view: View = mInflater.inflate(mResource, parent, false)
         val title = view.findViewById(R.id.title) as TextView
-        val item: SpinnerItem = dataSource[position]
-        title.text = item.title.replaceFirstChar(Char::uppercase)
+        when (val item = dataSource[position]) {
+            is ExpenseGroup -> {
+                title.text = item.name.replaceFirstChar(Char::uppercase)
+            }
+            is ExpenseType -> {
+                title.text = item.name.replaceFirstChar(Char::uppercase)
+            }
+            is MileageType -> {
+                title.text = item.type.replaceFirstChar(Char::uppercase)
+            }
+            is Department -> {
+                title.text = item.name.replaceFirstChar(Char::uppercase)
+            }
+            is Currency -> {
+                title.text = item.name.replaceFirstChar(Char::uppercase)
+            }
+            is Company -> {
+                title.text = item.name.replaceFirstChar(Char::uppercase)
+            }
+            is StatusType -> {
+                title.text = item.status.replaceFirstChar(Char::uppercase)
+            }
+            is UserType -> {
+                title.text = item.type.replaceFirstChar(Char::uppercase)
+            }
+            is Country -> {
+                title.text = item.countryName.replaceFirstChar(Char::uppercase)
+            }
+            is String -> {
+                title.text = item.replaceFirstChar(Char::uppercase)
+            }
+        }
 
         return view
     }

@@ -47,8 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/company"
-                android:textColor="@color/colorTextGray" />
+                android:text="@string/company_star"
+                android:textColor="@color/colorTextBlack" />
 
             <Spinner
                 android:id="@+id/spnCompany"
@@ -69,8 +69,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/department"
-                android:textColor="@color/colorTextGray" />
+                android:text="@string/department_star"
+                android:textColor="@color/colorTextBlack" />
 
             <Spinner
                 android:id="@+id/spnDepartment"
@@ -91,8 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/expense"
-                android:textColor="@color/colorTextGray" />
+                android:text="@string/expense_star"
+                android:textColor="@color/colorTextBlack" />
 
             <Spinner
                 android:id="@+id/spnExpense"
@@ -113,8 +113,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/total_amount"
-                android:textColor="@color/colorTextGray" />
+                android:text="@string/total_amount_star"
+                android:textColor="@color/colorTextBlack" />
 
             <EditText
                 android:id="@+id/edtTotalAmount"
@@ -125,7 +125,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:hint="@string/net_amount"
+                android:hint="@string/total_amount"
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"
                 android:padding="@dimen/_10sdp"
@@ -137,8 +137,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/tax_code"
-                android:textColor="@color/colorTextGray" />
+                android:text="@string/tax_code_star"
+                android:textColor="@color/colorTextBlack" />
 
             <EditText
                 android:id="@+id/edtTaxCode"

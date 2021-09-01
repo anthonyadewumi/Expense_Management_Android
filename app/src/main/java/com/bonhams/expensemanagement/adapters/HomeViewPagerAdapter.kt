@@ -6,7 +6,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.bonhams.expensemanagement.ui.claims.ClaimsFragment
 import com.bonhams.expensemanagement.ui.mileageExpenses.MileageExpensesFragment
-import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 
 class HomeViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -22,6 +21,6 @@ class HomeViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycl
             0 -> return ClaimsFragment()
             1 -> return MileageExpensesFragment()
         }
-        return NotificationFragment()
+        return ClaimsFragment()
     }
 }

@@ -7,21 +7,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.appcompat.widget.AppCompatButton
+import android.widget.AdapterView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
-import com.bonhams.expensemanagement.data.model.SpinnerItem
+import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
+import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
+import com.bonhams.expensemanagement.databinding.FragmentNewClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
@@ -45,27 +48,11 @@ class NewClaimFragment() : Fragment() {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private var edtMerchantName: EditText? = null
-    private var spnExpenseGroup: Spinner? = null
-    private var spnExpenseType: Spinner? = null
-    private var edtCompanyNumber: EditText? = null
-    private var spnDepartment: Spinner? = null
-    private var tvDateOfSubmission: TextView? = null
-    private var spnCurrency: Spinner? = null
-    private var edtTotalAmount: EditText? = null
-    private var edtTax: EditText? = null
-    private var edtNetAmount: EditText? = null
-    private var edtDescription: EditText? = null
-    private var tvUploadPic: TextView? = null
-    private var tvNoFileSelected: TextView? = null
-    private var ivPicUpload: ImageView? = null
-    private var rvAttachments: RecyclerView? = null
-    private var mProgressBar: ProgressBar? = null
-    private var btnSplit: AppCompatButton? = null
-    private var btnSubmit: AppCompatButton? = null
     private var attachments = "1, 2, 3"
 
+    private lateinit var claimDetail: ClaimDetail
     private lateinit var viewModel: NewClaimViewModel
+    private lateinit var binding: FragmentNewClaimBinding
     private lateinit var expenseGroupAdapter: CustomSpinnerAdapter
     private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
     private lateinit var departmentAdapter: CustomSpinnerAdapter
@@ -76,56 +63,74 @@ class NewClaimFragment() : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_new_claim, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_claim, container, false)
+        val view = binding.root
+        binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
-
-        edtMerchantName = view.findViewById(R.id.edtMerchantName)
-        spnExpenseGroup = view.findViewById(R.id.spnExpenseGroup)
-        spnExpenseType = view.findViewById(R.id.spnExpenseType)
-        edtCompanyNumber = view.findViewById(R.id.edtCompanyNumber)
-        spnDepartment = view.findViewById(R.id.spnDepartment)
-        tvDateOfSubmission = view.findViewById(R.id.tvDateOfSubmission)
-        spnCurrency = view.findViewById(R.id.spnCurrency)
-        edtTotalAmount = view.findViewById(R.id.edtTotalAmount)
-        edtTax = view.findViewById(R.id.edtTax)
-        edtNetAmount = view.findViewById(R.id.edtNetAmount)
-        edtDescription = view.findViewById(R.id.edtDescription)
-        tvUploadPic = view.findViewById(R.id.tvUploadPic)
-        tvNoFileSelected = view.findViewById(R.id.tvNoFileSelected)
-        ivPicUpload = view.findViewById(R.id.ivPicUpload)
-        rvAttachments = view.findViewById(R.id.rvAttachments)
-        mProgressBar = view.findViewById(R.id.mProgressBars)
-        btnSplit = view.findViewById(R.id.btnSplit)
-        btnSubmit = view.findViewById(R.id.btnSubmit)
-
 
         setupViewModel()
         setClickListeners()
-        setupSpinners()
         setupAttachmentRecyclerView();
+        setDropdownDataObserver()
+        setupView()
 
         return view
     }
 
+    fun setClaimDetails(detail: ClaimDetail?){
+        detail?.let {
+            claimDetail = it
+        }
+    }
+
+    private fun setupView(){
+
+        if(this::claimDetail.isInitialized) {
+            binding.edtMerchantName.setText(claimDetail.merchant)
+            binding.edtCompanyNumber.setText(claimDetail.companyName)
+            binding.tvDateOfSubmission.text = if(!claimDetail.createdOn.trim().isNullOrEmpty())
+                Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT) else ""
+            binding.edtTotalAmount.setText(claimDetail.totalAmount)
+            binding.edtTax.setText(claimDetail.tax)
+            binding.edtNetAmount.setText(claimDetail.netAmount)
+            binding.edtDescription.setText(claimDetail.description)
+            viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
+
+            if(viewModel.attachmentsList.size > 0)
+                refreshAttachments()
+            /*
+            binding.spnExpenseGroup
+            binding.spnExpenseType
+            binding.spnDepartment
+            binding.spnCurrency
+
+            if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
+            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
+            if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
+            if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
+            */
+
+        }
+    }
+
     private fun setClickListeners(){
-        tvUploadPic?.setOnClickListener(View.OnClickListener {
+        binding.tvUploadPic.setOnClickListener(View.OnClickListener {
             showBottomSheet()
         })
-        ivPicUpload?.setOnClickListener(View.OnClickListener {
+        binding.ivPicUpload.setOnClickListener(View.OnClickListener {
             showBottomSheet()
         })
 
-        tvDateOfSubmission?.setOnClickListener(View.OnClickListener {
+        binding.tvDateOfSubmission.setOnClickListener(View.OnClickListener {
             showCalenderDialog()
         })
 
-        btnSplit?.setOnClickListener(View.OnClickListener {
-             val fragment = SplitClaimFragment()
-            (contextActivity as? MainActivity)?.addFragment(fragment)
+        binding.btnSplit.setOnClickListener(View.OnClickListener {
+            splitNewClaim()
         })
 
-        btnSubmit?.setOnClickListener(View.OnClickListener {
+        binding.btnSubmit.setOnClickListener(View.OnClickListener {
             contextActivity?.let {
                 if(NoInternetUtils.isConnectedToInternet(it))
                     createNewClaim()
@@ -136,16 +141,14 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun setupSpinners(){
-        initializeSpinnerItems();
-
         // Expense Group Adapter
         expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.expenseGroupList
         )
-        spnExpenseGroup?.adapter = expenseGroupAdapter
-        spnExpenseGroup?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnExpenseGroup.adapter = expenseGroupAdapter
+        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val item = viewModel.expenseGroupList[position]
@@ -160,8 +163,8 @@ class NewClaimFragment() : Fragment() {
             R.layout.item_spinner,
             viewModel.expenseTypeList
         )
-        spnExpenseType?.adapter = expenseTypeAdapter
-        spnExpenseType?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnExpenseType.adapter = expenseTypeAdapter
+        binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val item = viewModel.expenseTypeList[position]
@@ -176,8 +179,8 @@ class NewClaimFragment() : Fragment() {
             R.layout.item_spinner,
             viewModel.departmentList
         )
-        spnDepartment?.adapter = departmentAdapter
-        spnDepartment?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnDepartment.adapter = departmentAdapter
+        binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val item = viewModel.departmentList[position]
@@ -192,11 +195,11 @@ class NewClaimFragment() : Fragment() {
             R.layout.item_spinner,
             viewModel.currencyList
         )
-        spnCurrency?.adapter = currencyAdapter
-        spnCurrency?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+        binding.spnCurrency.adapter = currencyAdapter
+        binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.currencyList[position].title
+                val item = viewModel.currencyList[position].name
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -209,45 +212,66 @@ class NewClaimFragment() : Fragment() {
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        rvAttachments?.layoutManager = linearLayoutManager
+        binding.rvAttachments.layoutManager = linearLayoutManager
         attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList)
-        rvAttachments?.adapter = attachmentsAdapter
+        binding.rvAttachments.adapter = attachmentsAdapter
     }
 
     private fun refreshAttachments(){
         if(viewModel.attachmentsList.size > 0){
-            tvNoFileSelected?.visibility = View.GONE
-            rvAttachments?.visibility = View.VISIBLE
+            binding.tvNoFileSelected.visibility = View.GONE
+            binding.rvAttachments.visibility = View.VISIBLE
             attachmentsAdapter.notifyDataSetChanged()
         }
         else{
-            rvAttachments?.visibility = View.GONE
-            tvNoFileSelected?.visibility = View.VISIBLE
+            binding.rvAttachments.visibility = View.GONE
+            binding.tvNoFileSelected.visibility = View.VISIBLE
         }
     }
 
-    private fun initializeSpinnerItems(){
-        viewModel.expenseGroupList =
-            listOf(SpinnerItem("1", "Group 1"), SpinnerItem("2", "Group 2"),
-                SpinnerItem("3", "Group 3"), SpinnerItem("4", "Group 4"))
-
-        viewModel.expenseTypeList =
-            listOf(SpinnerItem("1", "Group Type 1"), SpinnerItem("2", "Group Type 2"),
-                SpinnerItem("3", "Group Type 3"), SpinnerItem("4", "Group Type 4"))
-
-        viewModel.departmentList =
-            listOf(SpinnerItem("1", "Department 1"), SpinnerItem("2", "Department 2"),
-                SpinnerItem("3", "Department 3"), SpinnerItem("4", "Department 4"))
-
-        viewModel.currencyList =
-            listOf(SpinnerItem("1", "Currency 1"), SpinnerItem("2", "Currency 2"),
-                SpinnerItem("3", "Currency 3"), SpinnerItem("4", "Currency 4"))
-    }
-
     private fun setupViewModel() {
-        viewModel = ViewModelProvider(this,
+        viewModel = ViewModelProvider(requireActivity(),
             NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NewClaimViewModel::class.java)
+    }
+
+    private fun setDropdownDataObserver() {
+        viewModel.getDropDownData().observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
+                                initializeSpinnerData(response)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+//                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
+    }
+
+    private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
+        viewModel.expenseGroupList = dropdownResponse.expenseGroup
+        viewModel.expenseTypeList = dropdownResponse.expenseType
+        viewModel.departmentList = dropdownResponse.departmentList
+        viewModel.currencyList  = dropdownResponse.currencyType
+        viewModel.carTypeList  = dropdownResponse.carType
+        viewModel.statusTypeList  = dropdownResponse.statusType
+        viewModel.mileageTypeList  = dropdownResponse.mileageType
+        viewModel.companyList  = dropdownResponse.companyList
+
+        setupSpinners()
     }
 
     private fun setCreateClaimObserver(newClaimRequest: NewClaimRequest) {
@@ -265,13 +289,13 @@ class NewClaimFragment() : Fragment() {
                         }
                     }
                     Status.ERROR -> {
-                        mProgressBar?.visibility = View.GONE
-                        btnSubmit?.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.btnSubmit.visibility = View.VISIBLE
                         Log.e(TAG, "setChangePasswordObserver: ${it.message}")
                         it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-                        mProgressBar?.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.VISIBLE
                     }
                 }
             }
@@ -279,63 +303,80 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun createNewClaim() {
-        if (validateCreateClaim()) {
-            onCreateClaimFailed()
-            return
+        try {
+            val newClaimRequest = getClaimRequest()
+
+            if (!validateCreateClaim(newClaimRequest)) {
+                onCreateClaimFailed()
+                return
+            }
+
+            binding.btnSubmit.visibility = View.GONE
+            setCreateClaimObserver(newClaimRequest)
         }
+        catch (e: Exception){
+            Log.e(TAG, "createNewClaim: ${e.message}")
+        }
+    }
 
-//        attachments = viewModel.attachmentsList.joinToString { it }
+    private fun splitNewClaim() {
+        //  attachments = viewModel.attachmentsList.joinToString { it }
+        try {
+            val newClaimRequest = getClaimRequest()
 
-        btnSubmit?.visibility = View.GONE
-        val changePasswordRequest = viewModel.getNewClaimRequest(
-            edtMerchantName?.text.toString().trim(),
-            viewModel.expenseGroupList[spnExpenseGroup?.selectedItemPosition!!].id,
-            viewModel.expenseTypeList[spnExpenseType?.selectedItemPosition!!].id,
-            edtCompanyNumber?.text.toString().trim(),
-            viewModel.departmentList[spnDepartment?.selectedItemPosition!!].id,
-            Utils.getFormattedDate(tvDateOfSubmission?.text.toString().trim(), Constants.DD_MMM_YYYY_FORMAT),
-            viewModel.currencyList[spnCurrency?.selectedItemPosition!!].id,
-            edtTotalAmount?.text.toString().trim(),
-            edtTax?.text.toString().trim(),
-            edtNetAmount?.text.toString().trim(),
-            edtDescription?.text.toString().trim(),
+            if (!validateCreateClaim(newClaimRequest)) {
+                onCreateClaimFailed()
+                return
+            }
+
+            val fragment = SplitClaimFragment()
+            fragment.setClaimRequestDetail(newClaimRequest)
+            (contextActivity as? MainActivity)?.addFragment(fragment)
+        }
+        catch (e: Exception){
+            Log.e(TAG, "createNewClaim: ${e.message}")
+        }
+    }
+
+    private fun getClaimRequest() : NewClaimRequest{
+      attachments = viewModel.attachmentsList.joinToString { it }
+
+        return viewModel.getNewClaimRequest(
+            binding.edtMerchantName.text.toString().trim(),
+            if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
+            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
+            binding.edtCompanyNumber.text.toString().trim(),
+            if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
+            Utils.getDateInServerRequestFormat(
+                binding.tvDateOfSubmission.text.toString().trim(),
+                Constants.DD_MMM_YYYY_FORMAT
+            ),
+            if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
+            binding.edtTotalAmount.text.toString().trim(),
+            binding.edtTax.text.toString().trim(),
+            binding.edtNetAmount.text.toString().trim(),
+            binding.edtDescription.text.toString().trim(),
             attachments,
             attachments
         )
-        setCreateClaimObserver(changePasswordRequest)
     }
 
-    private fun validateCreateClaim(): Boolean {
-        /*edtOldPassword?.error = viewModel.validatePassword(
-            edtOldPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password),
-            true
-        )
-
-        edtNewPassword?.error = viewModel.validatePassword(
-            edtNewPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password),
-            false
-        )
-
-        edtConfirmPassword?.error = viewModel.validateConfirmPassword(
-            edtNewPassword?.text.toString().trim(),
-            edtConfirmPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password_not_match)
-        )
-
-        return (viewModel.validOldPassword || viewModel.validPassword || viewModel.validConfirmPassword)*/
-        return false
+    private fun validateCreateClaim(newClaimRequest: NewClaimRequest): Boolean {
+        val isValid = viewModel.validateNewClaimRequest(newClaimRequest)
+        if(!isValid.first){
+            Toast.makeText(contextActivity, isValid.second, Toast.LENGTH_SHORT).show()
+        }
+        return isValid.first
     }
 
     private fun setResponse(commonResponse: CommonResponse) {
-        mProgressBar?.visibility = View.GONE
-        btnSubmit?.visibility = View.VISIBLE
+        binding.mProgressBars.visibility = View.GONE
+        binding.btnSubmit.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
     }
 
     private fun onCreateClaimFailed() {
-        btnSubmit?.isEnabled = true
+        binding.btnSubmit.isEnabled = true
     }
 
     private fun showCalenderDialog(){
@@ -362,7 +403,7 @@ class NewClaimFragment() : Fragment() {
         picker.addOnPositiveButtonClickListener {
             val date = Utils.getDateInDisplayFormat(it)
             Log.d("DatePicker Activity", "Date String = ${date}:: Date epoch value = ${it}")
-            tvDateOfSubmission?.text = date
+            binding.tvDateOfSubmission.text = date
         }
     }
 

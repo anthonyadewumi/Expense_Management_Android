@@ -39,14 +39,17 @@
     <string name="company_name">Company Name</string>
     <string name="department_name">Department Name</string>
     <string name="car_type">Car Type</string>
+    <string name="car_type_star">Car Type*</string>
     <string name="country">Country</string>
     <string name="mileage_type">Mileage Type</string>
+    <string name="mileage_type_star">Mileage Type*</string>
     <string name="default_approver">Default Approver</string>
     <string name="current_password">Current Password</string>
     <string name="new_password">New Password</string>
     <string name="confirm_your_password">Confirm your password</string>
     <string name="reset">Reset</string>
     <string name="merchant_name">Merchant Name</string>
+    <string name="merchant_name_star">Merchant Name*</string>
     <string name="expense_group">Expense Group</string>
     <string name="expense_group_star">Expense Group*</string>
     <string name="expense_type">Expense Type</string>
@@ -95,19 +98,26 @@
     <string name="round_trip">Round Trip</string>
     <string name="date_of_trip">Date Of Trip</string>
     <string name="from">From</string>
+    <string name="from_star">From*</string>
     <string name="to">To</string>
+    <string name="to_star">To*</string>
     <string name="enter_end_location">Enter End Location</string>
     <string name="enter_starting_location">Enter Starting Location</string>
     <string name="distance">Distance</string>
+    <string name="distance_star">Distance*</string>
     <string name="select_distance">Select Distance</string>
     <string name="claimed_miles">Claimed Miles</string>
+    <string name="claimed_miles_star">Claimed Miles*</string>
     <string name="petrol_amount">Petrol Amount</string>
     <string name="park_amount">Park Amount</string>
     <string name="date">Date</string>
     <string name="user_name">Username</string>
     <string name="company">Company</string>
+    <string name="company_star">Company*</string>
     <string name="expense">Expense</string>
+    <string name="expense_star">Expense*</string>
     <string name="tax_code">Tax Code</string>
+    <string name="tax_code_star">Tax Code*</string>
     <string name="login_successful">Login Successful</string>
     <string name="reset_your_pass_to_continue">Please reset your password to continue</string>
     <string name="upload_file">Upload File</string>
@@ -120,5 +130,11 @@
     <string name="split_expenses">Split Expenses</string>
     <string name="original_expense">Original Expense</string>
     <string name="retry">Retry</string>
+    <string name="please_select_expense_group">Please select expense group</string>
+    <string name="please_select_expense_type">Please select expense type</string>
+    <string name="please_select_department">Please select department</string>
+    <string name="please_select_currency">Please select currency</string>
+    <string name="please_enter_total_amount">Please enter total amount</string>
+    <string name="please_enter_tax">Please enter tax</string>
 
 </resources>

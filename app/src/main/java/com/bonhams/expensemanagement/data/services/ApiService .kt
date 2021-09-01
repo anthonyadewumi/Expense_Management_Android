@@ -2,10 +2,7 @@ package com.bonhams.expensemanagement.data.services
 
 import com.bonhams.expensemanagement.BuildConfig
 import com.bonhams.expensemanagement.data.services.requests.*
-import com.bonhams.expensemanagement.data.services.responses.ClaimsResponse
-import com.bonhams.expensemanagement.data.services.responses.CommonResponse
-import com.bonhams.expensemanagement.data.services.responses.LoginResponse
-import com.bonhams.expensemanagement.data.services.responses.MileageListResponse
+import com.bonhams.expensemanagement.data.services.responses.*
 import com.bonhams.expensemanagement.utils.RetrofitHeaderInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -60,6 +57,9 @@ interface ApiService {
 
     @POST("changePassword")
     suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest) : CommonResponse
+
+    @GET("dropdown")
+    suspend fun dropdownData(): DropdownResponse
 
     @GET("logOut")
     suspend fun logoutUser(): CommonResponse

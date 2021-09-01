@@ -6,5 +6,6 @@ import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimReque
 
 class NewMileageClaimRepository(private val apiHelper: ApiHelper) {
 
+    suspend fun dropdownData() = apiHelper.dropdownData()
     suspend fun createNewMileageClaim(mileageClaimRequest: NewMileageClaimRequest) = apiHelper.createNewMileageClaim(mileageClaimRequest)
 }

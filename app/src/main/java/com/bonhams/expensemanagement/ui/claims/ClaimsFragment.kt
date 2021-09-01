@@ -194,6 +194,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
     override fun onClaimCreateCopyClicked(claim: ClaimDetail?, position: Int) {
         Log.d(TAG, "onClaimCreateCopyClicked: $position")
         val fragment = NewClaimFragment()
+        fragment.setClaimDetails(claim)
         (contextActivity as? MainActivity)?.addFragment(fragment)
     }
 }

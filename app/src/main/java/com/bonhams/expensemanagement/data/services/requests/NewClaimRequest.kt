@@ -1,6 +1,7 @@
 package com.bonhams.expensemanagement.data.services.requests
 
 class NewClaimRequest {
+    var title: String? = ""
     var merchantName: String? = ""
     var expenseGroup: String? = ""
     var expenseType: String? = ""

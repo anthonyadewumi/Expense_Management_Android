@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.item_attachment.view.*
 
 
@@ -24,9 +25,8 @@ class AttachmentsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val orderItem = listAttachments?.get(position)
-        orderItem?.let { holder.bindItems(it) }
-
+        val attachmentItem = listAttachments?.get(position)
+        attachmentItem?.let { holder.bindItems(it) }
     }
 
     override fun getItemCount(): Int {
@@ -41,8 +41,13 @@ class AttachmentsAdapter(
         fun bindItems(item: String) {
             Glide.with(itemView.context)
                 .load(item)
+                .apply(
+                    RequestOptions()
+                    .placeholder(R.drawable.ic_default_media)
+                    .error(R.drawable.ic_default_media)
+                )
+                .placeholder(R.drawable.ic_default_media)
                 .error(R.drawable.ic_default_media)
-                .fallback(R.drawable.ic_default_media)
                 .into(itemView.ivAttachment);
         }
     }

@@ -45,6 +45,8 @@
             android:background="@drawable/round_border_gray"
             android:hint="@string/search"
             android:imeOptions="actionSearch"
+            android:inputType="textNoSuggestions"
+            android:selectAllOnFocus="true"
             style="@style/TextRegular12"
             android:textColor="@color/colorTextBlack"
             android:textSize="@dimen/_13ssp"
