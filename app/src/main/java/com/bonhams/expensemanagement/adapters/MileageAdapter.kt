@@ -14,7 +14,6 @@ import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
-import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 
 class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHolder>(MILEAGE_COMPARATOR) {
@@ -25,11 +24,11 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
         mileageListener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MileageAdapter.ViewHolder {
-        return MileageAdapter.ViewHolder.create(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder.create(parent)
     }
 
-    override fun onBindViewHolder(holder: MileageAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val claimItem = getItem(position)
         claimItem?.let { holder.bind(it, position, mileageListener) }
     }
@@ -45,9 +44,9 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
             binding.tvStatus.text = item.status.replaceFirstChar(Char::uppercase)
 
             when {
-                item.status.equals(Constants.STATUS_PENDING, true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
-                item.status.equals(Constants.STATUS_APPROVED, true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
-                else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
+                item.status.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                item.status.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                else -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
             }
 
             binding.tvCreateCopy.setOnClickListener(View.OnClickListener {

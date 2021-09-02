@@ -13,7 +13,6 @@ import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
-import kotlinx.android.synthetic.main.item_claims_and_mileage.view.*
 
 class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>(CLAIM_COMPARATOR) {
 
@@ -45,12 +44,11 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
                     item.reportingMStatus.replaceFirstChar(Char::uppercase)
 
                 when {
-                    item.reportingMStatus.equals(Constants.STATUS_PENDING, true) -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
-                    item.reportingMStatus.equals(Constants.STATUS_APPROVED, true) ->itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
-                    else -> itemView.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
+                    item.reportingMStatus.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                    item.reportingMStatus.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                    else -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
                 }
             }
-
 
             binding.tvCreateCopy.setOnClickListener(View.OnClickListener {
                 Log.d("ClaimsAdapter", "bindItems: 1111111")
