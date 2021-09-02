@@ -42,8 +42,8 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
     fun getNewClaimRequest(merchantName: String, expenseGroup: String, expenseType: String,
                            companyNumber: String, department: String, dateSubmitted: String,
                            currency: String, totalAmount: String, tax: String,
-                           netAmount: String, description: String, attachments: String,
-                           split: String): NewClaimRequest {
+                           netAmount: String, description: String,
+                           attachments: List<String>): NewClaimRequest {
         val newClaimRequest = NewClaimRequest()
         newClaimRequest.merchantName = merchantName
         newClaimRequest.expenseGroup = expenseGroup
@@ -58,7 +58,6 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
         newClaimRequest.title = description
         newClaimRequest.description = description
         newClaimRequest.attachments = attachments
-        newClaimRequest.split = split
         return newClaimRequest
     }
 

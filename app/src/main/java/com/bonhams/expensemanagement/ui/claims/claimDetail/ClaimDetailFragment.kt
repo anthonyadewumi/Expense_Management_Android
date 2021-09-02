@@ -52,22 +52,29 @@ class ClaimDetailFragment() : Fragment() {
     }
 
     private fun setupView(){
-        binding.tvMerchantName.text = claimDetail.merchant
-        binding.tvExpenseGroup.text = claimDetail.expenseGroupName
-        binding.tvExpenseType.text = claimDetail.expenseTypeName
-        binding.tvCompanyNumber.text = claimDetail.companyName
-        binding.tvDepartment.text = claimDetail.department
-        binding.tvDateOfSubmission.text = Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
-        binding.tvCurrency.text = claimDetail.currencyTypeName
-        binding.tvTotalAmount.text = claimDetail.totalAmount
-        binding.tvTax.text = claimDetail.tax
-        binding.tvNetAmount.text = claimDetail.netAmount
-        binding.tvRMStatus.text = claimDetail.reportingMStatus
-        binding.tvFMStatus.text = claimDetail.financeMStatus
-        binding.tvDescription.text = claimDetail.description
+        if(this::claimDetail.isInitialized) {
+            binding.tvMerchantName.text = claimDetail.merchant
+            binding.tvExpenseGroup.text = claimDetail.expenseGroupName
+            binding.tvExpenseType.text = claimDetail.expenseTypeName
+            binding.tvCompanyNumber.text = claimDetail.companyName
+            binding.tvDepartment.text = claimDetail.department
+            binding.tvDateOfSubmission.text = Utils.getFormattedDate(
+                claimDetail.createdOn,
+                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+            )
+            binding.tvCurrency.text = claimDetail.currencyTypeName
+            binding.tvTotalAmount.text = claimDetail.totalAmount
+            binding.tvTax.text = claimDetail.tax
+            binding.tvNetAmount.text = claimDetail.netAmount
+            binding.tvRMStatus.text = claimDetail.reportingMStatus
+            binding.tvFMStatus.text = claimDetail.financeMStatus
+            binding.tvDescription.text = claimDetail.description
 
-        if(claimDetail.attachments.trim().isEmpty())
-            viewModel.attachmentsList.add(claimDetail.attachments)
+            if (claimDetail.attachments.trim().isEmpty()) {
+                viewModel.attachmentsList.add(claimDetail.attachments)
+            }
+        }
+        refreshAttachments()
     }
 
     private fun setupViewModel() {

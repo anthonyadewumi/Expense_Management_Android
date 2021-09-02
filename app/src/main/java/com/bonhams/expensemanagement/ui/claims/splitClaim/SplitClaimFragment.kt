@@ -5,16 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.Toast
+import android.widget.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
+import com.bonhams.expensemanagement.data.model.Company
+import com.bonhams.expensemanagement.data.model.Department
+import com.bonhams.expensemanagement.data.model.ExpenseType
+import com.bonhams.expensemanagement.data.model.SplitClaimDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
@@ -67,7 +68,7 @@ class SplitClaimFragment() : Fragment() {
 
         binding.btnSubmit.setOnClickListener(View.OnClickListener {
             contextActivity?.let {
-                if(NoInternetUtils.isConnectedToInternet(it))
+                if (NoInternetUtils.isConnectedToInternet(it))
                     createNewClaim()
                 else
                     Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
@@ -172,6 +173,7 @@ class SplitClaimFragment() : Fragment() {
 
     private fun createNewSplitLayout(){
         val view = View.inflate(contextActivity, R.layout.item_claims_split, null)
+        val linearLayout = view.findViewById<LinearLayout>(R.id.layoutSplit)
         val spnCompany = view.findViewById<Spinner>(R.id.spnCompany)
         val spnDepartment = view.findViewById<Spinner>(R.id.spnDepartment)
         val spnExpense = view.findViewById<Spinner>(R.id.spnExpense)
@@ -182,13 +184,13 @@ class SplitClaimFragment() : Fragment() {
         val companyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            newClaimViewModel.expenseGroupList
+            newClaimViewModel.companyList
         )
         spnCompany?.adapter = companyAdapter
         spnCompany?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.expenseGroupList[position]
+                val item = newClaimViewModel.companyList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -198,13 +200,13 @@ class SplitClaimFragment() : Fragment() {
         var departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            newClaimViewModel.expenseGroupList
+            newClaimViewModel.departmentList
         )
         spnDepartment?.adapter = departmentAdapter
         spnDepartment?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.expenseGroupList[position]
+                val item = newClaimViewModel.departmentList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -214,23 +216,27 @@ class SplitClaimFragment() : Fragment() {
         var expenseAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
-            newClaimViewModel.expenseGroupList
+            newClaimViewModel.expenseTypeList
         )
         spnExpense?.adapter = expenseAdapter
         spnExpense?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.expenseGroupList[position]
+                val item = newClaimViewModel.expenseTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
+
+        viewModel.splitCount = viewModel.splitCount + 1
+        linearLayout.tag = viewModel.splitCount
+
         binding.layoutSplitDetail.addView(view)
     }
 
     private fun createNewClaim() {
-        if (validateCreateClaim()) {
+        if(!validateAllSplitDetails()){
             onCreateClaimFailed()
             return
         }
@@ -239,27 +245,110 @@ class SplitClaimFragment() : Fragment() {
         setCreateClaimObserver(claimRequest)
     }
 
-    private fun validateCreateClaim(): Boolean {
-        /*edtOldPassword?.error = viewModel.validatePassword(
-            edtOldPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password),
-            true
-        )
+    private fun validateAllSplitDetails(): Boolean{
+        var isValid = true
+        Log.d(TAG, "validateAllSplitDetails viewModel.splitCount : ${viewModel.splitCount}")
+        claimRequest.split.clear()
 
-        edtNewPassword?.error = viewModel.validatePassword(
-            edtNewPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password),
-            false
-        )
+        if(viewModel.splitCount <= 0){
+            val companyOne = binding.spnCompany.selectedItem as Company?
+            val departmentOne = binding.spnDepartment.selectedItem as Department?
+            val expenseTypeOne = binding.spnExpense.selectedItem as ExpenseType?
+            val totalAmountOne = binding.edtTotalAmount.text
+            val taxCodeOne = binding.edtTaxCode.text
 
-        edtConfirmPassword?.error = viewModel.validateConfirmPassword(
-            edtNewPassword?.text.toString().trim(),
-            edtConfirmPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password_not_match)
-        )
+            if(companyOne?.id.isNullOrEmpty() || departmentOne?.id.isNullOrEmpty()
+                || expenseTypeOne?.expenseCodeID.isNullOrEmpty() || totalAmountOne.isNullOrEmpty()
+                || taxCodeOne.isNullOrEmpty()) {
+                isValid = false
 
-        return (viewModel.validOldPassword || viewModel.validPassword || viewModel.validConfirmPassword)*/
-        return false
+                return isValid
+            }
+
+            val splitOne = SplitClaimDetail(companyOne?.id!!, departmentOne?.id!!, expenseTypeOne?.expenseCodeID!!,
+                totalAmountOne.toString(), taxCodeOne.toString())
+
+            Log.d(
+                TAG, "validateAllSplitDetails Split 0 : " +
+                        "company: ${splitOne.company} " +
+                        "department: ${splitOne.department} " +
+                        "expense: ${splitOne.expenseType} " +
+                        "totalAmount: ${splitOne.totalAmount} " +
+                        "taxCode: ${splitOne.taxCode}"
+            )
+
+            claimRequest.split.add(splitOne)
+        }
+        else{
+            try {
+                val companyOne = binding.spnCompany.selectedItem as Company?
+                val departmentOne = binding.spnDepartment.selectedItem as Department?
+                val expenseTypeOne = binding.spnExpense.selectedItem as ExpenseType?
+                val totalAmountOne = binding.edtTotalAmount.text
+                val taxCodeOne = binding.edtTaxCode.text
+
+                if(companyOne?.id.isNullOrEmpty() || departmentOne?.id.isNullOrEmpty()
+                    || expenseTypeOne?.expenseCodeID.isNullOrEmpty() || totalAmountOne.isNullOrEmpty()
+                    || taxCodeOne.isNullOrEmpty()) {
+                    isValid = false
+
+                    return isValid
+                }
+
+                val splitOne = SplitClaimDetail(companyOne?.id!!, departmentOne?.id!!, expenseTypeOne?.expenseCodeID!!,
+                    totalAmountOne.toString(), taxCodeOne.toString())
+
+                Log.d(
+                    TAG, "validateAllSplitDetails Split 0 : " +
+                            "company: ${splitOne.company} " +
+                            "department: ${splitOne.department} " +
+                            "expense: ${splitOne.expenseType} " +
+                            "totalAmount: ${splitOne.totalAmount} " +
+                            "taxCode: ${splitOne.taxCode}"
+                )
+
+                claimRequest.split.add(splitOne)
+
+                for (i in 1..viewModel.splitCount) {
+                    val company = ((binding.layoutSplitDetail.getChildAt(i).findViewById(R.id.spnCompany)
+                            as Spinner?)?.selectedItem as Company?)
+                    val department = ((binding.layoutSplitDetail.getChildAt(i).findViewById(R.id.spnDepartment)
+                            as Spinner?)?.selectedItem as Department?)
+                    val expenseType = ((binding.layoutSplitDetail.getChildAt(i).findViewById(R.id.spnExpense)
+                            as Spinner?)?.selectedItem as ExpenseType?)
+                    val totalAmount = (binding.layoutSplitDetail.getChildAt(i).findViewById(R.id.edtTotalAmount)
+                            as EditText?)?.text
+                    val taxCode = (binding.layoutSplitDetail.getChildAt(i).findViewById(R.id.edtTaxCode)
+                            as EditText?)?.text
+
+                    if(company?.id.isNullOrEmpty() || department?.id.isNullOrEmpty()
+                        || expenseType?.expenseCodeID.isNullOrEmpty() || totalAmount.isNullOrEmpty()
+                        || taxCode.isNullOrEmpty()) {
+                        isValid = false
+                        break
+                    }
+
+                    val split = SplitClaimDetail(company?.id!!, department?.id!!, expenseType?.expenseCodeID!!,
+                        totalAmount.toString(), taxCode.toString())
+
+                    claimRequest.split.add(split)
+                    Log.d(
+                        TAG, "validateAllSplitDetails Split $i : " +
+                                "company: ${split.company} " +
+                                "department: ${split.department} " +
+                                "expense: ${split.expenseType} " +
+                                "totalAmount: ${split.totalAmount} " +
+                                "taxCode: ${split.taxCode}"
+                    )
+                }
+            }
+            catch (e: Exception){
+                Log.e(TAG, "validateAllSplitDetails: ${e.message}")
+                isValid = false
+            }
+        }
+
+        return isValid
     }
 
     private fun setResponse(commonResponse: CommonResponse) {
@@ -270,6 +359,6 @@ class SplitClaimFragment() : Fragment() {
 
     private fun onCreateClaimFailed() {
         binding.btnSubmit.isEnabled = true
+        Toast.makeText(contextActivity, getString(R.string.please_enter_all_mandatory_fields), Toast.LENGTH_SHORT).show()
     }
-
 }

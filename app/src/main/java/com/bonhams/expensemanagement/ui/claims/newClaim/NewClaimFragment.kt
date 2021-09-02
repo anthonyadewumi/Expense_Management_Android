@@ -29,6 +29,7 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.RefreshPageListener
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -58,6 +59,8 @@ class NewClaimFragment() : Fragment() {
     private lateinit var departmentAdapter: CustomSpinnerAdapter
     private lateinit var currencyAdapter: CustomSpinnerAdapter
     private lateinit var attachmentsAdapter: AttachmentsAdapter
+    private lateinit var refreshPageListener: RefreshPageListener
+    private var shouldRefreshPage: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -82,6 +85,10 @@ class NewClaimFragment() : Fragment() {
         detail?.let {
             claimDetail = it
         }
+    }
+
+    fun setRefreshPageListener(refreshListener: RefreshPageListener){
+        refreshPageListener = refreshListener
     }
 
     private fun setupView(){
@@ -339,8 +346,7 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun getClaimRequest() : NewClaimRequest{
-      attachments = viewModel.attachmentsList.joinToString { it }
-
+//      attachments = viewModel.attachmentsList.joinToString { it }
         return viewModel.getNewClaimRequest(
             binding.edtMerchantName.text.toString().trim(),
             if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
@@ -356,8 +362,7 @@ class NewClaimFragment() : Fragment() {
             binding.edtTax.text.toString().trim(),
             binding.edtNetAmount.text.toString().trim(),
             binding.edtDescription.text.toString().trim(),
-            attachments,
-            attachments
+            viewModel.attachmentsList
         )
     }
 
@@ -373,6 +378,12 @@ class NewClaimFragment() : Fragment() {
         binding.mProgressBars.visibility = View.GONE
         binding.btnSubmit.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
+        if(commonResponse.success) {
+            shouldRefreshPage = true
+            (contextActivity as? MainActivity)?.backButtonPressed()/*supportFragmentManager?.popBackStack(
+                    HomeFragment::class.java.simpleName, 0
+                )*/
+        }
     }
 
     private fun onCreateClaimFailed() {
@@ -499,6 +510,13 @@ class NewClaimFragment() : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(shouldRefreshPage && this::refreshPageListener.isInitialized){
+            refreshPageListener.refreshPage()
         }
     }
 }

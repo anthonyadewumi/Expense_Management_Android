@@ -1,5 +1,7 @@
 package com.bonhams.expensemanagement.data.services.requests
 
+import com.bonhams.expensemanagement.data.model.SplitClaimDetail
+
 class NewClaimRequest {
     var title: String? = ""
     var merchantName: String? = ""
@@ -14,5 +16,5 @@ class NewClaimRequest {
     var netAmount: String? = ""
     var description: String? = ""
     var attachments: List<String> = emptyList()
-    var split: String? = ""
+    var split: MutableList<SplitClaimDetail> = mutableListOf()
 }

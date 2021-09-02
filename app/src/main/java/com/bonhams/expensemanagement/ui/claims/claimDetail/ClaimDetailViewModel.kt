@@ -18,26 +18,4 @@ class ClaimDetailViewModel(private val claimDetailRepository: ClaimDetailReposit
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
-
-    fun getNewClaimRequest(merchantName: String, expenseGroup: String, expenseType: String,
-                           companyNumber: String, department: String, dateSubmitted: String,
-                           currency: String, totalAmount: String, tax: String,
-                           netAmount: String, description: String, attachments: String,
-                           split: String): NewClaimRequest {
-        val newClaimRequest = NewClaimRequest()
-        newClaimRequest.merchantName = merchantName
-        newClaimRequest.expenseGroup = expenseGroup
-        newClaimRequest.expenseType = expenseType
-        newClaimRequest.companyNumber = companyNumber
-        newClaimRequest.department = department
-        newClaimRequest.dateSubmitted = dateSubmitted
-        newClaimRequest.currency = currency
-        newClaimRequest.totalAmount = totalAmount
-        newClaimRequest.tax = tax
-        newClaimRequest.netAmount = netAmount
-        newClaimRequest.description = description
-        newClaimRequest.attachments = attachments
-        newClaimRequest.split = split
-        return newClaimRequest
-    }
 }

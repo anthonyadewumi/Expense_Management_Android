@@ -27,12 +27,13 @@ import com.bonhams.expensemanagement.ui.home.HomeViewModel
 import com.bonhams.expensemanagement.ui.home.HomeViewModelFactory
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
+import com.bonhams.expensemanagement.utils.RefreshPageListener
 import com.bonhams.expensemanagement.utils.Utils.Companion.showKeyboard
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
 
-class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
+class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPageListener {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -124,6 +125,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
         lifecycleScope.launchWhenCreated {
             viewModel.claims.collectLatest {
                 claimsAdapter.submitData(it)
+                claimsAdapter.notifyDataSetChanged()
             }
         }
 
@@ -195,6 +197,13 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener {
         Log.d(TAG, "onClaimCreateCopyClicked: $position")
         val fragment = NewClaimFragment()
         fragment.setClaimDetails(claim)
+        fragment.setRefreshPageListener(this)
         (contextActivity as? MainActivity)?.addFragment(fragment)
+    }
+
+    override fun refreshPage() {
+        if(this::claimsAdapter.isInitialized){
+            claimsAdapter.refresh()
+        }
     }
 }

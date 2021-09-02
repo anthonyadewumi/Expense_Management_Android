@@ -143,5 +143,6 @@
     <string name="please_select_distance">Please select distance</string>
     <string name="please_select_car_type">Please select car type</string>
     <string name="please_enter_claimed_miles">Please enter claimed miles</string>
+    <string name="please_enter_all_mandatory_fields">Please enter all mandatory fields</string>
 
 </resources>

@@ -162,132 +162,143 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                style="@style/TextRegular12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/company_star"
-                android:textColor="@color/colorTextBlack" />
-
-            <Spinner
-                android:id="@+id/spnCompany"
-                style="@style/outlineBoxExposedDropdown"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/spinner_bg"
-                android:hint="@string/expense_group"
-                android:minHeight="@dimen/_30sdp"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/colorTextBlack"
-                android:textSize="@dimen/_13ssp" />
-
-            <TextView
-                style="@style/TextRegular12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/department_star"
-                android:textColor="@color/colorTextBlack" />
-
-            <Spinner
-                android:id="@+id/spnDepartment"
-                style="@style/outlineBoxExposedDropdown"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/spinner_bg"
-                android:hint="@string/department"
-                android:minHeight="@dimen/_30sdp"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/colorTextBlack"
-                android:textSize="@dimen/_13ssp" />
-
-            <TextView
-                style="@style/TextRegular12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/expense_star"
-                android:textColor="@color/colorTextBlack" />
-
-            <Spinner
-                android:id="@+id/spnExpense"
-                style="@style/outlineBoxExposedDropdown"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_35sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/spinner_bg"
-                android:hint="@string/expense"
-                android:minHeight="@dimen/_30sdp"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/colorTextBlack"
-                android:textSize="@dimen/_13ssp" />
-
-            <TextView
-                style="@style/TextRegular12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/total_amount_star"
-                android:textColor="@color/colorTextBlack" />
-
-            <EditText
-                android:id="@+id/edtTotalAmount"
-                style="@style/TextRegular12"
+            <LinearLayout
+                android:id="@+id/layoutSplit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/_35sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/round_border_gray_white_bg"
-                android:hint="@string/total_amount"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/colorTextBlack"
-                android:textSize="@dimen/_13ssp" />
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                style="@style/TextRegular12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:text="@string/tax_code_star"
-                android:textColor="@color/colorTextBlack" />
+                <TextView
+                    style="@style/TextRegular12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/company_star"
+                    android:textColor="@color/colorTextBlack" />
 
-            <EditText
-                android:id="@+id/edtTaxCode"
-                style="@style/TextRegular12"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/_35sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@drawable/round_border_gray_white_bg"
-                android:hint="@string/tax_code"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/colorTextBlack"
-                android:textSize="@dimen/_13ssp" />
+                <Spinner
+                    android:id="@+id/spnCompany"
+                    style="@style/outlineBoxExposedDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/spinner_bg"
+                    android:hint="@string/expense_group"
+                    android:minHeight="@dimen/_30sdp"
+                    android:padding="@dimen/_10sdp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="@dimen/_13ssp" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnSplit"
-                style="@style/TextRegular12"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_15sdp"
-                android:background="@drawable/round_border_theme_transparent_bg"
-                android:text="@string/split"
-                android:textAllCaps="false"
-                android:textColor="@color/secondary"
-                android:textStyle="bold"
-                android:visibility="gone"/>
+                <TextView
+                    style="@style/TextRegular12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/department_star"
+                    android:textColor="@color/colorTextBlack" />
+
+                <Spinner
+                    android:id="@+id/spnDepartment"
+                    style="@style/outlineBoxExposedDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/spinner_bg"
+                    android:hint="@string/department"
+                    android:minHeight="@dimen/_30sdp"
+                    android:padding="@dimen/_10sdp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="@dimen/_13ssp" />
+
+                <TextView
+                    style="@style/TextRegular12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/expense_star"
+                    android:textColor="@color/colorTextBlack" />
+
+                <Spinner
+                    android:id="@+id/spnExpense"
+                    style="@style/outlineBoxExposedDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/spinner_bg"
+                    android:hint="@string/expense"
+                    android:minHeight="@dimen/_30sdp"
+                    android:padding="@dimen/_10sdp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="@dimen/_13ssp" />
+
+                <TextView
+                    style="@style/TextRegular12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/total_amount_star"
+                    android:textColor="@color/colorTextBlack" />
+
+                <EditText
+                    android:id="@+id/edtTotalAmount"
+                    style="@style/TextRegular12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/round_border_gray_white_bg"
+                    android:hint="@string/total_amount"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:padding="@dimen/_10sdp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="@dimen/_13ssp" />
+
+                <TextView
+                    style="@style/TextRegular12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/tax_code_star"
+                    android:textColor="@color/colorTextBlack" />
+
+                <EditText
+                    android:id="@+id/edtTaxCode"
+                    style="@style/TextRegular12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_35sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/round_border_gray_white_bg"
+                    android:hint="@string/tax_code"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    android:padding="@dimen/_10sdp"
+                    android:textColor="@color/colorTextBlack"
+                    android:textSize="@dimen/_13ssp" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnSplit"
+                    style="@style/TextRegular12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:background="@drawable/round_border_theme_transparent_bg"
+                    android:text="@string/split"
+                    android:textAllCaps="false"
+                    android:textColor="@color/secondary"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
 
             <!--<include
                 android:id="@+id/layoutClaimSplit"
