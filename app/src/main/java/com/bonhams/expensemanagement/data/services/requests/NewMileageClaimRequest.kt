@@ -1,5 +1,7 @@
 package com.bonhams.expensemanagement.data.services.requests
 
+import com.google.gson.annotations.SerializedName
+
 class NewMileageClaimRequest {
 
     var companyName: String? = ""
@@ -7,7 +9,8 @@ class NewMileageClaimRequest {
     var department: String? = ""
     var dateSubmitted: String? = ""
     var expenseType:  String? = ""
-    var MerchantName: String? = ""
+    @SerializedName("MerchantName")
+    var merchantName: String? = ""
     var tripDate: String? = ""
     var tripFrom: String? = ""
     var tripTo: String? = ""

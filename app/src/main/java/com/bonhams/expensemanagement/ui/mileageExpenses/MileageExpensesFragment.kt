@@ -185,12 +185,14 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
     override fun onMileageExpenseItemClicked(claim: MileageDetail?, position: Int) {
         Log.d(TAG, "onMileageExpenseItemClicked: $position")
         val fragment = MileageDetailFragment()
+        fragment.setMileageDetails(claim)
         (contextActivity as? MainActivity)?.addFragment(fragment)
     }
 
     override fun onMileageExpenseCreateCopyClicked(claim: MileageDetail?, position: Int) {
         Log.d(TAG, "onMileageExpenseCreateCopyClicked: $position")
         val fragment = NewMileageClaimFragment()
+        fragment.setMileageDetails(claim)
         (contextActivity as? MainActivity)?.addFragment(fragment)
     }
 

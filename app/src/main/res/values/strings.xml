@@ -136,5 +136,12 @@
     <string name="please_select_currency">Please select currency</string>
     <string name="please_enter_total_amount">Please enter total amount</string>
     <string name="please_enter_tax">Please enter tax</string>
+    <string name="please_select_mileage_type">Please select mileage type</string>
+    <string name="please_enter_merchant_name">Please enter merchant name</string>
+    <string name="please_select_starting_location">Please select starting location</string>
+    <string name="please_select_end_location">Please select end location</string>
+    <string name="please_select_distance">Please select distance</string>
+    <string name="please_select_car_type">Please select car type</string>
+    <string name="please_enter_claimed_miles">Please enter claimed miles</string>
 
 </resources>

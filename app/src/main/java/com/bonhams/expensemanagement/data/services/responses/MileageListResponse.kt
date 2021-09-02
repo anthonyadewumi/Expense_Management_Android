@@ -8,8 +8,8 @@ class MileageListResponse {
     var success: Boolean = false
     @SerializedName("message")
     var message: String? = ""
-    @SerializedName("data")
-    var mileageList: List<MileageDetail>? = null
+    @SerializedName("list")
+    var mileageList: List<MileageDetail>? = emptyList()
 }
 
 

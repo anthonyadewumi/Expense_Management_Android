@@ -3,6 +3,7 @@ package com.bonhams.expensemanagement.data.model
 import com.google.gson.annotations.SerializedName
 
 data class MileageDetail (
+
     val id: String = "",
     val title: String = "",
     val description: String = "",
@@ -11,6 +12,10 @@ data class MileageDetail (
     val status: String = "",
     val reportingMStatus: String = "",
     val financeMStatus: String = "",
+    @SerializedName("group.id")
+    val groupID: String = "",
+    @SerializedName("group.name")
+    val groupName: String = "",
     val type: String = "",
     @SerializedName("companyname")
     val companyName: String = "",
@@ -18,6 +23,8 @@ data class MileageDetail (
     @SerializedName("currency_id")
     val currencyID: String = "",
     val currency: String = "",
+    @SerializedName("currency_symbol")
+    val currencySymbol: String = "",
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",
@@ -30,5 +37,7 @@ data class MileageDetail (
     val parking: String = "",
     val petrolAmount: String = "",
     val carType: String = "",
-    val createdBy: String? = null
+    @SerializedName("user_id")
+    val userID: String = "",
+    val createdBy: String = "",
 )

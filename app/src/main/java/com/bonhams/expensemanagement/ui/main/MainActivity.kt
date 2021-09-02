@@ -37,6 +37,7 @@ import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
 import com.bonhams.expensemanagement.ui.login.LoginActivity
+import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
@@ -99,7 +100,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun backButtonPressed(){
+     fun backButtonPressed(){
         // Go to the previous fragment
         supportFragmentManager.popBackStack()
         // Reset app bar
@@ -441,7 +442,7 @@ class MainActivity : BaseActivity() {
     /*
     * Fragment backstack functions
     * */
-    private fun removeAnyOtherFragVisible(){
+    fun removeAnyOtherFragVisible(){
         supportFragmentManager.fragments.forEach {
             if (it !is HomeFragment) {
                 supportFragmentManager.beginTransaction().remove(it).commit()
@@ -463,6 +464,10 @@ class MainActivity : BaseActivity() {
             fragment,
             fragment.javaClass.simpleName
         ).addToBackStack(fragment.javaClass.simpleName).commit()
+    }
+
+    fun popFragment() {
+        supportFragmentManager.popBackStack()
     }
 
     private fun fragmentBackstackListener(){
@@ -498,6 +503,12 @@ class MainActivity : BaseActivity() {
                     setAppbarTitle(getString(R.string.create_mileage_claim))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
+                }
+                else if(fragName.equals(MileageDetailFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.mileage_details))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                    showAppbarMore(true)
                 }
                 else if(fragName.equals(GPSTrackingFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.start_gps))

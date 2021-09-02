@@ -128,7 +128,6 @@
                     android:minHeight="@dimen/_35sdp"
                     android:hint="@string/company_number"
                     android:imeOptions="actionNext"
-                    android:inputType="number"
                     style="@style/TextRegular12"
                     android:textColor="@color/colorTextBlack"
                     android:background="@drawable/round_border_gray_white_bg"

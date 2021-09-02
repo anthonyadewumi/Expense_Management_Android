@@ -13,6 +13,6 @@ class NewClaimRequest {
     var tax: String? = ""
     var netAmount: String? = ""
     var description: String? = ""
-    var attachments: String? = ""
+    var attachments: List<String> = emptyList()
     var split: String? = ""
 }

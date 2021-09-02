@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
+import com.bonhams.expensemanagement.data.model.Currency
+import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
@@ -25,6 +27,7 @@ import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
 import com.bonhams.expensemanagement.databinding.FragmentNewMileageClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -53,6 +56,7 @@ class NewMileageClaimFragment() : Fragment() {
     private lateinit var currencyAdapter: CustomSpinnerAdapter
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private var attachments = "1, 2, 3"
+    private lateinit var mileageDetail: MileageDetail
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,8 +72,47 @@ class NewMileageClaimFragment() : Fragment() {
         setClickListeners()
         setupAttachmentRecyclerView()
         setDropdownDataObserver()
+        setupView()
 
         return view
+    }
+
+    fun setMileageDetails(detail: MileageDetail?){
+        detail?.let {
+            mileageDetail = it
+        }
+    }
+
+    private fun setupView(){
+        if(this::mileageDetail.isInitialized) {
+            binding.edtCompanyName.setText(mileageDetail.companyName)
+            binding.edtMileageType.setText(mileageDetail.department)
+            binding.tvDateOfSubmission.text = Utils.getFormattedDate(
+                mileageDetail.submittedOn,
+                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+            )
+            binding.edtMerchantName.setText(mileageDetail.merchant)
+            binding.tvDateOfTrip.text = Utils.getFormattedDate(
+                mileageDetail.tripDate,
+                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+            )
+            binding.edtTripFrom.text = mileageDetail.fromLocation
+            binding.edtTripTo.text = mileageDetail.toLocation
+            binding.edtClaimedMiles.setText(mileageDetail.claimedMileage)
+            binding.edtPetrolAmount.setText(mileageDetail.petrolAmount)
+            binding.edtParkAmount.setText(mileageDetail.parking)
+            binding.edtTotalAmount.setText(mileageDetail.totalAmount)
+            binding.edtTax.setText(mileageDetail.tax)
+            binding.edtNetAmount.setText(mileageDetail.netAmount)
+            binding.edtDescription.setText(mileageDetail.description)
+
+
+            binding.switchRoundTrip.isChecked = mileageDetail.isRoundTrip == "1"
+            /*if(mileageDetail.attachments.trim().isEmpty())
+            viewModel.attachmentsList.add(mileageDetail.attachments)*/
+        }
+
+        refreshAttachments()
     }
 
     private fun setClickListeners(){
@@ -187,6 +230,17 @@ class NewMileageClaimFragment() : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+        if(this::mileageDetail.isInitialized){
+            binding.spnDepartment
+            binding.spnExpenseType
+            binding.spnDistance
+            binding.spnCarType
+            binding.spnCurrency
+
+            val currency: Currency? = viewModel.currencyList.find { it.id == mileageDetail.currencyID }
+
+        }
     }
 
     private fun setupAttachmentRecyclerView(){
@@ -201,27 +255,28 @@ class NewMileageClaimFragment() : Fragment() {
     }
 
     private fun createNewClaim() {
-        if (validateCreateClaim()) {
-            onCreateClaimFailed()
-            return
-        }
 
-        binding.btnSubmit.visibility = View.GONE
-        val changePasswordRequest = viewModel.getNewMileageClaimRequest(
+        val claimRequest = viewModel.getNewMileageClaimRequest(
             binding.edtCompanyName.text.toString().trim(),
             binding.edtMileageType.text.toString().trim(),
-            "1",
-            "12/08/2021",//tvDateOfSubmission?.text.toString().trim(),
-            "1",
+            if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
+            Utils.getDateInServerRequestFormat(
+                binding.tvDateOfSubmission.text.toString().trim(),
+                Constants.DD_MMM_YYYY_FORMAT
+            ),
+            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
             binding.edtMerchantName.text.toString().trim(),
-            "12/08/2021",//tvDateOfTrip?.text.toString().trim(),
-            "test",//edtTripFrom?.text.toString().trim(),
-            "test", //edtTripTo?.text.toString().trim(),
-            "1",//tvDateOfSubmission?.text.toString().trim(),
-            "1", //spnCurrency.selectedItemPosition,
+            Utils.getDateInServerRequestFormat(
+                binding.tvDateOfTrip.text.toString().trim(),
+                Constants.DD_MMM_YYYY_FORMAT
+            ),
+            binding.edtTripFrom.text.toString().trim(),
+            binding.edtTripTo.text.toString().trim(),
+            "1"/*binding.spnDistance*/,
+            if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[binding.spnCarType.selectedItemPosition].id else "", //spnCurrency.selectedItemPosition,
             binding.edtClaimedMiles.text.toString().trim(),
             binding.switchRoundTrip.isChecked.toString(),
-            "1",
+            if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
             binding.edtPetrolAmount.text.toString().trim(),
             binding.edtParkAmount.text.toString().trim(),
             binding.edtTotalAmount.text.toString().trim(),
@@ -230,7 +285,14 @@ class NewMileageClaimFragment() : Fragment() {
             binding.edtDescription.text.toString().trim(),
             attachments
         )
-        setCreateClaimObserver(changePasswordRequest)
+
+        if (validateCreateClaim(claimRequest)) {
+            onCreateClaimFailed()
+            return
+        }
+
+        binding.btnSubmit.visibility = View.GONE
+        setCreateClaimObserver(claimRequest)
     }
 
     private fun setDropdownDataObserver() {
@@ -309,27 +371,12 @@ class NewMileageClaimFragment() : Fragment() {
         })
     }
 
-    private fun validateCreateClaim(): Boolean {
-        /*edtOldPassword?.error = viewModel.validatePassword(
-            edtOldPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password),
-            true
-        )
-
-        edtNewPassword?.error = viewModel.validatePassword(
-            edtNewPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password),
-            false
-        )
-
-        edtConfirmPassword?.error = viewModel.validateConfirmPassword(
-            edtNewPassword?.text.toString().trim(),
-            edtConfirmPassword?.text.toString().trim(),
-            resources.getString(R.string.validate_password_not_match)
-        )
-
-        return (viewModel.validOldPassword || viewModel.validPassword || viewModel.validConfirmPassword)*/
-        return false
+    private fun validateCreateClaim(newClaimRequest: NewMileageClaimRequest): Boolean {
+        val isValid = viewModel.validateNewClaimRequest(newClaimRequest)
+        if(!isValid.first){
+            Toast.makeText(contextActivity, isValid.second, Toast.LENGTH_SHORT).show()
+        }
+        return isValid.first
     }
 
     private fun setResponse(commonResponse: CommonResponse) {
