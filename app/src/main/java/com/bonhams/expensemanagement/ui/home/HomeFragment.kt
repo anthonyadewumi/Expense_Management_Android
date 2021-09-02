@@ -5,17 +5,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.HomeViewPagerAdapter
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
+import com.bonhams.expensemanagement.databinding.FragmentHomeBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.utils.Constants
@@ -26,7 +26,6 @@ import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.datepicker.MaterialDatePicker.INPUT_MODE_CALENDAR
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import java.util.*
 
@@ -35,15 +34,11 @@ class HomeFragment : Fragment() {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-
+    private lateinit var binding: FragmentHomeBinding
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var viewModel: HomeViewModel
-
     private var adapter: HomeViewPagerAdapter? = null
-    private var ivCalendar: ImageView? = null
-    private var ivFilter: ImageView? = null
-    private lateinit var tabLayout: TabLayout
-    private lateinit var viewPager: ViewPager2
+
 
     private val tabsArray = arrayOf(
         "Claims",
@@ -54,14 +49,11 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+    ): View {
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        val view = binding.root
+        binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
-        ivCalendar = view.findViewById(R.id.ivCalendar)
-        ivFilter = view.findViewById(R.id.ivFilter)
-        tabLayout = view.findViewById(R.id.tab_layout)
-        viewPager = view.findViewById(R.id.viewPager)
-
 
         setupViewModel()
         setupViewPager()
@@ -82,12 +74,12 @@ class HomeFragment : Fragment() {
 
     private fun setupViewPager() {
         adapter = HomeViewPagerAdapter(childFragmentManager, lifecycle)
-        viewPager.adapter = adapter
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        binding.viewPager.adapter = adapter
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = tabsArray[position]
         }.attach()
-
-        viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+        binding.viewPager.isUserInputEnabled = false
+        binding.viewPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageScrolled(
                 position: Int,
                 positionOffset: Float,
@@ -108,11 +100,11 @@ class HomeFragment : Fragment() {
 }
 
     private fun setClickListeners(){
-        ivCalendar?.setOnClickListener(View.OnClickListener {
+        binding.ivCalendar.setOnClickListener(View.OnClickListener {
             showDateRangePicker()
         })
 
-        ivFilter?.setOnClickListener(View.OnClickListener {
+        binding.ivFilter.setOnClickListener(View.OnClickListener {
             showStatusFilterBottomSheet()
         })
     }
