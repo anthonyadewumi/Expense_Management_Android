@@ -2,10 +2,13 @@ package com.bonhams.expensemanagement.ui.claims.claimDetail
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
@@ -15,6 +18,9 @@ import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.databinding.FragmentClaimDetailBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
+import com.bonhams.expensemanagement.ui.main.MainActivity
+import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
 
@@ -27,6 +33,7 @@ class ClaimDetailFragment() : Fragment() {
     private lateinit var viewModel: ClaimDetailViewModel
     private lateinit var binding: FragmentClaimDetailBinding
     private lateinit var attachmentsAdapter: AttachmentsAdapter
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,6 +88,10 @@ class ClaimDetailFragment() : Fragment() {
         viewModel = ViewModelProvider(this,
             ClaimDetailViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(ClaimDetailViewModel::class.java)
+
+        mainViewModel.appbarMenuClick?.observe(viewLifecycleOwner, {
+            showPopupMenu(it)
+        })
     }
 
     private fun setupAttachmentRecyclerView(){
@@ -104,5 +115,26 @@ class ClaimDetailFragment() : Fragment() {
             binding.rvAttachments.visibility = View.GONE
             binding.tvAttachments.visibility = View.VISIBLE
         }
+    }
+
+    private fun showPopupMenu(view: View) {
+        val popup = PopupMenu(contextActivity, view)
+        popup.inflate(R.menu.claims_menu)
+        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.action_copy -> {
+                    val fragment = NewClaimFragment()
+                    fragment.setClaimDetails(claimDetail)
+//                    fragment.setRefreshPageListener(this)
+                    (contextActivity as? MainActivity)?.addFragment(fragment)
+                }
+                R.id.action_delete -> {
+
+                }
+            }
+            true
+        })
+
+        popup.show()
     }
 }

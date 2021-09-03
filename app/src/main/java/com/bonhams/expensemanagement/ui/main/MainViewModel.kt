@@ -1,5 +1,6 @@
 package com.bonhams.expensemanagement.ui.main
 
+import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -11,6 +12,7 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
     var responseLogout: MutableLiveData<LogoutResponse>? = null
     var appbarSearchClick: MutableLiveData<Boolean>? = MutableLiveData(false)
     var appbarEditClick: MutableLiveData<Boolean>? = MutableLiveData(false)
+    var appbarMenuClick: MutableLiveData<View>? = MutableLiveData()
 
     init {
         responseLogout = MutableLiveData()
@@ -24,5 +26,4 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
-
 }

@@ -29,7 +29,8 @@
     <string name="settings">Settings</string>
     <string name="settings_colon">Settings :</string>
     <string name="change_password">Change Password</string>
-    <string name="create_copy"><u>Create Copy</u></string>
+    <string name="create_copy">Create Copy</string>
+    <string name="create_copy_underline"><u>Create Copy</u></string>
     <string name="enter_your_email">Enter your email</string>
     <string name="submit">Submit</string>
     <string name="first_name">First Name</string>
@@ -144,5 +145,6 @@
     <string name="please_select_car_type">Please select car type</string>
     <string name="please_enter_claimed_miles">Please enter claimed miles</string>
     <string name="please_enter_all_mandatory_fields">Please enter all mandatory fields</string>
+    <string name="delete">Delete</string>
 
 </resources>

@@ -174,13 +174,14 @@ class MainActivity : BaseActivity() {
         })
 
         binding.appBar.ivSearch.setOnClickListener(View.OnClickListener {
-            Log.d(TAG, "setupClickListeners: appbarSearchClick")
             viewModel.appbarSearchClick?.value = viewModel.appbarSearchClick?.value?.not()
-            Log.d(TAG, "setupClickListeners: appbarSearchClick: ${viewModel.appbarSearchClick?.value}")
         })
 
         binding.appBar.appbarEdit.setOnClickListener(View.OnClickListener {
-            viewModel.appbarEditClick?.value = true
+            viewModel.appbarEditClick?.value = viewModel.appbarEditClick?.value?.not()
+        })
+        binding.appBar.ivMore.setOnClickListener(View.OnClickListener {
+            viewModel.appbarMenuClick?.value = it
         })
     }
 
@@ -228,8 +229,6 @@ class MainActivity : BaseActivity() {
         // Add Item Touch Listener
         binding.navDrawerRv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
             override fun onClick(view: View, position: Int) {
-                Log.d(TAG, "navDrawerRv onClick: $position")
-                Log.d(TAG, "navDrawerRv onClick code: ${navDrawerItems[position].code}")
                 when (navDrawerItems[position].code) {
                     1 -> { // Manually Create
                         setAppbarTitle(getString(R.string.create_new_claim))
@@ -382,7 +381,6 @@ class MainActivity : BaseActivity() {
             for (i in grantResults.indices) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
 //                    viewModel.locationGranted = true
-                    Log.d("MainActivity", "onRequestPermissionsResult: ${permissions[i]}")
                 }
             }
         }
@@ -426,7 +424,6 @@ class MainActivity : BaseActivity() {
         binding.appBar.ivSearch.visibility = View.GONE
         binding.appBar.ivMore.visibility = View.GONE
     }
-
 
     fun showAppbarMore(show: Boolean){
         binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
