@@ -15,8 +15,7 @@
         android:title="@string/delete"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/_12ssp"
-        android:fontFamily="@font/inter_regular"
-        android:visible="false"/>
+        android:fontFamily="@font/inter_regular"/>
 
 
 </menu>

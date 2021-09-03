@@ -49,6 +49,9 @@ interface ApiService {
     @POST("create-claim")
     suspend fun createNewClaim(@Body newClaimRequest: NewClaimRequest) : CommonResponse
 
+    @POST("delete-claim")
+    suspend fun deleteClaim(@Body deleteClaimRequest: DeleteClaimRequest): CommonResponse
+
     @POST("mileage_list")
     suspend fun mileageList(@Body mileageExpenseRequest: MileageExpenseRequest) : MileageListResponse
 

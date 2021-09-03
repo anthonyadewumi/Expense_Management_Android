@@ -146,5 +146,6 @@
     <string name="please_enter_claimed_miles">Please enter claimed miles</string>
     <string name="please_enter_all_mandatory_fields">Please enter all mandatory fields</string>
     <string name="delete">Delete</string>
-
+    <string name="delete_claim">Delete Claim</string>
+    <string name="are_you_sure_you_want_to_delete_claim">Are you sure you want to delete this claim?</string>
 </resources>
