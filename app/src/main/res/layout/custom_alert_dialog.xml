@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="@dimen/_10sdp">
+            android:padding="@dimen/_10sdp">
 
             <TextView
                 android:id="@+id/txtTitle"
@@ -81,14 +81,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="horizontal"
-                android:weightSum="2"
-                android:layout_marginTop="@dimen/_4sdp">
+                android:weightSum="2">
 
                 <Button
                     android:id="@+id/btnPositive"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_height="wrap_content"
                     android:minWidth="@dimen/_80sdp"
+                    android:minHeight="@dimen/_35sdp"
                     android:text="@string/logout"
                     style="@style/TextBold12"
                     android:textColor="@color/secondary"
@@ -100,8 +100,9 @@
                 <Button
                     android:id="@+id/btnNegative"
                     android:layout_width="0dp"
-                    android:layout_height="@dimen/_30sdp"
+                    android:layout_height="wrap_content"
                     android:minWidth="@dimen/_80sdp"
+                    android:minHeight="@dimen/_35sdp"
                     android:text="@string/cancel"
                     style="@style/TextBold12"
                     android:textColor="@color/secondary"
