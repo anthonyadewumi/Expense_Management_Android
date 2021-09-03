@@ -24,6 +24,7 @@ import com.bonhams.expensemanagement.databinding.FragmentSplitClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
@@ -150,7 +151,7 @@ class SplitClaimFragment() : Fragment() {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
+                                Log.d(TAG, "setCreateClaimObserver: ${resource.status}")
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -160,7 +161,7 @@ class SplitClaimFragment() : Fragment() {
                     Status.ERROR -> {
                         binding.mProgressBars.visibility = View.GONE
                         binding.btnSubmit.visibility = View.VISIBLE
-                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
+                        Log.e(TAG, "setCreateClaimObserver: ${it.message}")
                         it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
@@ -270,11 +271,11 @@ class SplitClaimFragment() : Fragment() {
 
             Log.d(
                 TAG, "validateAllSplitDetails Split 0 : " +
-                        "company: ${splitOne.company} " +
+                        "company: ${splitOne.companyNumber} " +
                         "department: ${splitOne.department} " +
                         "expense: ${splitOne.expenseType} " +
                         "totalAmount: ${splitOne.totalAmount} " +
-                        "taxCode: ${splitOne.taxCode}"
+                        "taxCode: ${splitOne.tax}"
             )
 
             claimRequest.split.add(splitOne)
@@ -300,11 +301,11 @@ class SplitClaimFragment() : Fragment() {
 
                 Log.d(
                     TAG, "validateAllSplitDetails Split 0 : " +
-                            "company: ${splitOne.company} " +
+                            "company: ${splitOne.companyNumber} " +
                             "department: ${splitOne.department} " +
                             "expense: ${splitOne.expenseType} " +
                             "totalAmount: ${splitOne.totalAmount} " +
-                            "taxCode: ${splitOne.taxCode}"
+                            "taxCode: ${splitOne.tax}"
                 )
 
                 claimRequest.split.add(splitOne)
@@ -334,11 +335,11 @@ class SplitClaimFragment() : Fragment() {
                     claimRequest.split.add(split)
                     Log.d(
                         TAG, "validateAllSplitDetails Split $i : " +
-                                "company: ${split.company} " +
+                                "company: ${split.companyNumber} " +
                                 "department: ${split.department} " +
                                 "expense: ${split.expenseType} " +
                                 "totalAmount: ${split.totalAmount} " +
-                                "taxCode: ${split.taxCode}"
+                                "taxCode: ${split.tax}"
                     )
                 }
             }
@@ -355,6 +356,10 @@ class SplitClaimFragment() : Fragment() {
         binding.mProgressBars.visibility = View.GONE
         binding.btnSubmit.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
+        if(commonResponse.success) {
+//            (contextActivity as? MainActivity)?.backButtonPressed()
+            (contextActivity as? MainActivity)?.clearFragmentBackstack()
+        }
     }
 
     private fun onCreateClaimFailed() {

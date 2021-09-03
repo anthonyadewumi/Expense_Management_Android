@@ -57,6 +57,7 @@ class NewClaimFragment() : Fragment() {
     private lateinit var binding: FragmentNewClaimBinding
     private lateinit var expenseGroupAdapter: CustomSpinnerAdapter
     private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
+    private lateinit var companyAdapter: CustomSpinnerAdapter
     private lateinit var departmentAdapter: CustomSpinnerAdapter
     private lateinit var currencyAdapter: CustomSpinnerAdapter
     private lateinit var attachmentsAdapter: AttachmentsAdapter
@@ -93,10 +94,9 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun setupView(){
-
         if(this::claimDetail.isInitialized) {
-            binding.edtMerchantName.setText(claimDetail.merchant)
-            binding.edtCompanyNumber.setText(claimDetail.companyName)
+            binding.edtMerchantName.setText(claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant)
+//            binding.edtCompanyNumber.setText(claimDetail.companyName)
             binding.tvDateOfSubmission.text = if(!claimDetail.createdOn.trim().isNullOrEmpty())
                 Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT) else ""
             binding.edtTotalAmount.setText(claimDetail.totalAmount)
@@ -104,22 +104,14 @@ class NewClaimFragment() : Fragment() {
             binding.edtNetAmount.setText(claimDetail.netAmount)
             binding.edtDescription.setText(claimDetail.description)
             viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
-
-            if(viewModel.attachmentsList.size > 0)
-                refreshAttachments()
-            /*
-            binding.spnExpenseGroup
-            binding.spnExpenseType
-            binding.spnDepartment
-            binding.spnCurrency
-
-            if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
-            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
-            if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
-            if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
-            */
-
         }
+        refreshAttachments()
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(requireActivity(),
+            NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(NewClaimViewModel::class.java)
     }
 
     private fun setClickListeners(){
@@ -158,9 +150,7 @@ class NewClaimFragment() : Fragment() {
         binding.spnExpenseGroup.adapter = expenseGroupAdapter
         binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseGroupList[position]
-            }
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -174,9 +164,21 @@ class NewClaimFragment() : Fragment() {
         binding.spnExpenseType.adapter = expenseTypeAdapter
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseTypeList[position]
-            }
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+        // Company List Adapter
+        companyAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.companyList
+        )
+        binding.spnCompanyNumber.adapter = companyAdapter
+        binding.spnCompanyNumber.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -190,9 +192,7 @@ class NewClaimFragment() : Fragment() {
         binding.spnDepartment.adapter = departmentAdapter
         binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.departmentList[position]
-            }
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -206,9 +206,7 @@ class NewClaimFragment() : Fragment() {
         binding.spnCurrency.adapter = currencyAdapter
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.currencyList[position].name
-            }
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -227,6 +225,13 @@ class NewClaimFragment() : Fragment() {
                 val expenseTypePos = viewModel.expenseTypeList.indexOf(expenseType)
                 if (expenseTypePos >= 0) {
                     binding.spnExpenseType.setSelection(expenseTypePos)
+                }
+
+                val company: Company? =
+                    viewModel.companyList.find { it.name == claimDetail.companyName }
+                val companyPos = viewModel.companyList.indexOf(company)
+                if (companyPos >= 0) {
+                    binding.spnCompanyNumber.setSelection(companyPos)
                 }
 
                 val department: Department? =
@@ -270,12 +275,6 @@ class NewClaimFragment() : Fragment() {
             binding.rvAttachments.visibility = View.GONE
             binding.tvNoFileSelected.visibility = View.VISIBLE
         }
-    }
-
-    private fun setupViewModel() {
-        viewModel = ViewModelProvider(requireActivity(),
-            NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(NewClaimViewModel::class.java)
     }
 
     private fun setDropdownDataObserver() {
@@ -387,7 +386,8 @@ class NewClaimFragment() : Fragment() {
             binding.edtMerchantName.text.toString().trim(),
             if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
             if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
-            binding.edtCompanyNumber.text.toString().trim(),
+            if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].code else "",
+//            binding.edtCompanyNumber.text.toString().trim(),
             if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
             Utils.getDateInServerRequestFormat(
                 binding.tvDateOfSubmission.text.toString().trim(),
@@ -416,7 +416,8 @@ class NewClaimFragment() : Fragment() {
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success) {
             shouldRefreshPage = true
-            (contextActivity as? MainActivity)?.backButtonPressed()
+//            (contextActivity as? MainActivity)?.backButtonPressed()
+            (contextActivity as? MainActivity)?.clearFragmentBackstack()
         }
     }
 

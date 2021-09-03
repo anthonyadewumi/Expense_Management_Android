@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -346,7 +347,6 @@ class MainActivity : BaseActivity() {
         finish()
     }
 
-
     /*
     * Location functions
     * */
@@ -470,8 +470,12 @@ class MainActivity : BaseActivity() {
         ).addToBackStack(fragment.javaClass.simpleName).commit()
     }
 
-    fun popFragment() {
-        supportFragmentManager.popBackStack()
+    fun clearFragmentBackstack() {
+        removeAnyOtherFragVisible()
+        supportFragmentManager.popBackStack(HomeFragment::class.java.simpleName, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
+        setupAppbar()
+        showBottomNavbar(true)
     }
 
     private fun fragmentBackstackListener(){
