@@ -3,7 +3,6 @@ package com.bonhams.expensemanagement.data.model
 import com.google.gson.annotations.SerializedName
 
 data class MileageDetail (
-
     val id: String = "",
     val title: String = "",
     val description: String = "",

@@ -5,6 +5,10 @@ import com.google.gson.annotations.SerializedName
 
 data class ClaimDetail(
     val id: String = "",
+    @SerializedName("claim_type")
+    val claimType: String = "",
+    @SerializedName("userId")
+    val userID: String = "",
     val createdBy: String = "",
     @SerializedName("userTypeId")
     val userTypeID: String = "",
@@ -32,8 +36,10 @@ data class ClaimDetail(
     val currencyTypeID: String = "",
     @SerializedName("currency_type_name")
     val currencyTypeName: String = "",
+    @SerializedName("currency_symbol")
+    val currencySymbol: String = "",
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",
-    val attachments: String = "",
+    val attachments: String = ""
 )

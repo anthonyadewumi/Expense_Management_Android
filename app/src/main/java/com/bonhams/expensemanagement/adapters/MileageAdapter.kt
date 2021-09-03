@@ -1,7 +1,6 @@
 package com.bonhams.expensemanagement.adapters
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +39,7 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
         fun bind(item: MileageDetail, position: Int, mileageListener: OnMileageExpenseClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
             binding.tvSubmittedOn.text = Utils.getFormattedDate(item.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
-            binding.tvTotalAmount.text = item.currency + item.totalAmount
+            binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
             binding.tvStatus.text = item.status.replaceFirstChar(Char::uppercase)
 
             when {
@@ -50,12 +49,10 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
             }
 
             binding.tvCreateCopy.setOnClickListener(View.OnClickListener {
-                Log.d("ClaimsAdapter", "bindItems: 1111111")
                 mileageListener.onMileageExpenseCreateCopyClicked(item, position)
             })
 
             binding.claimCardView.setOnClickListener(View.OnClickListener {
-                Log.d("ClaimsAdapter", "bindItems: 2222222")
                 mileageListener.onMileageExpenseItemClicked(item, position)
             })
         }
