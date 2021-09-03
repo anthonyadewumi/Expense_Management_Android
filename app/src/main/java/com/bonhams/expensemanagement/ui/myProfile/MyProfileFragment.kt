@@ -20,15 +20,15 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
+import com.bonhams.expensemanagement.ui.myProfile.editProfile.EditProfileFragment
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
-private const val TAG = "MyProfileFragment"
-
 class MyProfileFragment() : Fragment() {
 
+    private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
     private lateinit var binding: FragmentMyProfileBinding
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -66,6 +66,8 @@ class MyProfileFragment() : Fragment() {
 
         mainViewModel.appbarEditClick?.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: Clicked!!")
+            val fragment = EditProfileFragment()
+            (contextActivity as? MainActivity)?.addFragment(fragment)
         })
     }
 

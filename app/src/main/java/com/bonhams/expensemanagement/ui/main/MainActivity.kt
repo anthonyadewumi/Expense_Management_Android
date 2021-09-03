@@ -42,6 +42,7 @@ import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDet
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
+import com.bonhams.expensemanagement.ui.myProfile.editProfile.EditProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
@@ -534,6 +535,11 @@ class MainActivity : BaseActivity() {
                     hideAppbarBackAndMenu(true)
                     showAppbarEdit(true)
                     showBottomNavbar(true)
+                }
+                else if(fragName.equals(EditProfileFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.profile))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
                 }
                 else if(fragName.equals(ChangePasswordFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.change_password))

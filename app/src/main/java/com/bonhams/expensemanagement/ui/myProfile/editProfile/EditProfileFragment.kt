@@ -23,10 +23,10 @@ import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
-private const val TAG = "MyProfileFragment"
 
-class MyProfileFragment() : Fragment() {
+class EditProfileFragment() : Fragment() {
 
+    private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
     private lateinit var binding: FragmentMyProfileBinding
     private val mainViewModel: MainViewModel by activityViewModels()
