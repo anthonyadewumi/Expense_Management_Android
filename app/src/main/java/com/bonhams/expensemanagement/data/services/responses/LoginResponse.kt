@@ -29,9 +29,13 @@ class UserDetails() {
     @SerializedName("employId")
     val employID: String = ""
     val isReset: Long = 0
+    val status: String = ""
+    @SerializedName("last_login")
+    val lastLogin: String = ""
     val approver: String = ""
     val countryCode: String = ""
     val token: String = ""
     @SerializedName("refresh_token")
     val refreshToken: String = ""
+
 }
