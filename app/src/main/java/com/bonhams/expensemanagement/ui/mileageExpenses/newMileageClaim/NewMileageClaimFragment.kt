@@ -18,8 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
+import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.model.Currency
-import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
@@ -41,6 +41,7 @@ import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.util.*
+
 
 class NewMileageClaimFragment() : Fragment() {
 
@@ -159,7 +160,7 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.departmentList[position]
+//                val item = viewModel.departmentList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -175,7 +176,7 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.expenseTypeList[position]
+//                val item = viewModel.expenseTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -192,7 +193,7 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnDistance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.distanceList[position]
+//                val item = viewModel.distanceList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -209,7 +210,7 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnCarType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.carTypeList[position]
+//                val item = viewModel.carTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -225,21 +226,52 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = viewModel.currencyList[position].name
+//                val item = viewModel.currencyList[position].name
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
         if(this::mileageDetail.isInitialized){
-            binding.spnDepartment
-            binding.spnExpenseType
-            binding.spnDistance
-            binding.spnCarType
-            binding.spnCurrency
+            try {
+                val department: Department? =
+                    viewModel.departmentList.find { it.name == mileageDetail.department }
+                val departmentPos = viewModel.departmentList.indexOf(department)
+                if (departmentPos >= 0) {
+                    binding.spnDepartment.setSelection(departmentPos)
+                }
 
-            val currency: Currency? = viewModel.currencyList.find { it.id == mileageDetail.currencyID }
+                val expenseType: ExpenseType? =
+                    viewModel.expenseTypeList.find { it.name == mileageDetail.type }
+                val expenseTypePos = viewModel.expenseTypeList.indexOf(expenseType)
+                if (expenseTypePos >= 0) {
+                    binding.spnExpenseType.setSelection(expenseTypePos)
+                }
 
+                val expenseGroup: ExpenseGroup? =
+                    viewModel.distanceList.find { it.name == mileageDetail.distance }
+                val expenseGroupPos = viewModel.distanceList.indexOf(expenseGroup)
+                if (expenseGroupPos >= 0) {
+                    binding.spnDistance.setSelection(expenseGroupPos)
+                }
+
+                val carType: CarType? =
+                    viewModel.carTypeList.find { it.type == mileageDetail.carType }
+                val carTypePos = viewModel.carTypeList.indexOf(carType)
+                if (carTypePos >= 0) {
+                    binding.spnCarType.setSelection(carTypePos)
+                }
+
+                val currency: Currency? =
+                    viewModel.currencyList.find { it.id == mileageDetail.currencyID }
+                val currencyPos = viewModel.currencyList.indexOf(currency)
+                if (currencyPos >= 0) {
+                    binding.spnCurrency.setSelection(currencyPos)
+                }
+            }
+            catch (e: Exception){
+                Log.e(TAG, "setupSpinners: ${e.message}")
+            }
         }
     }
 

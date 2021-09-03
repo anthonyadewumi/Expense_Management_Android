@@ -18,7 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
-import com.bonhams.expensemanagement.data.model.ClaimDetail
+import com.bonhams.expensemanagement.data.model.*
+import com.bonhams.expensemanagement.data.model.Currency
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
@@ -211,6 +212,41 @@ class NewClaimFragment() : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+        if(this::claimDetail.isInitialized){
+            try {
+                val expenseGroup: ExpenseGroup? =
+                    viewModel.expenseGroupList.find { it.id == claimDetail.expenseGroupID }
+                val expenseGroupPos = viewModel.expenseGroupList.indexOf(expenseGroup)//(currencyAdapter).getPosition(expenseGroup)
+                if (expenseGroupPos >= 0) {
+                    binding.spnExpenseGroup.setSelection(expenseGroupPos)
+                }
+
+                val expenseType: ExpenseType? =
+                    viewModel.expenseTypeList.find { it.id == claimDetail.expenseTypeID }
+                val expenseTypePos = viewModel.expenseTypeList.indexOf(expenseType)
+                if (expenseTypePos >= 0) {
+                    binding.spnExpenseType.setSelection(expenseTypePos)
+                }
+
+                val department: Department? =
+                    viewModel.departmentList.find { it.name == claimDetail.department }
+                val departmentPos = viewModel.departmentList.indexOf(department)
+                if (departmentPos >= 0) {
+                    binding.spnDepartment.setSelection(departmentPos)
+                }
+
+                val currency: Currency? =
+                    viewModel.currencyList.find { it.id == claimDetail.currencyTypeID }
+                val currencyPos = viewModel.currencyList.indexOf(currency)
+                if (currencyPos >= 0) {
+                    binding.spnCurrency.setSelection(currencyPos)
+                }
+            }
+            catch (e: Exception){
+                Log.e(TAG, "setupSpinners: ${e.message}")
+            }
+        }
     }
 
     private fun setupAttachmentRecyclerView(){
@@ -380,9 +416,7 @@ class NewClaimFragment() : Fragment() {
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success) {
             shouldRefreshPage = true
-            (contextActivity as? MainActivity)?.backButtonPressed()/*supportFragmentManager?.popBackStack(
-                    HomeFragment::class.java.simpleName, 0
-                )*/
+            (contextActivity as? MainActivity)?.backButtonPressed()
         }
     }
 
