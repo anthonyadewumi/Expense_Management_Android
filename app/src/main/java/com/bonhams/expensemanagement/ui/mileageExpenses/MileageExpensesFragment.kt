@@ -13,6 +13,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.MileageAdapter
 import com.bonhams.expensemanagement.adapters.MileageExpensesLoadStateAdapter
@@ -102,6 +104,8 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
             header = MileageExpensesLoadStateAdapter(adapter),
             footer = MileageExpensesLoadStateAdapter(adapter)
         )
+        binding.recyclerView.layoutManager = LinearLayoutManager(contextActivity)
+        binding.recyclerView.itemAnimator = DefaultItemAnimator()
 
         adapter.addLoadStateListener { loadState ->
             if (loadState.source.refresh is LoadState.NotLoading

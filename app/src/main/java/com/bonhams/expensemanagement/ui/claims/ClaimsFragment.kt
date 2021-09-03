@@ -13,6 +13,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.ClaimsAdapter
 import com.bonhams.expensemanagement.adapters.ClaimsLoadStateAdapter
@@ -104,6 +106,8 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
             header = ClaimsLoadStateAdapter(claimsAdapter),
             footer = ClaimsLoadStateAdapter(claimsAdapter)
         )
+        binding.recyclerView.layoutManager = LinearLayoutManager(contextActivity)
+        binding.recyclerView.itemAnimator = DefaultItemAnimator()
 
         claimsAdapter.addLoadStateListener { loadState ->
             if (loadState.source.refresh is LoadState.NotLoading
