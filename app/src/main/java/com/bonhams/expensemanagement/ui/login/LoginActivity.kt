@@ -38,6 +38,20 @@ class LoginActivity : BaseActivity() {
         setupViewModel()
         setClickListeners()
         setNoInternetSnackbar()
+        setupView()
+    }
+
+    private fun setupView(){
+        binding.mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_uncheck_login)
+        binding.mRememberMeCheckbox.tag = 0
+        viewModel.isRememberMe = false
+
+        binding.mEmail.setText(AppPreferences.email)
+        binding.mPassword.setText(AppPreferences.password)
+
+        if(AppPreferences.email.trim().isNotEmpty() && AppPreferences.password.trim().isNotEmpty()) {
+            setRememberMe()
+        }
     }
 
     private fun setClickListeners(){
@@ -58,11 +72,11 @@ class LoginActivity : BaseActivity() {
     private fun setRememberMe(){
         if (binding.mRememberMeCheckbox.tag == 0){
             binding.mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_checked_login)
-            binding.mRememberMeCheckbox.setTag(1)
+            binding.mRememberMeCheckbox.tag = 1
             viewModel.isRememberMe = true
         }else{
             binding.mRememberMeCheckbox.setImageResource(R.drawable.ic_checkbox_uncheck_login)
-            binding.mRememberMeCheckbox.setTag(0)
+            binding.mRememberMeCheckbox.tag = 0
             viewModel.isRememberMe = false
         }
     }
@@ -103,6 +117,7 @@ class LoginActivity : BaseActivity() {
         binding.mProgressBars.visibility = View.GONE
         binding.mContinue.visibility = View.VISIBLE
         viewModel.setResponse(response)
+        AppPreferences.password = binding.mPasswordTextField.editText!!.text.toString().trim()
 
         if(response.success){
 //            showResetPassword()
@@ -124,7 +139,7 @@ class LoginActivity : BaseActivity() {
             return
         }
         hideKeyboard()
-        binding.mContinue!!.visibility = View.GONE
+        binding.mContinue.visibility = View.GONE
         val email = binding.mEmailTextField.editText!!.text.toString().trim()
         val password = binding.mPasswordTextField.editText!!.text.toString().trim()
         val loginRequest = viewModel.getLoginRequest(email, password)
@@ -132,12 +147,12 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun validateLoginDetails(): Boolean {
-        binding.mEmailTextField!!.error = viewModel.validateEmail(
+        binding.mEmailTextField.error = viewModel.validateEmail(
             binding.mEmailTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_email)
         )
 
-        binding.mPasswordTextField!!.error = viewModel.validatePassword(
+        binding.mPasswordTextField.error = viewModel.validatePassword(
             binding.mPasswordTextField.editText!!.text.toString().trim(),
             resources.getString(R.string.validate_password)
         )
@@ -146,7 +161,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun onLoginFailed() {
-        binding.mContinue!!.isEnabled = true
+        binding.mContinue.isEnabled = true
     }
 
     private fun setupViewModel() {

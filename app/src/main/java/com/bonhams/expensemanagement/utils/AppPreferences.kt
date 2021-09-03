@@ -12,6 +12,7 @@ object AppPreferences {
     private val IS_TOKEN_AVAILABLE = Pair("is_token_avail", false)
     private val FIREBASE_TOKEN = Pair("firebase_token", "")
     private val USER_ID = Pair("user_id", "")
+    private val PASSWORD = Pair("password", "")
     private val EMPLOYEE_ID = Pair("employee_id", "")
     private val USER_TOKEN = Pair("user_token", "")
     private val REFRESH_TOKEN = Pair("refresh_token", "")
@@ -51,6 +52,12 @@ object AppPreferences {
         // custom setter to save a preference back to preferences file
         set(value) = prefs.edit {
             it.putBoolean(IS_TOKEN_AVAILABLE.first, value)
+        }
+
+    var password: String
+        get() = prefs.getString(PASSWORD.first, PASSWORD.second)!!
+        set(value) = prefs.edit {
+            it.putString(PASSWORD.first, value)
         }
 
     var fireBaseToken: String
@@ -121,18 +128,39 @@ object AppPreferences {
 
 
     fun clearPrefs(){
-        isLoggedIn = false
-        prefs.edit {
-            it.remove(IS_LOGGED_IN.first)
-            it.remove(FIREBASE_TOKEN.first)
-            it.remove(USER_ID.first)
-            it.remove(EMPLOYEE_ID.first)
-            it.remove(USER_TOKEN.first)
-            it.remove(REFRESH_TOKEN.first)
-            it.remove(FIRST_NAME.first)
-            it.remove(LAST_NAME.first)
-            it.remove(EMAIL.first)
-            it.remove(PROFILE_PIC.first)
+        // User selected remember me. Store email and password
+        if(isLoggedIn && isTokenAvailable){
+            prefs.edit {
+                it.remove(IS_LOGGED_IN.first)
+                it.remove(IS_TOKEN_AVAILABLE.first)
+                it.remove(FIREBASE_TOKEN.first)
+//                it.remove(PASSWORD.first)
+                it.remove(USER_ID.first)
+                it.remove(EMPLOYEE_ID.first)
+                it.remove(USER_TOKEN.first)
+                it.remove(REFRESH_TOKEN.first)
+                it.remove(FIRST_NAME.first)
+                it.remove(LAST_NAME.first)
+//                it.remove(EMAIL.first)
+                it.remove(PROFILE_PIC.first)
+            }
+        }
+        else { // User did not select remember me. Clear all details
+            isLoggedIn = false
+            prefs.edit {
+                it.remove(IS_LOGGED_IN.first)
+                it.remove(IS_TOKEN_AVAILABLE.first)
+                it.remove(FIREBASE_TOKEN.first)
+                it.remove(PASSWORD.first)
+                it.remove(USER_ID.first)
+                it.remove(EMPLOYEE_ID.first)
+                it.remove(USER_TOKEN.first)
+                it.remove(REFRESH_TOKEN.first)
+                it.remove(FIRST_NAME.first)
+                it.remove(LAST_NAME.first)
+                it.remove(EMAIL.first)
+                it.remove(PROFILE_PIC.first)
+            }
         }
     }
 }

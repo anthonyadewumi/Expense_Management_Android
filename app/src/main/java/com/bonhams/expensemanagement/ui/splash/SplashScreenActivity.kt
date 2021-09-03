@@ -24,7 +24,7 @@ class SplashScreenActivity : BaseActivity() {
     private fun checkUserToStartActivity(){
         Handler(Looper.getMainLooper()).postDelayed({
             // Your Code
-            if (AppPreferences.isLoggedIn)
+            if (AppPreferences.isTokenAvailable)
                 startMainActivity()
             else
                 startLoginActivity()
