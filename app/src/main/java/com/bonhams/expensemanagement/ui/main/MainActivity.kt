@@ -44,6 +44,7 @@ import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordF
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
@@ -178,7 +179,7 @@ class MainActivity : BaseActivity() {
         })
 
         binding.appBar.appbarEdit.setOnClickListener(View.OnClickListener {
-            viewModel.appbarEditClick?.value = viewModel.appbarEditClick?.value?.not()
+            viewModel.appbarEditClick?.value = it
         })
         binding.appBar.ivMore.setOnClickListener(View.OnClickListener {
             viewModel.appbarMenuClick?.value = it
@@ -215,12 +216,18 @@ class MainActivity : BaseActivity() {
         binding.navDrawerTitle.text = AppPreferences.fullName
         binding.navDrawerDescription.text = AppPreferences.email
         binding.tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
+
         Glide.with(this)
             .load(AppPreferences.profilePic)
+            .apply(
+                RequestOptions()
+                    .placeholder(R.drawable.ic_default_user)
+                    .error(R.drawable.ic_default_user)
+            )
+            .placeholder(R.drawable.ic_default_user)
             .error(R.drawable.ic_default_user)
-            .fallback(R.drawable.ic_default_user)
             .circleCrop()
-            .into(binding.navDrawerProfilePic);
+            .into(binding.navDrawerProfilePic)
 
         // Setup Recyclerview's Layout
         binding.navDrawerRv.layoutManager = LinearLayoutManager(this)

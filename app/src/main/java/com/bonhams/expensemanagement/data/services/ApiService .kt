@@ -63,4 +63,7 @@ interface ApiService {
 
     @GET("logOut")
     suspend fun logoutUser(): CommonResponse
+
+    @GET("my_profile")
+    suspend fun profileDetail(): MyProfileResponse
 }

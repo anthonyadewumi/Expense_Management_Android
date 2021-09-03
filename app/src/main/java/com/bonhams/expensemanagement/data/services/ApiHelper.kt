@@ -23,4 +23,6 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun dropdownData() = apiService.dropdownData()
 
     suspend fun logoutUser() = apiService.logoutUser()
+
+    suspend fun profileDetail() = apiService.profileDetail()
 }

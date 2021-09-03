@@ -1,27 +1,25 @@
-package com.bonhams.expensemanagement.ui.myProfile
+package com.bonhams.expensemanagement.ui.myProfile.editProfile
 
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
-import com.bonhams.expensemanagement.data.services.responses.MyProfileResponse
 import com.bonhams.expensemanagement.databinding.FragmentMyProfileBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
+import com.bonhams.expensemanagement.ui.myProfile.MyProfileViewModel
+import com.bonhams.expensemanagement.ui.myProfile.MyProfileViewModelFactory
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
 import com.bonhams.expensemanagement.utils.AppPreferences
-import com.bonhams.expensemanagement.utils.Status
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
@@ -47,7 +45,6 @@ class MyProfileFragment() : Fragment() {
         setupViewModel()
         setClickListeners()
         setupView()
-        setMyProfileObserver()
 
         return view
     }
@@ -87,47 +84,12 @@ class MyProfileFragment() : Fragment() {
         binding.tvLastName.text = AppPreferences.lastName
         binding.tvEmail.text = AppPreferences.email
         binding.tvPhoneNumber.text = AppPreferences.phoneNumber
-    }
 
-    private fun setMyProfileObserver() {
-        viewModel.profileDetail().observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
-                                setResponse(response)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                    }
-                    Status.LOADING -> {
-//                        binding.mProgressBars.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })
-    }
-
-    private fun setResponse(response: MyProfileResponse) {
-        viewModel.setResponse(response)
-
-        binding.tvEmpId.text = response.profileDetail?.employID
-        binding.tvFirstName.text = response.profileDetail?.fname
-        binding.tvLastName.text = response.profileDetail?.lname
-        binding.tvEmail.text = response.profileDetail?.email
-        binding.tvPhoneNumber.text = response.profileDetail?.contactNo
-        binding.tvCompanyName.text = response.profileDetail?.companyName
-        binding.tvDepartmentName.text = response.profileDetail?.departmentName
-        binding.tvCarType.text = response.profileDetail?.carType
-        binding.tvCountry.text = response.profileDetail?.countryCode
-        binding.tvMileageType.text = response.profileDetail?.mileageType
-        binding.tvDefaultApprover.text = response.profileDetail?.approver
+        /*binding.tvCompanyName.text = AppPreferences.userId
+        binding.tvDepartmentName.text = AppPreferences.userId
+        binding.tvCarType.text = AppPreferences.userId
+        binding.tvCountry.text = AppPreferences.userId
+        binding.tvMileageType.text = AppPreferences.userId
+        binding.tvDefaultApprover.text = AppPreferences.userId*/
     }
 }

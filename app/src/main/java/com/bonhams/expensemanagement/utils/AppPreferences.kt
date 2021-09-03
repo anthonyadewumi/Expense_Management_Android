@@ -19,6 +19,7 @@ object AppPreferences {
     private val FIRST_NAME = Pair("first_name", "")
     private val LAST_NAME = Pair("last_name", "")
     private val EMAIL = Pair("email", "")
+    private val PHONE_NUMBER = Pair("phone_number", "")
     private val PROFILE_PIC = Pair("profile_pic", "")
 
     fun init(context: Context) {
@@ -104,6 +105,12 @@ object AppPreferences {
         get() = prefs.getString(EMAIL.first, EMAIL.second)!!
         set(value) = prefs.edit {
             it.putString(EMAIL.first, value)
+        }
+
+    var phoneNumber: String
+        get() = prefs.getString(PHONE_NUMBER.first, PHONE_NUMBER.second)!!
+        set(value) = prefs.edit {
+            it.putString(PHONE_NUMBER.first, value)
         }
 
     var profilePic: String
