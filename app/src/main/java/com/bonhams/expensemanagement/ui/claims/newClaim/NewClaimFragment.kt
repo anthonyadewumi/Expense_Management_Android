@@ -3,6 +3,8 @@ package com.bonhams.expensemanagement.ui.claims.newClaim
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -79,6 +81,7 @@ class NewClaimFragment() : Fragment() {
         setupAttachmentRecyclerView();
         setDropdownDataObserver()
         setupView()
+        setupTextWatcher()
 
         return view
     }
@@ -94,18 +97,33 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun setupView(){
-        if(this::claimDetail.isInitialized) {
-            binding.edtMerchantName.setText(claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant)
+        try {
+            if (this::claimDetail.isInitialized) {
+                binding.edtMerchantName.setText(
+                    claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
+                )
 //            binding.edtCompanyNumber.setText(claimDetail.companyName)
-            binding.tvDateOfSubmission.text = if(!claimDetail.createdOn.trim().isNullOrEmpty())
-                Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT) else ""
-            binding.edtTotalAmount.setText(claimDetail.totalAmount)
-            binding.edtTax.setText(claimDetail.tax)
-            binding.edtNetAmount.setText(claimDetail.netAmount)
-            binding.edtDescription.setText(claimDetail.description)
-            viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
+                binding.tvDateOfSubmission.text = if (!claimDetail.createdOn.trim().isNullOrEmpty())
+                    Utils.getFormattedDate(
+                        claimDetail.createdOn,
+                        Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                    ) else ""
+                binding.edtTotalAmount.setText(claimDetail.totalAmount)
+                binding.edtTax.setText(claimDetail.tax)
+                binding.tvNetAmount.text = claimDetail.netAmount
+                binding.edtDescription.setText(claimDetail.description)
+                if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
+                        .isNotEmpty()
+                ) {
+                    viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
+                }
+
+            }
+            refreshAttachments()
         }
-        refreshAttachments()
+        catch (error: Exception){
+            Log.e(TAG, "setupView: ${error.message}")
+        }
     }
 
     private fun setupViewModel() {
@@ -254,6 +272,28 @@ class NewClaimFragment() : Fragment() {
         }
     }
 
+    private fun setupTextWatcher(){
+        binding.edtTotalAmount.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateNetAmount(s.toString(), binding.edtTax.text.toString())
+            }
+        })
+
+        binding.edtTax.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                updateNetAmount(binding.edtTotalAmount.text.toString(), s.toString())
+            }
+        })
+    }
+
     private fun setupAttachmentRecyclerView(){
         val linearLayoutManager = LinearLayoutManager(
             context,
@@ -274,6 +314,26 @@ class NewClaimFragment() : Fragment() {
         else{
             binding.rvAttachments.visibility = View.GONE
             binding.tvNoFileSelected.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateNetAmount(total: String, tax: String){
+        try {
+            var totalAmount = 0.0
+            var taxAmount = 0.0
+
+            if (!total.isNullOrEmpty()) {
+                totalAmount = total.toDouble()
+            }
+            if (!tax.isNullOrEmpty()) {
+                taxAmount = tax.toDouble()
+            }
+
+            val netAmount = totalAmount + taxAmount
+            binding.tvNetAmount.text = "$netAmount"
+        }
+        catch (error: Exception){
+            Log.e(TAG, "updateNetAmount: ${error.message}")
         }
     }
 
@@ -396,7 +456,7 @@ class NewClaimFragment() : Fragment() {
             if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
             binding.edtTotalAmount.text.toString().trim(),
             binding.edtTax.text.toString().trim(),
-            binding.edtNetAmount.text.toString().trim(),
+            binding.tvNetAmount.text.toString().trim(),
             binding.edtDescription.text.toString().trim(),
             viewModel.attachmentsList
         )

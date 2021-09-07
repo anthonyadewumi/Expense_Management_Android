@@ -191,7 +191,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
     }
 
     override fun onClaimItemClicked(claim: ClaimDetail?, position: Int) {
-        Log.d(TAG, "onClaimItemClicked: $position")
+        Log.d(TAG, "onClaimItemClicked: $position claim: $claim")
         val fragment = ClaimDetailFragment()
         fragment.setClaimDetails(claim)
         (contextActivity as? MainActivity)?.addFragment(fragment)
