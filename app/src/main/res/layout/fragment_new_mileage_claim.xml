@@ -79,17 +79,15 @@
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
-            <EditText
-                android:id="@+id/edtMileageType"
+            <Spinner
+                android:id="@+id/spnMileageType"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/_35sdp"
                 android:minHeight="@dimen/_35sdp"
                 android:hint="@string/mileage_type"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                style="@style/TextRegular12"
+                style="@style/outlineBoxExposedDropdown"
                 android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
+                android:background="@drawable/spinner_bg"
                 android:textSize="@dimen/_13ssp"
                 android:padding="@dimen/_10sdp"
                 android:layout_gravity="center_vertical"
@@ -500,14 +498,12 @@
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
-            <EditText
-                android:id="@+id/edtNetAmount"
+            <TextView
+                android:id="@+id/tvNetAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
                 android:hint="@string/net_amount"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"

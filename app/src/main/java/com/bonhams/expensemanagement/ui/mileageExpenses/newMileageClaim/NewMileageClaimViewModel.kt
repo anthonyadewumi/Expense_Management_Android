@@ -15,6 +15,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
     lateinit var distanceList: List<ExpenseGroup>
     lateinit var carTypeList: List<CarType>
     lateinit var currencyList: List<Currency>
+    lateinit var mileageTypeList: List<MileageType>
     var attachmentsList: MutableList<String> = mutableListOf()
 
     fun createNewMileageClaim(mileageClaimRequest: NewMileageClaimRequest) = liveData(Dispatchers.IO) {
@@ -41,7 +42,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
                                   distance: String, carType: String, claimedMiles: String,
                                   roundTrip: String, currency: String, petrolAmount: String,
                                   parkAmount: String, totalAmount: String, tax: String,
-                                  netAmount: String, description: String, attachments: String
+                                  netAmount: String, description: String, attachments: List<String>
                                 ): NewMileageClaimRequest {
 
         val newClaimRequest = NewMileageClaimRequest()
@@ -65,7 +66,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         newClaimRequest.tax = tax
         newClaimRequest.netAmount = netAmount
         newClaimRequest.description = description
-//        newClaimRequest.attachments = attachments
+        newClaimRequest.attachments = attachments
         
         return newClaimRequest
     }

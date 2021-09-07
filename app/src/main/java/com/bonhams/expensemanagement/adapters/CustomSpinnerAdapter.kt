@@ -55,6 +55,9 @@ class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource
             is UserType -> {
                 title.text = item.type.replaceFirstChar(Char::uppercase)
             }
+            is CarType -> {
+                title.text = item.type.replaceFirstChar(Char::uppercase)
+            }
             is Country -> {
                 title.text = item.countryName.replaceFirstChar(Char::uppercase)
             }
