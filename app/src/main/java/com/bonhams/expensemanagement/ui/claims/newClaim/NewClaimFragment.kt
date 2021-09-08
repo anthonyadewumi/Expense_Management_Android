@@ -99,6 +99,9 @@ class NewClaimFragment() : Fragment() {
     private fun setupView(){
         try {
             if (this::claimDetail.isInitialized) {
+                binding.edtTitle.setText(
+                    claimDetail.title.replaceFirstChar(Char::uppercase) ?: claimDetail.title
+                )
                 binding.edtMerchantName.setText(
                     claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
                 )
@@ -443,6 +446,7 @@ class NewClaimFragment() : Fragment() {
     private fun getClaimRequest() : NewClaimRequest{
 //      attachments = viewModel.attachmentsList.joinToString { it }
         return viewModel.getNewClaimRequest(
+            binding.edtTitle.text.toString().trim(),
             binding.edtMerchantName.text.toString().trim(),
             if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
             if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",

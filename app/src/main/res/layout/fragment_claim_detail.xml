@@ -51,9 +51,31 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/title"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_35sdp"
+                android:hint="@string/title"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="@string/merchant_name"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -75,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/expense_group"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -97,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/expense_type"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -119,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/company_number"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -141,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/department"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -163,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/date_of_submission"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -185,7 +207,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/currency"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -207,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/total_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -229,7 +251,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/tax"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -251,7 +273,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/net_amount"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -273,7 +295,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/reporting_manager_status"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -295,7 +317,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/finance_manager_status"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -317,7 +339,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/description"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
@@ -351,7 +373,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/attachments"
                 style="@style/TextRegular12"
-                android:textColor="@color/colorTextGray"
+                android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <androidx.recyclerview.widget.RecyclerView

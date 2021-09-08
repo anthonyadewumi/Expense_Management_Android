@@ -52,12 +52,13 @@ class NewMileageClaimFragment() : Fragment() {
     private lateinit var binding: FragmentNewMileageClaimBinding
     private lateinit var viewModel: NewMileageClaimViewModel
 
+    /*private lateinit var companyAdapter: CustomSpinnerAdapter
     private lateinit var mileageTypeAdapter: CustomSpinnerAdapter
     private lateinit var departmentAdapter: CustomSpinnerAdapter
     private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
     private lateinit var distanceAdapter: CustomSpinnerAdapter
     private lateinit var carTypeAdapter: CustomSpinnerAdapter
-    private lateinit var currencyAdapter: CustomSpinnerAdapter
+    private lateinit var currencyAdapter: CustomSpinnerAdapter*/
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var mileageDetail: MileageDetail
 
@@ -90,7 +91,7 @@ class NewMileageClaimFragment() : Fragment() {
     private fun setupView(){
         try {
             if (this::mileageDetail.isInitialized) {
-                binding.edtCompanyName.setText(mileageDetail.companyName)
+                binding.edtTitle.setText(mileageDetail.title)
 //                binding.edtMileageType.setText(mileageDetail.department)
                 binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                     mileageDetail.submittedOn,
@@ -113,8 +114,11 @@ class NewMileageClaimFragment() : Fragment() {
 
 
                 binding.switchRoundTrip.isChecked = mileageDetail.isRoundTrip == "1"
-                /*if(mileageDetail.attachments.trim().isEmpty())
-            viewModel.attachmentsList.add(mileageDetail.attachments)*/
+                /*if (!mileageDetail.attachments.isNullOrEmpty() && mileageDetail.attachments.trim()
+                        .isNotEmpty()
+                ) {
+                    viewModel.attachmentsList = mutableListOf(mileageDetail.attachments)
+                }*/
             }
 
             refreshAttachments()
@@ -157,8 +161,21 @@ class NewMileageClaimFragment() : Fragment() {
     }
 
     private fun setupSpinners(){
+        // Company List Adapter
+        val companyAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.companyList
+        )
+        binding.spnCompanyName.adapter = companyAdapter
+        binding.spnCompanyName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
         // Department Adapter
-        mileageTypeAdapter = CustomSpinnerAdapter(
+        val mileageTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.mileageTypeList
@@ -174,7 +191,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
 
         // Department Adapter
-        departmentAdapter = CustomSpinnerAdapter(
+        val departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.departmentList
@@ -190,7 +207,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
 
         // Expense Type Adapter
-        expenseTypeAdapter = CustomSpinnerAdapter(
+        val expenseTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.expenseTypeList
@@ -206,7 +223,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
 
         // Distance Adapter
-        distanceAdapter = CustomSpinnerAdapter(
+        val distanceAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.distanceList
@@ -222,7 +239,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
 
         // Car Type Adapter
-        carTypeAdapter = CustomSpinnerAdapter(
+        val carTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.carTypeList
@@ -238,7 +255,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
 
         // Currency Adapter
-        currencyAdapter = CustomSpinnerAdapter(
+        val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.currencyList
@@ -255,6 +272,13 @@ class NewMileageClaimFragment() : Fragment() {
 
         if(this::mileageDetail.isInitialized){
             try {
+                val company: Company? =
+                    viewModel.companyList.find { it.name == mileageDetail.companyName }
+                val companyPos = viewModel.companyList.indexOf(company)
+                if (companyPos >= 0) {
+                    binding.spnCompanyName.setSelection(companyPos)
+                }
+
                 val department: Department? =
                     viewModel.departmentList.find { it.name == mileageDetail.department }
                 val departmentPos = viewModel.departmentList.indexOf(department)
@@ -335,43 +359,49 @@ class NewMileageClaimFragment() : Fragment() {
 
     private fun createNewClaim() {
 
-        val claimRequest = viewModel.getNewMileageClaimRequest(
-            binding.edtCompanyName.text.toString().trim(),
-            if (!viewModel.mileageTypeList.isNullOrEmpty()) viewModel.mileageTypeList[binding.spnMileageType.selectedItemPosition].id else "",
-            if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
-            Utils.getDateInServerRequestFormat(
-                binding.tvDateOfSubmission.text.toString().trim(),
-                Constants.DD_MMM_YYYY_FORMAT
-            ),
-            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
-            binding.edtMerchantName.text.toString().trim(),
-            Utils.getDateInServerRequestFormat(
-                binding.tvDateOfTrip.text.toString().trim(),
-                Constants.DD_MMM_YYYY_FORMAT
-            ),
-            binding.edtTripFrom.text.toString().trim(),
-            binding.edtTripTo.text.toString().trim(),
-            "1"/*binding.spnDistance*/,
-            if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[binding.spnCarType.selectedItemPosition].id else "", //spnCurrency.selectedItemPosition,
-            binding.edtClaimedMiles.text.toString().trim(),
-            binding.switchRoundTrip.isChecked.toString(),
-            if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
-            binding.edtPetrolAmount.text.toString().trim(),
-            binding.edtParkAmount.text.toString().trim(),
-            binding.edtTotalAmount.text.toString().trim(),
-            binding.edtTax.text.toString().trim(),
-            binding.tvNetAmount.text.toString().trim(),
-            binding.edtDescription.text.toString().trim(),
-            viewModel.attachmentsList
-        )
+        try {
+            val claimRequest = viewModel.getNewMileageClaimRequest(
+                binding.edtTitle.text.toString().trim(),
+                if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyName.selectedItemPosition].id else "",
+                if (!viewModel.mileageTypeList.isNullOrEmpty()) viewModel.mileageTypeList[binding.spnMileageType.selectedItemPosition].id else "",
+                if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
+                Utils.getDateInServerRequestFormat(
+                    binding.tvDateOfSubmission.text.toString().trim(),
+                    Constants.DD_MMM_YYYY_FORMAT
+                ),
+                if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
+                binding.edtMerchantName.text.toString().trim(),
+                Utils.getDateInServerRequestFormat(
+                    binding.tvDateOfTrip.text.toString().trim(),
+                    Constants.DD_MMM_YYYY_FORMAT
+                ),
+                binding.edtTripFrom.text.toString().trim(),
+                binding.edtTripTo.text.toString().trim(),
+                "1"/*binding.spnDistance*/,
+                if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[binding.spnCarType.selectedItemPosition].id else "", //spnCurrency.selectedItemPosition,
+                binding.edtClaimedMiles.text.toString().trim(),
+                binding.switchRoundTrip.isChecked,
+                if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
+                binding.edtPetrolAmount.text.toString().trim(),
+                binding.edtParkAmount.text.toString().trim(),
+                binding.edtTotalAmount.text.toString().trim(),
+                binding.edtTax.text.toString().trim(),
+                binding.tvNetAmount.text.toString().trim(),
+                binding.edtDescription.text.toString().trim(),
+                viewModel.attachmentsList
+            )
 
-        if (!validateCreateClaim(claimRequest)) {
-            onCreateClaimFailed()
-            return
+            if (!validateCreateClaim(claimRequest)) {
+                onCreateClaimFailed()
+                return
+            }
+
+            binding.btnSubmit.visibility = View.GONE
+            setCreateClaimObserver(claimRequest)
         }
-
-        binding.btnSubmit.visibility = View.GONE
-        setCreateClaimObserver(claimRequest)
+        catch (error: Exception){
+            Log.e(TAG, "createNewClaim: ${error.message}")
+        }
     }
 
     private fun setDropdownDataObserver() {
@@ -401,6 +431,7 @@ class NewMileageClaimFragment() : Fragment() {
     }
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
+        viewModel.companyList = dropdownResponse.companyList
         viewModel.departmentList = dropdownResponse.departmentList
         viewModel.expenseTypeList = dropdownResponse.expenseType
         viewModel.distanceList = dropdownResponse.expenseGroup

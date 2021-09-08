@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 
 class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageClaimRepository) : ViewModel() {
 
+    lateinit var companyList: List<Company>
     lateinit var departmentList: List<Department>
     lateinit var expenseTypeList: List<ExpenseType>
     lateinit var distanceList: List<ExpenseGroup>
@@ -36,16 +37,17 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         }
     }
 
-    fun getNewMileageClaimRequest(companyName: String, mileageType: String, department: String,
+    fun getNewMileageClaimRequest(title: String,companyName: String, mileageType: String, department: String,
                                   dateSubmitted: String, expenseType: String, MerchantName: String,
                                   tripDate: String, tripFrom: String, tripTo: String,
                                   distance: String, carType: String, claimedMiles: String,
-                                  roundTrip: String, currency: String, petrolAmount: String,
+                                  roundTrip: Boolean, currency: String, petrolAmount: String,
                                   parkAmount: String, totalAmount: String, tax: String,
                                   netAmount: String, description: String, attachments: List<String>
                                 ): NewMileageClaimRequest {
 
         val newClaimRequest = NewMileageClaimRequest()
+        newClaimRequest.title = title
         newClaimRequest.companyName = companyName 
         newClaimRequest.mileageType = mileageType
         newClaimRequest.department = department
@@ -58,7 +60,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         newClaimRequest.distance = distance
         newClaimRequest.carType = carType
         newClaimRequest.claimedMiles = claimedMiles
-        newClaimRequest.roundTrip = roundTrip
+        newClaimRequest.roundTrip = if(roundTrip) "1" else "0"
         newClaimRequest.currency = currency
         newClaimRequest.petrolAmount = petrolAmount
         newClaimRequest.parkAmount = parkAmount
@@ -74,7 +76,9 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
     fun validateNewClaimRequest(newClaimRequest: NewMileageClaimRequest): Pair<Boolean, Int>{
         var isValid: Pair<Boolean, Int> = Pair(true, R.string.ok)
 
-        if(newClaimRequest.mileageType.isNullOrEmpty())
+        if(newClaimRequest.title.isNullOrEmpty())
+            isValid = Pair(false, R.string.please_enter_title)
+        else if(newClaimRequest.mileageType.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_mileage_type)
         else if(newClaimRequest.department.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_department)

@@ -61,6 +61,7 @@ class MileageDetailFragment() : Fragment() {
 
     private fun setupView(){
         if(this::mileageDetail.isInitialized) {
+            binding.tvTitle.text = mileageDetail.title
             binding.tvCompanyName.text = mileageDetail.companyName
             binding.tvMileageType.text = mileageDetail.department
             binding.tvDepartment.text = mileageDetail.department
@@ -118,10 +119,12 @@ class MileageDetailFragment() : Fragment() {
 
     private fun refreshAttachments(){
         if(viewModel.attachmentsList.size > 0){
+            binding.tvAttachments.visibility = View.VISIBLE
             binding.rvAttachments.visibility = View.VISIBLE
             attachmentsAdapter.notifyDataSetChanged()
         }
         else{
+            binding.tvAttachments.visibility = View.INVISIBLE
             binding.rvAttachments.visibility = View.GONE
         }
     }

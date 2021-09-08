@@ -39,12 +39,13 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
         }
     }
 
-    fun getNewClaimRequest(merchantName: String, expenseGroup: String, expenseType: String,
+    fun getNewClaimRequest(title: String, merchantName: String, expenseGroup: String, expenseType: String,
                            companyNumber: String, department: String, dateSubmitted: String,
                            currency: String, totalAmount: String, tax: String,
                            netAmount: String, description: String,
                            attachments: List<String>): NewClaimRequest {
         val newClaimRequest = NewClaimRequest()
+        newClaimRequest.title = title
         newClaimRequest.merchantName = merchantName
         newClaimRequest.expenseGroup = expenseGroup
         newClaimRequest.expenseType = expenseType
@@ -55,7 +56,6 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
         newClaimRequest.totalAmount = totalAmount
         newClaimRequest.tax = tax
         newClaimRequest.netAmount = netAmount
-        newClaimRequest.title = description
         newClaimRequest.description = description
         newClaimRequest.attachments = attachments
         return newClaimRequest
@@ -64,7 +64,9 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
     fun validateNewClaimRequest(newClaimRequest: NewClaimRequest): Pair<Boolean, Int>{
         var isValid: Pair<Boolean, Int> = Pair(true, R.string.ok)
 
-        if(newClaimRequest.expenseGroup.isNullOrEmpty())
+        if(newClaimRequest.title.isNullOrEmpty())
+            isValid = Pair(false, R.string.please_enter_title)
+        else if(newClaimRequest.expenseGroup.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_expense_group)
         else if(newClaimRequest.expenseType.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_expense_type)

@@ -66,6 +66,7 @@ class ClaimDetailFragment() : Fragment() {
     private fun setupView(){
         try {
             if (this::claimDetail.isInitialized) {
+                binding.tvTitle.text = claimDetail.title
                 binding.tvMerchantName.text = claimDetail.merchant
                 binding.tvExpenseGroup.text = claimDetail.expenseGroupName
                 binding.tvExpenseType.text = claimDetail.expenseTypeName

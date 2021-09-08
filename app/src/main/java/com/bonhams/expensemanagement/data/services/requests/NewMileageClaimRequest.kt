@@ -3,7 +3,7 @@ package com.bonhams.expensemanagement.data.services.requests
 import com.google.gson.annotations.SerializedName
 
 class NewMileageClaimRequest {
-
+    var title: String? = ""
     var companyName: String? = ""
     var mileageType: String? = ""
     var department: String? = ""
