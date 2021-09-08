@@ -523,12 +523,20 @@ class NewMileageClaimFragment() : Fragment() {
     private fun showBottomSheet(){
         contextActivity?.let {
             val dialog = BottomSheetDialog(contextActivity!!, R.style.CustomBottomSheetDialogTheme)
-            val view = layoutInflater.inflate(R.layout.item_bottom_sheet_picture, null)
+            val view = layoutInflater.inflate(R.layout.item_bottom_sheet, null)
             dialog.setCancelable(true)
             dialog.setContentView(view)
             val bottomOptionOne = view.findViewById<TextView>(R.id.bottomOptionOne)
+//            val dividerOne = view.findViewById<View>(R.id.dividerOne)
             val bottomOptionTwo = view.findViewById<TextView>(R.id.bottomOptionTwo)
+            val dividerTwo = view.findViewById<View>(R.id.dividerTwo)
+            val bottomOptionThree = view.findViewById<TextView>(R.id.bottomOptionThree)
             val bottomOptionCancel = view.findViewById<TextView>(R.id.bottomOptionCancel)
+
+            bottomOptionOne.text = resources.getString(R.string.upload_file)
+            bottomOptionTwo.text = resources.getString(R.string.take_photo)
+            dividerTwo.visibility = View.GONE
+            bottomOptionThree.visibility = View.GONE
 
             bottomOptionOne.setOnClickListener {
                 dialog.dismiss()

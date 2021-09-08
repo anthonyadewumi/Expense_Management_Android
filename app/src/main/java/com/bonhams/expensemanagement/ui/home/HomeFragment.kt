@@ -156,12 +156,12 @@ class HomeFragment : Fragment() {
     private fun showStatusFilterBottomSheet(){
         contextActivity?.let {
             val dialog = BottomSheetDialog(contextActivity!!, R.style.CustomBottomSheetDialogTheme)
-            val view = layoutInflater.inflate(R.layout.item_bottom_sheet_status_filter, null)
+            val view = layoutInflater.inflate(R.layout.item_bottom_sheet, null)
             dialog.setCancelable(true)
             dialog.setContentView(view)
-            val bottomOptionPending = view.findViewById<TextView>(R.id.bottomOptionPending)
-            val bottomOptionApproved = view.findViewById<TextView>(R.id.bottomOptionApproved)
-            val bottomOptionRejected = view.findViewById<TextView>(R.id.bottomOptionRejected)
+            val bottomOptionPending = view.findViewById<TextView>(R.id.bottomOptionOne)
+            val bottomOptionApproved = view.findViewById<TextView>(R.id.bottomOptionTwo)
+            val bottomOptionRejected = view.findViewById<TextView>(R.id.bottomOptionThree)
             val bottomOptionCancel = view.findViewById<TextView>(R.id.bottomOptionCancel)
 
             bottomOptionPending.setOnClickListener {

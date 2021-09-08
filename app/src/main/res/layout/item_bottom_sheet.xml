@@ -36,12 +36,13 @@
                     android:id="@+id/bottomOptionOne"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/upload_file"
+                    android:text="@string/pending"
                     style="@style/TextMedium12"
                     android:padding="@dimen/_15sdp"
                     android:gravity="center"/>
 
                 <View
+                    android:id="@+id/dividerOne"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@color/colorTextDarkGray" />
@@ -50,7 +51,22 @@
                     android:id="@+id/bottomOptionTwo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/take_photo"
+                    android:text="@string/approved"
+                    style="@style/TextMedium12"
+                    android:padding="@dimen/_15sdp"
+                    android:gravity="center"/>
+
+                <View
+                    android:id="@+id/dividerTwo"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/colorTextDarkGray" />
+
+                <TextView
+                    android:id="@+id/bottomOptionThree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rejected"
                     style="@style/TextMedium12"
                     android:padding="@dimen/_15sdp"
                     android:gravity="center"/>
