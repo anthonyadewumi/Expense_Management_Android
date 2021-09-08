@@ -29,7 +29,7 @@
             android:hint="@string/search"
             app:hintEnabled="false"
             app:endIconMode="clear_text"
-            app:startIconDrawable="@drawable/ic_search_input_drawable"
+            app:startIconDrawable="@drawable/ic_search"
             app:startIconTint="@color/secondary"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"

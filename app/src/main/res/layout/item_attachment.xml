@@ -42,7 +42,7 @@
                     android:id="@+id/ivDeleteCross"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
-                    android:src="@drawable/ic_nav_expense_plus"
+                    android:src="@drawable/ic_back"
                     android:padding="@dimen/_6sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"

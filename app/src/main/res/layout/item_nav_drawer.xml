@@ -28,8 +28,9 @@
             android:layout_height="@dimen/_30sdp"
             android:layout_gravity="center_vertical"
             android:scaleType="centerInside"
-            android:padding="@dimen/_5sdp"
+            android:padding="@dimen/_3sdp"
             android:src="@drawable/ic_nav_scan"
+            app:tint="@color/white"
             tools:ignore="ContentDescription" />
 
         <TextView

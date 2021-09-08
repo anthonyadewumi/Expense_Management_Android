@@ -141,7 +141,6 @@
                     android:layout_height="@dimen/_30sdp"
                     android:padding="@dimen/_5sdp"
                     android:src="@drawable/ic_more"
-                    android:rotation="90"
                     android:visibility="gone"/>
 
                 <TextView

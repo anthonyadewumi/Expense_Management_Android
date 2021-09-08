@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
-                android:drawableStart="@drawable/ic_email"
+                android:drawableStart="@drawable/ic_email_input_drawable"
                 android:drawablePadding="@dimen/_5sdp"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"/>
@@ -126,7 +126,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:singleLine="true"
-                android:drawableStart="@drawable/ic_password"
+                android:drawableStart="@drawable/ic_password_input_drawable"
                 android:drawablePadding="@dimen/_5sdp"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"/>

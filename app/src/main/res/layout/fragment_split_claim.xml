@@ -328,7 +328,7 @@
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="@dimen/_25sdp"
                     app:tint="@color/secondary"
-                    android:src="@drawable/ic_nav_expense_plus"
+                    android:src="@drawable/ic_plus_circle"
                     android:padding="@dimen/_5sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"/>

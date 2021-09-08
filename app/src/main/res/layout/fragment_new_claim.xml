@@ -355,7 +355,7 @@
                         android:id="@+id/ivPicUpload"
                         android:layout_width="@dimen/_25sdp"
                         android:layout_height="@dimen/_25sdp"
-                        android:src="@drawable/ic_split_plus"
+                        android:src="@drawable/ic_plus_circle"
                         android:padding="@dimen/_5sdp"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"/>

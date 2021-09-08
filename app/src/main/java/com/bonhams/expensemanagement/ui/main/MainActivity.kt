@@ -59,13 +59,13 @@ class MainActivity : BaseActivity() {
     private lateinit var navDrawerAdapter: NavDrawerAdapter
     private val TAG = javaClass.simpleName
     private var navDrawerItems = arrayListOf(
-        NavDrawerItem(R.drawable.ic_home, "Expense", -1),
-        NavDrawerItem(R.drawable.ic_nav_expense_plus, "Manually Create", 1),
+        NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1),
+        NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1),
         NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2),
-        NavDrawerItem(R.drawable.ic_home, "Mileage", -1),
+        NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1),
         NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3),
         NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4),
-        NavDrawerItem(R.drawable.ic_profile, "Others", -1),
+        NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1),
         NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5),
         NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6),
     )

@@ -28,10 +28,10 @@
                 </shape>
             </item>
 
-            <item android:right="0dp">
-                <bitmap
-                    android:gravity="center_vertical|right"
-                    android:src="@drawable/ic_arrow_down"/>
+            <item android:right="15dp"
+                android:gravity="center_vertical|right"
+                android:drawable="@drawable/ic_arrow_down_input_drawable">
+
                 <padding android:left="5dp"
                     android:top="5dp"
                     android:right="5dp"
