@@ -2,6 +2,8 @@ package com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +14,8 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -32,6 +36,11 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -61,6 +70,8 @@ class NewMileageClaimFragment() : Fragment() {
     private lateinit var currencyAdapter: CustomSpinnerAdapter*/
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var mileageDetail: MileageDetail
+    private lateinit var fromResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var toResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,6 +89,7 @@ class NewMileageClaimFragment() : Fragment() {
         setDropdownDataObserver()
         setupView()
         setupTextWatcher()
+        setupAutoCompletePlaces()
 
         return view
     }
@@ -92,7 +104,6 @@ class NewMileageClaimFragment() : Fragment() {
         try {
             if (this::mileageDetail.isInitialized) {
                 binding.edtTitle.setText(mileageDetail.title)
-//                binding.edtMileageType.setText(mileageDetail.department)
                 binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                     mileageDetail.submittedOn,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
@@ -102,8 +113,8 @@ class NewMileageClaimFragment() : Fragment() {
                     mileageDetail.tripDate,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
                 )
-                binding.edtTripFrom.text = mileageDetail.fromLocation
-                binding.edtTripTo.text = mileageDetail.toLocation
+                binding.tvTripFrom.text = mileageDetail.fromLocation
+                binding.tvTripTo.text = mileageDetail.toLocation
                 binding.edtClaimedMiles.setText(mileageDetail.claimedMileage)
                 binding.edtPetrolAmount.setText(mileageDetail.petrolAmount)
                 binding.edtParkAmount.setText(mileageDetail.parking)
@@ -114,11 +125,11 @@ class NewMileageClaimFragment() : Fragment() {
 
 
                 binding.switchRoundTrip.isChecked = mileageDetail.isRoundTrip == "1"
-                /*if (!mileageDetail.attachments.isNullOrEmpty() && mileageDetail.attachments.trim()
+                if (!mileageDetail.attachments.isNullOrEmpty() && mileageDetail.attachments.trim()
                         .isNotEmpty()
                 ) {
                     viewModel.attachmentsList = mutableListOf(mileageDetail.attachments)
-                }*/
+                }
             }
 
             refreshAttachments()
@@ -142,6 +153,14 @@ class NewMileageClaimFragment() : Fragment() {
 
         binding.tvDateOfTrip.setOnClickListener(View.OnClickListener {
             showCalenderDialog(false)
+        })
+
+        binding.tvTripFrom.setOnClickListener(View.OnClickListener {
+            openAutoCompletePlaces(true)
+        })
+
+        binding.tvTripTo.setOnClickListener(View.OnClickListener {
+            openAutoCompletePlaces(false)
         })
 
         binding.btnSubmit.setOnClickListener(View.OnClickListener {
@@ -343,7 +362,73 @@ class NewMileageClaimFragment() : Fragment() {
     }
 
     private fun setupAutoCompletePlaces(){
+        contextActivity?.let {
+            // Fetching API_KEY which we wrapped
+            val ai: ApplicationInfo = it.packageManager.getApplicationInfo(it.packageName, PackageManager.GET_META_DATA)
+            val value = ai.metaData["api_key"]
+            val apiKey = value.toString()
+            // Initializing the Places API
+            // with the help of our API_KEY
+            if (!Places.isInitialized()) {
+                Places.initialize(it, apiKey)
+            }
+        }
 
+        fromResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                Activity.RESULT_OK -> {
+                    result.data?.let {
+                        val place = Autocomplete.getPlaceFromIntent(it)
+                        Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.name}, ${place.id}")
+                    }
+                }
+                AutocompleteActivity.RESULT_ERROR -> {
+                    // TODO: Handle the error.
+                    result.data?.let {
+                        val status = Autocomplete.getStatusFromIntent(it)
+                        Log.e(TAG, "setupAutoCompletePlaces: ${status.statusMessage}")
+                    }
+                }
+                Activity.RESULT_CANCELED -> {
+                    // The user canceled the operation.
+                    Log.d(TAG, "setupAutoCompletePlaces: RESULT_CANCELED")
+                }
+            }
+        }
+
+        toResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                Activity.RESULT_OK -> {
+                    result.data?.let {
+                        val place = Autocomplete.getPlaceFromIntent(it)
+                        Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.name}, ${place.id}")
+                    }
+                }
+                AutocompleteActivity.RESULT_ERROR -> {
+                    // TODO: Handle the error.
+                    result.data?.let {
+                        val status = Autocomplete.getStatusFromIntent(it)
+                        Log.e(TAG, "setupAutoCompletePlaces: ${status.statusMessage}")
+                    }
+                }
+                Activity.RESULT_CANCELED -> {
+                    // The user canceled the operation.
+                    Log.d(TAG, "setupAutoCompletePlaces: RESULT_CANCELED")
+                }
+            }
+        }
+    }
+
+    private fun openAutoCompletePlaces(isFromLocation: Boolean){
+        contextActivity?.let {
+            val fields = listOf(Place.Field.ID, Place.Field.NAME)
+            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(it)
+            if(isFromLocation)
+                fromResultLauncher.launch(intent)
+            else
+                toResultLauncher.launch(intent)
+        }
     }
 
     private fun setupAttachmentRecyclerView(){
@@ -375,8 +460,8 @@ class NewMileageClaimFragment() : Fragment() {
                     binding.tvDateOfTrip.text.toString().trim(),
                     Constants.DD_MMM_YYYY_FORMAT
                 ),
-                binding.edtTripFrom.text.toString().trim(),
-                binding.edtTripTo.text.toString().trim(),
+                binding.tvTripFrom.text.toString().trim(),
+                binding.tvTripTo.text.toString().trim(),
                 "1"/*binding.spnDistance*/,
                 if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[binding.spnCarType.selectedItemPosition].id else "", //spnCurrency.selectedItemPosition,
                 binding.edtClaimedMiles.text.toString().trim(),
@@ -632,6 +717,13 @@ class NewMileageClaimFragment() : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && data != null) {
             when (requestCode) {
+                99 -> {
+                    data.let {
+                        val place = Autocomplete.getPlaceFromIntent(data)
+                        Log.i(TAG, "Place: ${place.name}, ${place.id}")
+                    }
+                    Log.d(TAG, "onActivityResult: ")
+                }
                 100 -> {
                     val selectedMedia = data.getSerializableExtra(KeyUtils.SELECTED_MEDIA) as ArrayList<MiMedia>
                     Log.d(TAG, "onActivityResult: ${selectedMedia.size}")

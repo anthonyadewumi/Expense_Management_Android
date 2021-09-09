@@ -52,16 +52,15 @@ class NewClaimFragment() : Fragment() {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private var attachments = "1, 2, 3"
-
     private lateinit var claimDetail: ClaimDetail
     private lateinit var viewModel: NewClaimViewModel
     private lateinit var binding: FragmentNewClaimBinding
-    private lateinit var expenseGroupAdapter: CustomSpinnerAdapter
+
+    /*private lateinit var expenseGroupAdapter: CustomSpinnerAdapter
     private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
     private lateinit var companyAdapter: CustomSpinnerAdapter
     private lateinit var departmentAdapter: CustomSpinnerAdapter
-    private lateinit var currencyAdapter: CustomSpinnerAdapter
+    private lateinit var currencyAdapter: CustomSpinnerAdapter*/
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var refreshPageListener: RefreshPageListener
     private var shouldRefreshPage: Boolean = false
@@ -163,7 +162,7 @@ class NewClaimFragment() : Fragment() {
 
     private fun setupSpinners(){
         // Expense Group Adapter
-        expenseGroupAdapter = CustomSpinnerAdapter(
+        val expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.expenseGroupList
@@ -177,7 +176,7 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Expense Type Adapter
-        expenseTypeAdapter = CustomSpinnerAdapter(
+        val expenseTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.expenseTypeList
@@ -191,7 +190,7 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Company List Adapter
-        companyAdapter = CustomSpinnerAdapter(
+        val companyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.companyList
@@ -205,7 +204,7 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Department Adapter
-        departmentAdapter = CustomSpinnerAdapter(
+        val departmentAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.departmentList
@@ -219,7 +218,7 @@ class NewClaimFragment() : Fragment() {
         }
 
         // Currency Adapter
-        currencyAdapter = CustomSpinnerAdapter(
+        val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.currencyList

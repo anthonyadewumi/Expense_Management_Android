@@ -39,4 +39,5 @@ data class MileageDetail (
     @SerializedName("user_id")
     val userID: String = "",
     val createdBy: String = "",
+    val attachments: String = ""
 )

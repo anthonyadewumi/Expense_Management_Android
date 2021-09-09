@@ -250,7 +250,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
-                android:id="@+id/edtTripFrom"
+                android:id="@+id/tvTripFrom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
@@ -273,7 +273,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <TextView
-                android:id="@+id/edtTripTo"
+                android:id="@+id/tvTripTo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"

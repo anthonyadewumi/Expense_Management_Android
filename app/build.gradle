@@ -136,6 +136,12 @@ dependencies {
     implementation 'org.imaginativeworld.oopsnointernet:oopsnointernet:2.0.0'
     // Media Picker
     implementation 'com.github.Mindinventory:Lassi:0.2.0'
+
+    // Google Places
+//    implementation 'com.google.android.libraries.places:places:2.4.0'
+    implementation 'com.google.maps.android:places-ktx:0.4.0'
+    implementation 'com.android.volley:volley:1.2.1' // Required for Google places
+
 }
 repositories {
     mavenCentral()
