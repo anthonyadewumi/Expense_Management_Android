@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
 
@@ -19,6 +20,9 @@ object RetrofitBuilder {
             level = HttpLoggingInterceptor.Level.BODY
         }
     ).addInterceptor(RetrofitHeaderInterceptor())
+        .readTimeout(60, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .callTimeout(60, TimeUnit.SECONDS)
         .build()
 
     private fun getRetrofit(): Retrofit {
