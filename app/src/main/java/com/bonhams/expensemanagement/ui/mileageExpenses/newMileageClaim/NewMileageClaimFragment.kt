@@ -291,6 +291,13 @@ class NewMileageClaimFragment() : Fragment() {
                     binding.spnCompanyName.setSelection(companyPos)
                 }
 
+                val mileageType: MileageType? =
+                    viewModel.mileageTypeList.find { it.type == mileageDetail.type }
+                val mileageTypePos = viewModel.mileageTypeList.indexOf(mileageType)
+                if (mileageTypePos >= 0) {
+                    binding.spnCompanyName.setSelection(mileageTypePos)
+                }
+
                 val department: Department? =
                     viewModel.departmentList.find { it.name == mileageDetail.department }
                 val departmentPos = viewModel.departmentList.indexOf(department)
