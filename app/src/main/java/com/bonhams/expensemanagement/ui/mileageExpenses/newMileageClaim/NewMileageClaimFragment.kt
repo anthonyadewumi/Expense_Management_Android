@@ -61,13 +61,6 @@ class NewMileageClaimFragment() : Fragment() {
     private lateinit var binding: FragmentNewMileageClaimBinding
     private lateinit var viewModel: NewMileageClaimViewModel
 
-    /*private lateinit var companyAdapter: CustomSpinnerAdapter
-    private lateinit var mileageTypeAdapter: CustomSpinnerAdapter
-    private lateinit var departmentAdapter: CustomSpinnerAdapter
-    private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
-    private lateinit var distanceAdapter: CustomSpinnerAdapter
-    private lateinit var carTypeAdapter: CustomSpinnerAdapter
-    private lateinit var currencyAdapter: CustomSpinnerAdapter*/
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var mileageDetail: MileageDetail
     private lateinit var fromResultLauncher: ActivityResultLauncher<Intent>

@@ -56,11 +56,6 @@ class NewClaimFragment() : Fragment() {
     private lateinit var viewModel: NewClaimViewModel
     private lateinit var binding: FragmentNewClaimBinding
 
-    /*private lateinit var expenseGroupAdapter: CustomSpinnerAdapter
-    private lateinit var expenseTypeAdapter: CustomSpinnerAdapter
-    private lateinit var companyAdapter: CustomSpinnerAdapter
-    private lateinit var departmentAdapter: CustomSpinnerAdapter
-    private lateinit var currencyAdapter: CustomSpinnerAdapter*/
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var refreshPageListener: RefreshPageListener
     private var shouldRefreshPage: Boolean = false
