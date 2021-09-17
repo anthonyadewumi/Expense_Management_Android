@@ -71,6 +71,10 @@ class MainActivity : BaseActivity() {
     )
     private lateinit var binding: ActivityMainBinding
 
+    companion object {
+        var isMilageClaim = false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -134,11 +138,20 @@ class MainActivity : BaseActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_expense_plus -> {
-                    setAppbarTitle(getString(R.string.create_new_claim))
-                    showBottomNavbar(false)
-                    showAppbarBackButton(true)
-                    val fragment = NewClaimFragment()
-                    addFragment(fragment)
+                    if(isMilageClaim)
+                    {
+                        setAppbarTitle(getString(R.string.create_mileage_claim))
+                        showBottomNavbar(false)
+                        showAppbarBackButton(true)
+                        val fragment = NewMileageClaimFragment()
+                        addFragment(fragment)
+                    }else {
+                        setAppbarTitle(getString(R.string.create_new_claim))
+                        showBottomNavbar(false)
+                        showAppbarBackButton(true)
+                        val fragment = NewClaimFragment()
+                        addFragment(fragment)
+                    }
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.bottom_nav_notifications -> {

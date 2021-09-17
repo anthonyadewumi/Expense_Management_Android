@@ -119,6 +119,8 @@
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@+id/mEmailTextField">
 
+           <!-- app:endIconDrawable="@drawable/custom_eye"-->
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/mPassword"
                 android:layout_width="match_parent"

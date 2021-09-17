@@ -42,11 +42,11 @@
                     android:id="@+id/ivDeleteCross"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_30sdp"
-                    android:src="@drawable/ic_back"
+                    android:src="@drawable/ic_baseline_cancel_24"
                     android:padding="@dimen/_6sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
             </RelativeLayout>
 

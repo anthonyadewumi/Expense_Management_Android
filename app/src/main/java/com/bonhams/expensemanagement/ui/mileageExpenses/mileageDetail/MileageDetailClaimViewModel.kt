@@ -8,7 +8,8 @@ import kotlinx.coroutines.Dispatchers
 
 class MileageDetailClaimViewModel(private val mileageClaimRepository: MileageDetailClaimRepository) : ViewModel() {
 
-    var attachmentsList: MutableList<String> = mutableListOf()
+   // var attachmentsList: MutableList<String> = mutableListOf()
+    var attachmentsList: MutableList<String?> = mutableListOf<String?>()
 
     fun createNewMileageClaim(mileageClaimRequest: NewMileageClaimRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))

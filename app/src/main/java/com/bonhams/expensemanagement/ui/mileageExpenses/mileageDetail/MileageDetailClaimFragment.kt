@@ -113,7 +113,7 @@ class MileageDetailFragment() : Fragment() {
             false
         )
         binding.rvAttachments.layoutManager = linearLayoutManager
-        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList)
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"detalis")
         binding.rvAttachments.adapter = attachmentsAdapter
     }
 

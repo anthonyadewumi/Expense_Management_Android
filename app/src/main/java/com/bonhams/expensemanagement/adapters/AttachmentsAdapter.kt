@@ -2,6 +2,7 @@ package com.bonhams.expensemanagement.adapters
 
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,8 @@ import com.bumptech.glide.request.RequestOptions
 
 
 class AttachmentsAdapter(
-    var listAttachments: List<String?>?
+    var listAttachments: MutableList<String?>,
+    var callby:String
 ) : RecyclerView.Adapter<AttachmentsAdapter.ViewHolder>() {
 
     init {
@@ -25,13 +27,13 @@ class AttachmentsAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val attachmentItem = listAttachments?.get(position)
         attachmentItem?.let { holder.bindItems(it) }
-    }
 
+            holder.removeItems(listAttachments, position,callby)
+
+    }
     override fun getItemCount(): Int {
         listAttachments?.let {
             return listAttachments?.size!!
-        } ?: kotlin.run {
-            return 0
         }
     }
 
@@ -50,6 +52,26 @@ class AttachmentsAdapter(
                 .error(R.drawable.ic_default_media)
                 .into(binding.ivAttachment);
         }
+        fun removeItems(listAttachments: MutableList<String?>?,postion:Int,callby:String) {
+
+            if(!callby.equals("detalis")) {
+                binding.ivDeleteCross.visibility=View.VISIBLE
+
+                binding.ivDeleteCross.setOnClickListener {
+                    System.out.println("remove at :$postion")
+                    System.out.println("remove listAttachments size :${listAttachments?.size}")
+
+                    listAttachments?.removeAt(postion)
+                    System.out.println("remove listAttachments size :${listAttachments?.size}")
+
+                    bindingAdapter?.notifyDataSetChanged()
+                }
+                }else{
+                    binding.ivDeleteCross.visibility=View.GONE
+                }
+            }
+
+
 
         companion object {
             fun create(parent: ViewGroup): ViewHolder {

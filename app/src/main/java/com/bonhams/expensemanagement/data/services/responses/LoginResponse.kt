@@ -22,7 +22,9 @@ class UserDetails() {
     val contactNo: String = ""
     @SerializedName("user_type")
     val userType: String = ""
+    @SerializedName("companyName")
     val companyName: String = ""
+    @SerializedName("departmentName")
     val departmentName: String = ""
     val carType: String = ""
     val mileageType: String = ""

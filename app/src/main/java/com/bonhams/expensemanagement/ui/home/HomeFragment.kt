@@ -17,6 +17,7 @@ import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.databinding.FragmentHomeBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
@@ -91,6 +92,7 @@ class HomeFragment : Fragment() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 Log.e("Selected_Page", position.toString())
+                MainActivity.isMilageClaim = position != 0
             }
 
             override fun onPageScrollStateChanged(state: Int) {

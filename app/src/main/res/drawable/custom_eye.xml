@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<selector xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="MissingDefaultResource">
+    <item android:drawable="@drawable/ic_opened_eye"
+        android:state_checked="true"/>
+    <item android:drawable="@drawable/ic_closed_eye"/>
+</selector>

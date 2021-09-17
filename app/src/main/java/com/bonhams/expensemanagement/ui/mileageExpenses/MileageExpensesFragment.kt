@@ -94,7 +94,6 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
                 binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
         })
-        
     }
 
     private fun initAdapter() {
@@ -144,7 +143,6 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
 //                .collect { binding.recyclerView.scrollToPosition(0) }
         }
     }
-
     private fun initSwipeToRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.resetFilters()
@@ -152,7 +150,6 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
 //            adapter.refresh()
         }
     }
-
     private fun initSearch() {
         binding.edtSearchClaim.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEARCH) {

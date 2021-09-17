@@ -20,6 +20,8 @@ object AppPreferences {
     private val FIRST_NAME = Pair("first_name", "")
     private val LAST_NAME = Pair("last_name", "")
     private val EMAIL = Pair("email", "")
+    private val DEPARTMENT = Pair("departmentName", "")
+    private val COMPANY = Pair("companyName", "")
     private val PHONE_NUMBER = Pair("phone_number", "")
     private val PROFILE_PIC = Pair("profile_pic", "")
 
@@ -112,6 +114,16 @@ object AppPreferences {
         get() = prefs.getString(EMAIL.first, EMAIL.second)!!
         set(value) = prefs.edit {
             it.putString(EMAIL.first, value)
+        }
+    var company: String
+        get() = prefs.getString(COMPANY.first, COMPANY.second)!!
+        set(value) = prefs.edit {
+            it.putString(COMPANY.first, value)
+        }
+    var department: String
+        get() = prefs.getString(DEPARTMENT.first, DEPARTMENT.second)!!
+        set(value) = prefs.edit {
+            it.putString(DEPARTMENT.first, value)
         }
 
     var phoneNumber: String

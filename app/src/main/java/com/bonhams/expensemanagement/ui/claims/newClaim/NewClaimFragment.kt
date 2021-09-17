@@ -31,10 +31,7 @@ import com.bonhams.expensemanagement.databinding.FragmentNewClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
-import com.bonhams.expensemanagement.utils.Constants
-import com.bonhams.expensemanagement.utils.RefreshPageListener
-import com.bonhams.expensemanagement.utils.Status
-import com.bonhams.expensemanagement.utils.Utils
+import com.bonhams.expensemanagement.utils.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -93,9 +90,9 @@ class NewClaimFragment() : Fragment() {
     private fun setupView(){
         try {
             if (this::claimDetail.isInitialized) {
-                binding.edtTitle.setText(
+              /*  binding.edtTitle.setText(
                     claimDetail.title.replaceFirstChar(Char::uppercase) ?: claimDetail.title
-                )
+                )*/
                 binding.edtMerchantName.setText(
                     claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
                 )
@@ -191,6 +188,16 @@ class NewClaimFragment() : Fragment() {
             viewModel.companyList
         )
         binding.spnCompanyNumber.adapter = companyAdapter
+        var compnypostion=0
+        viewModel.companyList.forEachIndexed { index, element ->
+
+            if(AppPreferences.company.equals(element.name)){
+                compnypostion=index
+                return@forEachIndexed
+            }
+        }
+        binding.spnCompanyNumber.setSelection(compnypostion)
+
         binding.spnCompanyNumber.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
@@ -205,6 +212,15 @@ class NewClaimFragment() : Fragment() {
             viewModel.departmentList
         )
         binding.spnDepartment.adapter = departmentAdapter
+        var postion=0
+        viewModel.departmentList.forEachIndexed { index, element ->
+
+            if(AppPreferences.department.equals(element.name)){
+                postion=index
+                return@forEachIndexed
+            }
+        }
+        binding.spnDepartment.setSelection(postion)
         binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
@@ -298,7 +314,7 @@ class NewClaimFragment() : Fragment() {
             false
         )
         binding.rvAttachments.layoutManager = linearLayoutManager
-        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList)
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"claim")
         binding.rvAttachments.adapter = attachmentsAdapter
     }
 
@@ -381,6 +397,8 @@ class NewClaimFragment() : Fragment() {
                         resource.data?.let { response ->
                             try {
                                 Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
+                                //Toast.makeText(contextActivity, "Claim added successfully/submitted successfully", Toast.LENGTH_SHORT).show()
+
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -444,7 +462,7 @@ class NewClaimFragment() : Fragment() {
             binding.edtMerchantName.text.toString().trim(),
             if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
             if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
-            if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].code else "",
+            if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "",
 //            binding.edtCompanyNumber.text.toString().trim(),
             if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
             Utils.getDateInServerRequestFormat(
@@ -456,7 +474,7 @@ class NewClaimFragment() : Fragment() {
             binding.edtTax.text.toString().trim(),
             binding.tvNetAmount.text.toString().trim(),
             binding.edtDescription.text.toString().trim(),
-            viewModel.attachmentsList
+            viewModel.attachmentsList as List<String>
         )
     }
 

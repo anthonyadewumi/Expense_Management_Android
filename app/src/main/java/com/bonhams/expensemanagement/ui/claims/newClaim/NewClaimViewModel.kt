@@ -19,8 +19,8 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
     lateinit var mileageTypeList: List<MileageType>
     lateinit var statusTypeList: List<StatusType>
 
-    var attachmentsList: MutableList<String> = mutableListOf()
-
+    //var attachmentsList: List<String> = mutableListOf()
+    var attachmentsList: MutableList<String?> = mutableListOf<String?>()
     fun createNewClaim(newClaimRequest: NewClaimRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {

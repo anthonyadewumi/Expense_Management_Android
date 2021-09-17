@@ -17,7 +17,9 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
     lateinit var carTypeList: List<CarType>
     lateinit var currencyList: List<Currency>
     lateinit var mileageTypeList: List<MileageType>
-    var attachmentsList: MutableList<String> = mutableListOf()
+   // var attachmentsList: MutableList<String> = mutableListOf()
+    var attachmentsList: MutableList<String?> = mutableListOf<String?>()
+
 
     fun createNewMileageClaim(mileageClaimRequest: NewMileageClaimRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))

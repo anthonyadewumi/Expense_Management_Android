@@ -33,9 +33,8 @@ import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
 import com.bonhams.expensemanagement.databinding.FragmentNewMileageClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
-import com.bonhams.expensemanagement.utils.Constants
-import com.bonhams.expensemanagement.utils.Status
-import com.bonhams.expensemanagement.utils.Utils
+import com.bonhams.expensemanagement.ui.main.MainActivity
+import com.bonhams.expensemanagement.utils.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -65,6 +64,9 @@ class NewMileageClaimFragment() : Fragment() {
     private lateinit var mileageDetail: MileageDetail
     private lateinit var fromResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var toResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var refreshPageListener: RefreshPageListener
+
+    private var shouldRefreshPage: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,10 +95,13 @@ class NewMileageClaimFragment() : Fragment() {
         }
     }
 
+    fun setRefreshPageListener(refreshListener: RefreshPageListener){
+        refreshPageListener = refreshListener
+    }
     private fun setupView(){
         try {
             if (this::mileageDetail.isInitialized) {
-                binding.edtTitle.setText(mileageDetail.title)
+             //   binding.edtTitle.setText(mileageDetail.title)
                 binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                     mileageDetail.submittedOn,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
@@ -180,6 +185,15 @@ class NewMileageClaimFragment() : Fragment() {
             viewModel.companyList
         )
         binding.spnCompanyName.adapter = companyAdapter
+        var compnypostion=0
+        viewModel.companyList.forEachIndexed { index, element ->
+
+            if(AppPreferences.company.equals(element.name)){
+                compnypostion=index
+                return@forEachIndexed
+            }
+        }
+        binding.spnCompanyName.setSelection(compnypostion)
         binding.spnCompanyName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
@@ -209,6 +223,15 @@ class NewMileageClaimFragment() : Fragment() {
             viewModel.departmentList
         )
         binding.spnDepartment.adapter = departmentAdapter
+        var dpostion=0
+        viewModel.departmentList.forEachIndexed { index, element ->
+
+            if(AppPreferences.department.equals(element.name)){
+                dpostion=index
+                return@forEachIndexed
+            }
+        }
+        binding.spnDepartment.setSelection(dpostion)
         binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
@@ -438,7 +461,7 @@ class NewMileageClaimFragment() : Fragment() {
             false
         )
         binding.rvAttachments.layoutManager = linearLayoutManager
-        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList)
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"milage")
         binding.rvAttachments.adapter = attachmentsAdapter
     }
 
@@ -473,7 +496,7 @@ class NewMileageClaimFragment() : Fragment() {
                 binding.edtTax.text.toString().trim(),
                 binding.tvNetAmount.text.toString().trim(),
                 binding.edtDescription.text.toString().trim(),
-                viewModel.attachmentsList
+                viewModel.attachmentsList as List<String>
             )
 
             if (!validateCreateClaim(claimRequest)) {
@@ -567,6 +590,8 @@ class NewMileageClaimFragment() : Fragment() {
                         resource.data?.let { response ->
                             try {
                                 Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
+                               // Toast.makeText(contextActivity, "Mileage Claim added successfully/submitted successfully", Toast.LENGTH_SHORT).show()
+
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -599,6 +624,11 @@ class NewMileageClaimFragment() : Fragment() {
         binding.mProgressBars.visibility = View.GONE
         binding.btnSubmit.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
+        if(commonResponse.success) {
+            shouldRefreshPage = true
+//            (contextActivity as? MainActivity)?.backButtonPressed()
+            (contextActivity as? MainActivity)?.clearFragmentBackstack()
+        }
     }
 
     private fun onCreateClaimFailed() {
@@ -743,6 +773,13 @@ class NewMileageClaimFragment() : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(shouldRefreshPage && this::refreshPageListener.isInitialized){
+            refreshPageListener.refreshPage()
         }
     }
 }
