@@ -23,6 +23,9 @@ class NewMileageClaimRequest {
     var parkAmount:  String? = ""
     var totalAmount:  String? = ""
     var tax: String? = ""
+    var taxCode: String? = ""
+    var auction: String? = ""
+    var expenseCode: String? = ""
     var netAmount: String? = ""
     var description: String? = ""
     var attachments: List<String> = emptyList()

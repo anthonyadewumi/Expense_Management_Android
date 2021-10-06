@@ -26,6 +26,7 @@ class NotificationFragment() : Fragment() {
     private var recyclerView: RecyclerView? = null
     private var mNoResult: TextView? = null
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

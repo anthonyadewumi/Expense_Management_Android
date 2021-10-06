@@ -41,7 +41,13 @@ import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
 import java.util.*
 
 
@@ -56,6 +62,8 @@ class NewClaimFragment() : Fragment() {
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var refreshPageListener: RefreshPageListener
     private var shouldRefreshPage: Boolean = false
+    private var expenseCode: String = ""
+    private var taxcodeId: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -153,6 +161,19 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun setupSpinners(){
+     /*   // Tax Adapter
+        val taxAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.taxList
+        )
+        binding.spntaxcode.adapter = taxAdapter
+        binding.spntaxcode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }*/
         // Expense Group Adapter
         val expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -176,7 +197,24 @@ class NewClaimFragment() : Fragment() {
         binding.spnExpenseType.adapter = expenseTypeAdapter
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                expenseCode=viewModel.expenseTypeList.get(position).activityCode
+                taxcodeId=viewModel.expenseTypeList.get(position).taxCodeID
+                viewModel.taxList.forEach {
+                   if(it.id.toString().equals(taxcodeId)) {
+                       binding.edtTaxcode.setText(it.tax_code)
+
+                   }
+                }
+
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
+
+                }else{
+                    binding.tvAuctionExpCode.text = ""
+                }
+
+            }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -200,7 +238,10 @@ class NewClaimFragment() : Fragment() {
 
         binding.spnCompanyNumber.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+               // System.out.println("selected appoint :"+ viewModel.companyList[position].code)
+                binding.edtTitle.setText(viewModel.companyList[position].code)
+            }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -227,7 +268,6 @@ class NewClaimFragment() : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
         // Currency Adapter
         val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -305,6 +345,20 @@ class NewClaimFragment() : Fragment() {
                 updateNetAmount(binding.edtTotalAmount.text.toString(), s.toString())
             }
         })
+        binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+              if(!binding.edtAutionValue.text.toString().isEmpty()){
+                  binding.tvAuctionExpCode.text = expenseCode
+
+              }else{
+                  binding.tvAuctionExpCode.text = ""
+              }
+            }
+        })
     }
 
     private fun setupAttachmentRecyclerView(){
@@ -342,7 +396,7 @@ class NewClaimFragment() : Fragment() {
                 taxAmount = tax.toDouble()
             }
 
-            val netAmount = totalAmount + taxAmount
+            val netAmount = totalAmount - taxAmount
             binding.tvNetAmount.text = "$netAmount"
         }
         catch (error: Exception){
@@ -385,12 +439,54 @@ class NewClaimFragment() : Fragment() {
         viewModel.statusTypeList  = dropdownResponse.statusType
         viewModel.mileageTypeList  = dropdownResponse.mileageType
         viewModel.companyList  = dropdownResponse.companyList
+        viewModel.taxList  = dropdownResponse.tax
 
         setupSpinners()
     }
 
     private fun setCreateClaimObserver(newClaimRequest: NewClaimRequest) {
-        viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
+
+
+     /*   val requestBody: RequestBody
+        val body: MultipartBody.Part
+        val mapRequestBody = LinkedHashMap<String, RequestBody>()
+        val arrBody: MutableList<MultipartBody.Part> = ArrayList()
+        val file=File( viewModel.attachmentsList.get(0))
+        requestBody = RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file)
+        mapRequestBody["file\"; filename=\"" + file] = requestBody
+        mapRequestBody["test"] =
+            RequestBody.create(okhttp3.MediaType.parse("text/plain"), "gogogogogogogog")
+
+
+        body = MultipartBody.Part.createFormData("claimImage", file.getName(), requestBody)
+        arrBody.add(body)
+
+        viewModel.uploadClaimAttachement(arrBody).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.btnSubmit.visibility = View.VISIBLE
+                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })*/
+
+       viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -474,6 +570,11 @@ class NewClaimFragment() : Fragment() {
             binding.edtTax.text.toString().trim(),
             binding.tvNetAmount.text.toString().trim(),
             binding.edtDescription.text.toString().trim(),
+            if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
+            binding.edtAutionValue.text.toString().trim(),
+            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "",
+
+            viewModel.claimImageList as List<String>,
             viewModel.attachmentsList as List<String>
         )
     }
@@ -569,9 +670,9 @@ class NewClaimFragment() : Fragment() {
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(100) // Restrict by minimum file size
-                .setMaxFileSize(1024) //  Restrict by maximum file size
+                .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
+                .setMinFileSize(50) // Restrict by minimum file size
+                .setMaxFileSize(100) //  Restrict by maximum file size
                 .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
@@ -591,9 +692,9 @@ class NewClaimFragment() : Fragment() {
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(100) // Restrict by minimum file size
-                .setMaxFileSize(1024) //  Restrict by maximum file size
+                .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
+                .setMinFileSize(50) // Restrict by minimum file size
+                .setMaxFileSize(100) //  Restrict by maximum file size
                 .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
@@ -624,6 +725,7 @@ class NewClaimFragment() : Fragment() {
                     Log.d(TAG, "onActivityResult: ${selectedMedia.size}")
                     if(selectedMedia.size > 0) {
                         viewModel.attachmentsList.add(selectedMedia[0].path!!)
+
                         refreshAttachments()
                         Log.d(TAG, "onActivityResult:  attachmentsList: ${viewModel.attachmentsList.size}")
                     }
@@ -632,6 +734,17 @@ class NewClaimFragment() : Fragment() {
         }
     }
 
+    @Throws(IOException::class)
+    fun getBytes(`is`: InputStream): ByteArray? {
+        val byteBuff = ByteArrayOutputStream()
+        val buffSize = 1024
+        val buff = ByteArray(buffSize)
+        var len = 0
+        while (`is`.read(buff).also { len = it } != -1) {
+            byteBuff.write(buff, 0, len)
+        }
+        return byteBuff.toByteArray()
+    }
     override fun onDestroy() {
         super.onDestroy()
         if(shouldRefreshPage && this::refreshPageListener.isInitialized){

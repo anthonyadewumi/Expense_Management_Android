@@ -59,13 +59,19 @@
     <string name="department">Department</string>
     <string name="department_star">Department*</string>
     <string name="date_of_submission">Date of Submission</string>
+    <string name="date_of_recipt">Date of Receipt</string>
     <string name="currency">Currency</string>
     <string name="currency_star">Currency*</string>
     <string name="total_amount">Total Amount</string>
+    <string name="aution_value">Auction Value</string>
     <string name="total_amount_star">Total Amount*</string>
     <string name="tax">Tax</string>
+    <string name="tax_codes">Tax Code</string>
     <string name="tax_star">Tax*</string>
     <string name="net_amount">Net Amount</string>
+    <string name="exp_code">Expense Code</string>
+    <string name="auction_sales">Auction/Sales</string>
+    <string name="auction_sales_exp">Auction/Sales Expense Code</string>
     <string name="reporting_manager_status">Reporting Manager Approval Status</string>
     <string name="finance_manager_status">Finance Manager Approval Status</string>
     <string name="description">Description</string>
@@ -93,6 +99,7 @@
 <!--    <string name="validate_password">Please enter password</string>-->
     <string name="validate_password">Password should contains a letter, number and must be greater than 6 characters</string>
     <string name="are_you_sure_you_want_to_logout">Are you sure you want to logout?</string>
+    <string name="force_logout">You\'re being log out due to inactivity. Please try again signed in or contact to admin.</string>
     <string name="validate_password_not_match">Confirm Password does not match new password</string>
     <string name="check_internet_msg">Please check your internet connection</string>
     <string name="trip_details_colon">Trip Details:</string>
@@ -127,7 +134,7 @@
     <string name="rejected">Rejected</string>
     <string name="search">Search</string>
     <string name="submitted_on">Submitted On</string>
-    <string name="no_result_found">No Result Found</string>
+    <string name="no_result_found">No Data Available</string>
     <string name="split_expenses">Split Expenses</string>
     <string name="original_expense">Original Expense</string>
     <string name="retry">Retry</string>
@@ -151,4 +158,5 @@
     <string name="title_star">Title*</string>
     <string name="title">Title</string>
     <string name="please_enter_title">Please enter title</string>
+    <string name="please_enter_company_numer">Please enter Company Number</string>
 </resources>

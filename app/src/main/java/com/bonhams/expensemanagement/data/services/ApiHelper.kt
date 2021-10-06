@@ -1,6 +1,7 @@
 package com.bonhams.expensemanagement.data.services
 
 import com.bonhams.expensemanagement.data.services.requests.*
+import okhttp3.MultipartBody
 
 class ApiHelper(private val apiService: ApiService) {
 
@@ -15,6 +16,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiService.createNewClaim(newClaimRequest)
 
     suspend fun deleteClaim(deleteClaimRequest: DeleteClaimRequest) = apiService.deleteClaim(deleteClaimRequest)
+    suspend fun uploadImage(claimImage :List<MultipartBody.Part>) = apiService.uploadImage(claimImage)
 
     suspend fun mileageExpensesList(mileageExpenseRequest: MileageExpenseRequest) = apiService.mileageList(mileageExpenseRequest)
 

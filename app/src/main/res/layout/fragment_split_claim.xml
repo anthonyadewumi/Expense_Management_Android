@@ -285,6 +285,51 @@
                     android:textColor="@color/colorTextBlack"
                     android:textSize="@dimen/_13ssp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auction_sales"
+                    style="@style/TextRegular12"
+                    android:textColor="@color/colorTextBlack"
+                    android:layout_marginTop="@dimen/_10sdp"/>
+
+                <EditText
+                    android:id="@+id/edtAutionValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_35sdp"
+                    android:hint="@string/aution_value"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal"
+                    style="@style/TextRegular12"
+                    android:textColor="@color/colorTextBlack"
+                    android:background="@drawable/round_border_gray_white_bg"
+                    android:textSize="@dimen/_13ssp"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auction_sales_exp"
+                    style="@style/TextRegular12"
+                    android:textColor="@color/colorTextBlack"
+                    android:layout_marginTop="@dimen/_10sdp"/>
+                <TextView
+                    android:id="@+id/tvAuctionExpCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/_35sdp"
+                    android:hint="@string/exp_code"
+                    style="@style/TextRegular12"
+                    android:textColor="@color/colorTextBlack"
+                    android:background="@drawable/round_border_gray_white_bg"
+                    android:textSize="@dimen/_13ssp"
+                    android:padding="@dimen/_10sdp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/_5sdp"/>
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSplit"
                     style="@style/TextRegular12"

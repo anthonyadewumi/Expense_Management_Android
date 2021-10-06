@@ -86,13 +86,17 @@ class MainActivity : BaseActivity() {
         setupAppbar()
         setNoInternetSnackbar()
         fragmentBackstackListener()
-
         if (savedInstanceState == null) {
             val fragment = HomeFragment()
             changeFragment(fragment)
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        myProfile()
+
+    }
     override fun onBackPressed() {
         if (binding.navDrawer.isDrawerOpen(GravityCompat.START)) {
             binding.navDrawer.closeDrawer(GravityCompat.START)
@@ -119,6 +123,8 @@ class MainActivity : BaseActivity() {
 
     private val mOnNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
+            myProfile()
+
             binding.bottomNavigationView.menu.setGroupCheckable(0, true, true)
             when (menuItem.itemId) {
                 R.id.bottom_nav_home -> {
@@ -359,6 +365,60 @@ class MainActivity : BaseActivity() {
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         finish()
+    }
+    private fun myProfile(){
+        viewModel.myprofile().observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            if(response.message.equals("invalid signature")||response.message.equals("Invalid token")){
+                                showforceLogoutAlert()
+
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        it.message?.let { it1 -> Log.d(TAG, "logoutUser: $it1")}
+                    }
+                    Status.LOADING -> {
+                        Log.d(TAG, "Loading.......")
+                    }
+                }
+            }
+        })
+
+    }
+    private fun showforceLogoutAlert() {
+        val dialog = Dialog(this)
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.setCancelable(false)
+        dialog?.setContentView(R.layout.custom_force_logout_alert_dialog)
+        val title = dialog?.findViewById(R.id.txtTitle) as TextView
+        val body = dialog.findViewById(R.id.txtDescription) as TextView
+        val input = dialog.findViewById(R.id.edtDescription) as EditText
+        //val yesBtn = dialog.findViewById(R.id.btnPositive) as Button
+        val noBtn = dialog.findViewById(R.id.btnNegative) as TextView
+
+        input.visibility = View.GONE
+        title.text = resources.getString(R.string.logout)
+        body.text = resources.getString(R.string.force_logout)
+        //yesBtn.text = resources.getString(R.string.logout)
+        noBtn.text = resources.getString(R.string.ok)
+
+
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+            AppPreferences.clearPrefs()
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            finish()
+
+        }
+        dialog?.show()
     }
 
     /*

@@ -47,30 +47,7 @@
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@+id/guidelineTop">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title_star"
-                style="@style/TextRegular12"
-                android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
 
-            <EditText
-                android:id="@+id/edtTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/_35sdp"
-                android:hint="@string/title"
-                android:imeOptions="actionNext"
-                android:inputType="text"
-                android:maxLength="50"
-                style="@style/TextRegular12"
-                android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -92,7 +69,31 @@
                 android:padding="@dimen/_10sdp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="@dimen/_5sdp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/company_number"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:layout_marginTop="@dimen/_10sdp"/>
 
+            <EditText
+                android:id="@+id/edtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_35sdp"
+                android:hint="@string/company_number"
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:maxLength="50"
+                android:enabled="false"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -138,7 +139,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/date_of_submission"
+                android:text="@string/date_of_recipt"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -148,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
-                android:hint="@string/date_of_submission"
+                android:hint="@string/date_of_recipt"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
@@ -347,6 +348,8 @@
                 android:hint="@string/claimed_miles"
                 android:imeOptions="actionNext"
                 android:inputType="number"
+                android:editable="false"
+                android:enabled="false"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
@@ -482,6 +485,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="numberDecimal"
                 style="@style/TextRegular12"
+                android:enabled="false"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
                 android:textSize="@dimen/_13ssp"
@@ -489,29 +493,99 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginTop="@dimen/_5sdp"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tax_star"
-                style="@style/TextRegular12"
-                android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
-
-            <EditText
-                android:id="@+id/edtTax"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/_35sdp"
-                android:hint="@string/tax"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal"
-                style="@style/TextRegular12"
-                android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tax_code"
+                        style="@style/TextRegular12"
+                        android:textColor="@color/colorTextBlack"
+                        android:layout_marginTop="@dimen/_10sdp"/>
+
+                    <EditText
+                        android:id="@+id/edtTaxcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/_35sdp"
+                        android:hint="@string/tax"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        style="@style/TextRegular12"
+                        android:enabled="false"
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/round_border_gray_white_bg"
+                        android:textSize="@dimen/_13ssp"
+                        android:padding="@dimen/_10sdp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/_5sdp"/>
+
+
+<!--
+                    <Spinner
+                        android:id="@+id/spntaxcode"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_35sdp"
+                        android:hint="@string/tax_code"
+                        style="@style/outlineBoxExposedDropdown"
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/spinner_bg"
+                        android:textSize="@dimen/_13ssp"
+                        android:padding="@dimen/_10sdp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/_5sdp"/>
+-->
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tax_star"
+                        style="@style/TextRegular12"
+                        android:textColor="@color/colorTextBlack"
+                        android:layout_marginTop="@dimen/_10sdp"/>
+
+                    <EditText
+                        android:id="@+id/edtTax"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/_35sdp"
+                        android:hint="@string/tax"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        style="@style/TextRegular12"
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/round_border_gray_white_bg"
+                        android:textSize="@dimen/_13ssp"
+                        android:padding="@dimen/_10sdp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginTop="@dimen/_5sdp"/>
+
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -527,6 +601,50 @@
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_35sdp"
                 android:hint="@string/net_amount"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auction_sales"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:layout_marginTop="@dimen/_10sdp"/>
+
+            <EditText
+                android:id="@+id/edtAutionValue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_35sdp"
+                android:hint="@string/aution_value"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:background="@drawable/round_border_gray_white_bg"
+                android:textSize="@dimen/_13ssp"
+                android:padding="@dimen/_10sdp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auction_sales_exp"
+                style="@style/TextRegular12"
+                android:textColor="@color/colorTextBlack"
+                android:layout_marginTop="@dimen/_10sdp"/>
+            <TextView
+                android:id="@+id/tvAuctionExpCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/_35sdp"
+                android:hint="@string/exp_code"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"

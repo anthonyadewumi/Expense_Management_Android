@@ -124,11 +124,12 @@ class ResetPasswordActivity : BaseActivity() {
         binding.mProgressBars.visibility = View.GONE
         binding.mContinue.visibility = View.VISIBLE
         Toast.makeText(this, commonResponse.message, Toast.LENGTH_SHORT).show()
-
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+       if(commonResponse.success) {
+           val intent = Intent(this, MainActivity::class.java)
+           intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+           startActivity(intent)
+           overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+       }
     }
 
     private fun onResetPasswordFailed() {

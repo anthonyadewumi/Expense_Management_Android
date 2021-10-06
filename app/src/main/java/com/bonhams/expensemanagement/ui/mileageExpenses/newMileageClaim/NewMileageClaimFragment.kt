@@ -1,9 +1,12 @@
 package com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,9 +14,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.Window
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -27,6 +29,7 @@ import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
 import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.model.Currency
 import com.bonhams.expensemanagement.data.services.ApiHelper
+import com.bonhams.expensemanagement.data.services.GoogleApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
@@ -50,6 +53,8 @@ import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.util.*
 
 
@@ -67,7 +72,11 @@ class NewMileageClaimFragment() : Fragment() {
     private lateinit var refreshPageListener: RefreshPageListener
 
     private var shouldRefreshPage: Boolean = false
-
+    private var fromadd: String = ""
+    private var toadd: String = ""
+    private var expenseCode: String = ""
+    private var taxcodeId: String = ""
+    private var milageRate:Double=4.0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -173,9 +182,39 @@ class NewMileageClaimFragment() : Fragment() {
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
-            NewMileageClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+            NewMileageClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService),
+                GoogleApiHelper(RetrofitBuilder.googleApiService)
+            )
         ).get(NewMileageClaimViewModel::class.java)
     }
+
+    private fun showLogoutAlert() {
+        val dialog = context?.let { Dialog(it) }
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.setCancelable(false)
+        dialog?.setContentView(R.layout.custom_force_logout_alert_dialog)
+        val title = dialog?.findViewById(R.id.txtTitle) as TextView
+        val body = dialog.findViewById(R.id.txtDescription) as TextView
+        val input = dialog.findViewById(R.id.edtDescription) as EditText
+        //val yesBtn = dialog.findViewById(R.id.btnPositive) as Button
+        val noBtn = dialog.findViewById(R.id.btnNegative) as TextView
+
+        input.visibility = View.GONE
+        title.text = resources.getString(R.string.logout)
+        body.text = resources.getString(R.string.are_you_sure_you_want_to_logout)
+        //yesBtn.text = resources.getString(R.string.logout)
+        noBtn.text = resources.getString(R.string.ok)
+
+
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog?.show()
+    }
+
+
 
     private fun setupSpinners(){
         // Company List Adapter
@@ -196,7 +235,10 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnCompanyName.setSelection(compnypostion)
         binding.spnCompanyName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                binding.edtTitle.setText(viewModel.companyList[position].code)
+
+            }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -251,6 +293,21 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                expenseCode=viewModel.expenseTypeList.get(position).activityCode
+                taxcodeId=viewModel.expenseTypeList.get(position).taxCodeID
+                viewModel.taxList.forEach {
+                    if(it.id.toString().equals(taxcodeId)) {
+                        binding.edtTaxcode.setText(it.tax_code)
+
+                    }
+                }
+
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
+
+                }else{
+                    binding.tvAuctionExpCode.text = ""
+                }
 //                val item = viewModel.expenseTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -272,6 +329,20 @@ class NewMileageClaimFragment() : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+        // Tax Adapter
+        /*val taxAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.taxList
+        )
+        binding.spntaxcode.adapter = taxAdapter
+        binding.spntaxcode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }*/
 
         // Car Type Adapter
         val carTypeAdapter = CustomSpinnerAdapter(
@@ -382,14 +453,29 @@ class NewMileageClaimFragment() : Fragment() {
                 updateNetAmount(binding.edtTotalAmount.text.toString(), s.toString())
             }
         })
+        binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
+
+                }else{
+                    binding.tvAuctionExpCode.text = ""
+                }
+            }
+        })
     }
 
     private fun setupAutoCompletePlaces(){
         contextActivity?.let {
             // Fetching API_KEY which we wrapped
             val ai: ApplicationInfo = it.packageManager.getApplicationInfo(it.packageName, PackageManager.GET_META_DATA)
-            val value = ai.metaData["api_key"]
-            val apiKey = value.toString()
+            val value = ai.metaData["AIzaSyBG514Hl7ekIEU3iyXKcnqBi0vvIgjtp-8"]
+           // val apiKey = value.toString()
+            val apiKey = "AIzaSyBG514Hl7ekIEU3iyXKcnqBi0vvIgjtp-8"
             // Initializing the Places API
             // with the help of our API_KEY
             if (!Places.isInitialized()) {
@@ -403,6 +489,11 @@ class NewMileageClaimFragment() : Fragment() {
                     result.data?.let {
                         val place = Autocomplete.getPlaceFromIntent(it)
                         Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.name}, ${place.id}")
+                        binding.tvTripFrom.text = place.name
+                        fromadd= place.name.toString()
+                        if(binding.tvTripFrom.text.isNotEmpty()&&binding.tvTripTo.text.isNotEmpty())
+                        getmatrixDistanceObserver(fromadd,toadd)
+
                     }
                 }
                 AutocompleteActivity.RESULT_ERROR -> {
@@ -425,6 +516,10 @@ class NewMileageClaimFragment() : Fragment() {
                     result.data?.let {
                         val place = Autocomplete.getPlaceFromIntent(it)
                         Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.name}, ${place.id}")
+                        binding.tvTripTo.text = place.name
+                        toadd= place.name.toString()
+                        if(binding.tvTripFrom.text.isNotEmpty()&&binding.tvTripTo.text.isNotEmpty())
+                            getmatrixDistanceObserver(fromadd,toadd)
                     }
                 }
                 AutocompleteActivity.RESULT_ERROR -> {
@@ -496,6 +591,10 @@ class NewMileageClaimFragment() : Fragment() {
                 binding.edtTax.text.toString().trim(),
                 binding.tvNetAmount.text.toString().trim(),
                 binding.edtDescription.text.toString().trim(),
+                if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
+                binding.edtAutionValue.text.toString().trim(),
+                if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "",
+
                 viewModel.attachmentsList as List<String>
             )
 
@@ -510,6 +609,35 @@ class NewMileageClaimFragment() : Fragment() {
         catch (error: Exception){
             Log.e(TAG, "createNewClaim: ${error.message}")
         }
+    }
+    private fun getmatrixDistanceObserver(origins:String,destinations:String) {
+         viewModel.getDistance(origins,destinations).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            val distance=
+                                response.rows[0].elements.get(0).distance?.value?.let { it1 ->
+                                    meterToKiloMeter(
+                                        it1
+                                    )
+                                }
+                            val fare= distance?.times(milageRate)
+                            val decimal =
+                                fare?.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN) }
+                            binding.edtClaimedMiles.setText(distance.toString())
+                            binding.edtTotalAmount.setText(decimal.toString())
+                        }
+                    }
+                    Status.ERROR -> {
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+                  binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
     }
 
     private fun setDropdownDataObserver() {
@@ -539,15 +667,21 @@ class NewMileageClaimFragment() : Fragment() {
     }
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
-        viewModel.companyList = dropdownResponse.companyList
-        viewModel.departmentList = dropdownResponse.departmentList
-        viewModel.expenseTypeList = dropdownResponse.expenseType
-        viewModel.distanceList = dropdownResponse.expenseGroup
-        viewModel.carTypeList  = dropdownResponse.carType
-        viewModel.currencyList  = dropdownResponse.currencyType
-        viewModel.mileageTypeList  = dropdownResponse.mileageType
+        if(dropdownResponse.message.equals("Invalid token"))
+        {
+            showLogoutAlert()
+        }else {
+            viewModel.companyList = dropdownResponse.companyList
+            viewModel.departmentList = dropdownResponse.departmentList
+            viewModel.expenseTypeList = dropdownResponse.expenseType
+            viewModel.distanceList = dropdownResponse.expenseGroup
+            viewModel.carTypeList = dropdownResponse.carType
+            viewModel.currencyList = dropdownResponse.currencyType
+            viewModel.mileageTypeList = dropdownResponse.mileageType
+            viewModel.taxList = dropdownResponse.tax
 
-        setupSpinners()
+            setupSpinners()
+        }
     }
 
     private fun updateNetAmount(total: String, tax: String){
@@ -562,7 +696,7 @@ class NewMileageClaimFragment() : Fragment() {
                 taxAmount = tax.toDouble()
             }
 
-            val netAmount = totalAmount + taxAmount
+            val netAmount = totalAmount - taxAmount
             binding.tvNetAmount.text = "$netAmount"
         }
         catch (error: Exception){
@@ -742,7 +876,13 @@ class NewMileageClaimFragment() : Fragment() {
             startActivityForResult(intent, 101)
         }
     }
-
+    private fun meterToMiles(meter:Int):Double{
+       val CONVERSION_UNIT = 0.00062137119;
+        return meter * CONVERSION_UNIT
+    }
+    private fun meterToKiloMeter(meter:Int):Double{
+        return meter * 0.001
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && data != null) {

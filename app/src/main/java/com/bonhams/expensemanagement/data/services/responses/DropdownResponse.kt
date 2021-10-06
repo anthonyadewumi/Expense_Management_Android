@@ -28,4 +28,6 @@ class DropdownResponse {
     val statusType: List<StatusType> = emptyList()
     @SerializedName("userType")
     val userType: List<UserType>? = null
+    @SerializedName("tax")
+    val tax: List<Tax> = emptyList()
 }

@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.*
+import com.bonhams.expensemanagement.data.model.Currency
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import java.util.*
+
 
 class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageClaimRepository) : ViewModel() {
 
@@ -17,6 +20,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
     lateinit var carTypeList: List<CarType>
     lateinit var currencyList: List<Currency>
     lateinit var mileageTypeList: List<MileageType>
+    lateinit var taxList: List<Tax>
    // var attachmentsList: MutableList<String> = mutableListOf()
     var attachmentsList: MutableList<String?> = mutableListOf<String?>()
 
@@ -38,6 +42,18 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+    fun getDistance(origins:String,destinations:String) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            val mapQuery: MutableMap<String, String> = HashMap()
+            mapQuery["key"] = "AIzaSyBG514Hl7ekIEU3iyXKcnqBi0vvIgjtp-8"
+            mapQuery["origins"] = origins
+            mapQuery["destinations"] = destinations
+            emit(Resource.success(data = mileageClaimRepository.getdistance(mapQuery)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 
     fun getNewMileageClaimRequest(title: String,companyName: String, mileageType: String, department: String,
                                   dateSubmitted: String, expenseType: String, MerchantName: String,
@@ -45,7 +61,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
                                   distance: String, carType: String, claimedMiles: String,
                                   roundTrip: Boolean, currency: String, petrolAmount: String,
                                   parkAmount: String, totalAmount: String, tax: String,
-                                  netAmount: String, description: String, attachments: List<String>
+                                  netAmount: String, description: String,taxcode: String,auction: String,expencecode: String, attachments: List<String>
                                 ): NewMileageClaimRequest {
 
         val newClaimRequest = NewMileageClaimRequest()
@@ -70,6 +86,9 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         newClaimRequest.tax = tax
         newClaimRequest.netAmount = netAmount
         newClaimRequest.description = description
+        newClaimRequest.taxCode = taxcode
+        newClaimRequest.auction = auction
+        newClaimRequest.expenseCode = expencecode
         newClaimRequest.attachments = attachments
         
         return newClaimRequest
@@ -79,7 +98,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         var isValid: Pair<Boolean, Int> = Pair(true, R.string.ok)
 
         if(newClaimRequest.title.isNullOrEmpty())
-            isValid = Pair(false, R.string.please_enter_title)
+            isValid = Pair(false, R.string.please_enter_company_numer)
         else if(newClaimRequest.mileageType.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_mileage_type)
         else if(newClaimRequest.department.isNullOrEmpty())

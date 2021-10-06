@@ -55,12 +55,15 @@ android {
             //
 //            buildConfigField "String", "BASE_URL", '"http://api-expense.n5631.iworklab.com/api/"'
             buildConfigField "String", "BASE_URL", '"https://apiexpense.n2.iworklab.com/api/"'
+          //  buildConfigField "String", "BASE_URL", '"https://testapi.n4.iworklab.com/api"'
+
             buildConfigField 'boolean', 'IS_PRODUCTION', 'false'
         }
         production {
             dimension "version"
             //
             buildConfigField "String", "BASE_URL", '"https://apiexpense.n2.iworklab.com/api/"'
+           // buildConfigField "String", "BASE_URL", '"https://testapi.n4.iworklab.com/api/"'
             buildConfigField 'boolean', 'IS_PRODUCTION', 'true'
         }
     }
@@ -136,7 +139,7 @@ dependencies {
     implementation 'org.imaginativeworld.oopsnointernet:oopsnointernet:2.0.0'
     // Media Picker
     implementation 'com.github.Mindinventory:Lassi:0.2.0'
-
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.8.+'
     // Google Places
 //    implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation 'com.google.maps.android:places-ktx:0.4.0'

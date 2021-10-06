@@ -1,6 +1,8 @@
 package com.bonhams.expensemanagement.ui.claims.splitClaim
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -173,11 +175,15 @@ class SplitClaimFragment() : Fragment() {
     }
 
     private fun createNewSplitLayout(){
+        var expenseCode: String = ""
+
         val view = View.inflate(contextActivity, R.layout.item_claims_split, null)
         val linearLayout = view.findViewById<LinearLayout>(R.id.layoutSplit)
         val spnCompany = view.findViewById<Spinner>(R.id.spnCompany)
         val spnDepartment = view.findViewById<Spinner>(R.id.spnDepartment)
         val spnExpense = view.findViewById<Spinner>(R.id.spnExpense)
+        val edtAutionValue = view.findViewById<EditText>(R.id.edtAutionValue)
+        val tvAuctionExpCode = view.findViewById<TextView>(R.id.tvAuctionExpCode)
         val edtTotalAmount = view.findViewById<EditText>(R.id.edtTotalAmount)
         val edtTaxCode = view.findViewById<EditText>(R.id.edtTaxCode)
 
@@ -223,13 +229,33 @@ class SplitClaimFragment() : Fragment() {
         spnExpense?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.expenseTypeList[position]
+                expenseCode=newClaimViewModel.expenseTypeList.get(position).activityCode
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    tvAuctionExpCode.text = expenseCode
+
+                }else{
+                    tvAuctionExpCode.text = ""
+                }
+               // val item = newClaimViewModel.expenseTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
+        edtAutionValue.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    tvAuctionExpCode.text = expenseCode
 
+                }else{
+                    tvAuctionExpCode.text = ""
+                }
+            }
+        })
         viewModel.splitCount = viewModel.splitCount + 1
         linearLayout.tag = viewModel.splitCount
 

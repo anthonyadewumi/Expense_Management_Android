@@ -15,6 +15,9 @@ class NewClaimRequest {
     var tax: String? = ""
     var netAmount: String? = ""
     var description: String? = ""
+    var taxCode: String? = ""
+    var auction: String? = ""
+    var expenseCode: String? = ""
     var attachments: List<String> = emptyList()
     var split: MutableList<SplitClaimDetail> = mutableListOf()
 }
