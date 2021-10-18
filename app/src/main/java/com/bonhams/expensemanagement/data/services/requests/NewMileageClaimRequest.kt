@@ -28,5 +28,6 @@ class NewMileageClaimRequest {
     var expenseCode: String? = ""
     var netAmount: String? = ""
     var description: String? = ""
+    var expenseGroup: String? = ""
     var attachments: List<String> = emptyList()
 }

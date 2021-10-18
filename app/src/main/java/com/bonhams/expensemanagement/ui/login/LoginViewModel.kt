@@ -99,6 +99,7 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
             AppPreferences.lastName = response.userDetails?.lname ?: ""
             AppPreferences.email = response.userDetails?.email ?: ""
             AppPreferences.company = response.userDetails?.companyName ?: ""
+            AppPreferences.userType = response.userDetails?.userType ?: ""
             AppPreferences.department = response.userDetails?.departmentName ?: ""
             AppPreferences.profilePic = response.userDetails?.profileImage ?: ""
             AppPreferences.phoneNumber = response.userDetails?.contactNo ?: ""

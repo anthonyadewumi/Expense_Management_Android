@@ -151,6 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/split"
+                android:visibility="gone"
                 style="@style/TextMedium12"
                 android:textColor="@color/secondary"
                 android:layout_marginTop="@dimen/_10sdp"/>
@@ -160,6 +161,7 @@
             android:id="@+id/layoutSplitDetail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <LinearLayout
@@ -378,6 +380,13 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"/>
             </RelativeLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvsplit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/item_split_row"
+                android:layout_marginTop="@dimen/_5sdp"
+                />
 
             <LinearLayout
                 android:id="@+id/mSubmitLay"

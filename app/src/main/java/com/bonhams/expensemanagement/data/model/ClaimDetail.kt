@@ -38,6 +38,10 @@ data class ClaimDetail(
     val currencyTypeName: String = "",
     @SerializedName("currency_symbol")
     val currencySymbol: String = "",
+    @SerializedName("auction")
+    val auction: Int = 0,
+    @SerializedName("expenseCode")
+    val expenseCode: String = "",
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",

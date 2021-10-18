@@ -44,6 +44,7 @@ import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
 import com.bonhams.expensemanagement.ui.myProfile.editProfile.EditProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
+import com.bonhams.expensemanagement.ui.rmExpence.ExpenceToBeAccepted
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -58,6 +59,7 @@ class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var navDrawerAdapter: NavDrawerAdapter
     private val TAG = javaClass.simpleName
+
     private var navDrawerItems = arrayListOf(
         NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1),
         NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1),
@@ -80,6 +82,10 @@ class MainActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        if(AppPreferences.userType.equals("Reporting Manager")){
+            navDrawerItems.add(3, NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved ", 7))
+        }
         setupNavDrawer()
         setupViewModel()
         setupClickListeners()
@@ -293,6 +299,12 @@ class MainActivity : BaseActivity() {
                     }
                     6 -> { // Logout
                         showLogoutAlert()
+                    }
+                    7 -> {
+                        val fp = Intent(applicationContext, ExpenceToBeAccepted::class.java)
+                        startActivity(fp)
+                        binding.navDrawer.closeDrawer(GravityCompat.START)
+
                     }
                     else -> {
                         setupAppbar()

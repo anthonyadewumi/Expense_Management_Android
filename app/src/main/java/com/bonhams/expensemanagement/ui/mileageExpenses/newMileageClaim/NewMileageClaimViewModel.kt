@@ -61,7 +61,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
                                   distance: String, carType: String, claimedMiles: String,
                                   roundTrip: Boolean, currency: String, petrolAmount: String,
                                   parkAmount: String, totalAmount: String, tax: String,
-                                  netAmount: String, description: String,taxcode: String,auction: String,expencecode: String, attachments: List<String>
+                                  netAmount: String, description: String,taxcode: String,auction: String,expencecode: String, attachments: List<String>,expenseGroup: String
                                 ): NewMileageClaimRequest {
 
         val newClaimRequest = NewMileageClaimRequest()

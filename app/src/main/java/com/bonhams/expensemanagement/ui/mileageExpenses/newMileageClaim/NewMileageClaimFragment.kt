@@ -147,9 +147,9 @@ class NewMileageClaimFragment() : Fragment() {
     }
 
     private fun setClickListeners(){
-        binding.tvUploadPic.setOnClickListener(View.OnClickListener {
+        binding.tvUploadPic.setOnClickListener {
             showBottomSheet()
-        })
+        }
         binding.ivPicUpload.setOnClickListener(View.OnClickListener {
             showBottomSheet()
         })
@@ -162,13 +162,11 @@ class NewMileageClaimFragment() : Fragment() {
             showCalenderDialog(false)
         })
 
-        binding.tvTripFrom.setOnClickListener(View.OnClickListener {
+        binding.tvTripFrom.setOnClickListener {
             openAutoCompletePlaces(true)
-        })
+        }
 
-        binding.tvTripTo.setOnClickListener(View.OnClickListener {
-            openAutoCompletePlaces(false)
-        })
+        binding.tvTripTo.setOnClickListener(View.OnClickListener { openAutoCompletePlaces(false) })
 
         binding.btnSubmit.setOnClickListener(View.OnClickListener {
             contextActivity?.let {
@@ -488,9 +486,9 @@ class NewMileageClaimFragment() : Fragment() {
                 Activity.RESULT_OK -> {
                     result.data?.let {
                         val place = Autocomplete.getPlaceFromIntent(it)
-                        Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.name}, ${place.id}")
-                        binding.tvTripFrom.text = place.name
-                        fromadd= place.name.toString()
+                        Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.address}, ${place.id}")
+                        binding.tvTripFrom.text = place.address
+                        fromadd= place.address.toString()
                         if(binding.tvTripFrom.text.isNotEmpty()&&binding.tvTripTo.text.isNotEmpty())
                         getmatrixDistanceObserver(fromadd,toadd)
 
@@ -515,9 +513,10 @@ class NewMileageClaimFragment() : Fragment() {
                 Activity.RESULT_OK -> {
                     result.data?.let {
                         val place = Autocomplete.getPlaceFromIntent(it)
-                        Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.name}, ${place.id}")
-                        binding.tvTripTo.text = place.name
-                        toadd= place.name.toString()
+                        Log.d(TAG, "setupAutoCompletePlaces: Place: ${place.address}, ${place.id}")
+                        Log.d(TAG, "setupAutoCompletePlaces: Place add: ${place}")
+                        binding.tvTripTo.text = place.address
+                        toadd= place.address.toString()
                         if(binding.tvTripFrom.text.isNotEmpty()&&binding.tvTripTo.text.isNotEmpty())
                             getmatrixDistanceObserver(fromadd,toadd)
                     }
@@ -539,7 +538,7 @@ class NewMileageClaimFragment() : Fragment() {
 
     private fun openAutoCompletePlaces(isFromLocation: Boolean){
         contextActivity?.let {
-            val fields = listOf(Place.Field.ID, Place.Field.NAME)
+            val fields = listOf(Place.Field.ID, Place.Field.ADDRESS,Place.Field.ADDRESS_COMPONENTS)
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
                 .build(it)
             if(isFromLocation)
@@ -591,12 +590,14 @@ class NewMileageClaimFragment() : Fragment() {
                 binding.edtTax.text.toString().trim(),
                 binding.tvNetAmount.text.toString().trim(),
                 binding.edtDescription.text.toString().trim(),
-                if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
+                if (!taxcodeId.isEmpty()) taxcodeId else "",
                 binding.edtAutionValue.text.toString().trim(),
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "",
 
-                viewModel.attachmentsList as List<String>
-            )
+                viewModel.attachmentsList as List<String>,
+                if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseGroupID else "",
+
+                )
 
             if (!validateCreateClaim(claimRequest)) {
                 onCreateClaimFailed()
@@ -633,7 +634,7 @@ class NewMileageClaimFragment() : Fragment() {
                         it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-                  binding.mProgressBars.visibility = View.VISIBLE
+                        binding.mProgressBars.visibility = View.VISIBLE
                     }
                 }
             }
@@ -689,10 +690,10 @@ class NewMileageClaimFragment() : Fragment() {
             var totalAmount = 0.0
             var taxAmount = 0.0
 
-            if (!total.isNullOrEmpty()) {
+            if (!total.isEmpty()) {
                 totalAmount = total.toDouble()
             }
-            if (!tax.isNullOrEmpty()) {
+            if (!tax.isEmpty()) {
                 taxAmount = tax.toDouble()
             }
 
@@ -915,7 +916,6 @@ class NewMileageClaimFragment() : Fragment() {
             }
         }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         if(shouldRefreshPage && this::refreshPageListener.isInitialized){

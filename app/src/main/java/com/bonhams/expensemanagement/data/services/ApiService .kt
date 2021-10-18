@@ -4,6 +4,7 @@ import com.bonhams.expensemanagement.BuildConfig
 import com.bonhams.expensemanagement.data.services.requests.*
 import com.bonhams.expensemanagement.data.services.responses.*
 import com.bonhams.expensemanagement.utils.RetrofitHeaderInterceptor
+import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -79,6 +80,12 @@ interface ApiService {
 
     @GET("dropdown")
     suspend fun dropdownData(): DropdownResponse
+
+    @POST("request_list")
+    suspend fun getRequestExpences(@Body mileageExpenseRequest: JsonObject): AcceptRequestResponse
+
+    @POST("request_detail")
+    suspend fun getRequestExpencesDetails(@Body mileageExpenseRequest: JsonObject): ExpenceDetailsResponse
 
     @GET("logOut")
     suspend fun logoutUser(): CommonResponse

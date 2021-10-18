@@ -69,6 +69,7 @@ class ClaimDetailFragment() : Fragment() {
                 binding.tvTitle.text = claimDetail.title
                 binding.tvMerchantName.text = claimDetail.merchant
                 binding.tvExpenseGroup.text = claimDetail.expenseGroupName
+                binding.tvAuction.text = claimDetail.auction.toString()
                 binding.tvExpenseType.text = claimDetail.expenseTypeName
                 binding.tvCompanyNumber.text = claimDetail.companyName
                 binding.tvDepartment.text = claimDetail.department

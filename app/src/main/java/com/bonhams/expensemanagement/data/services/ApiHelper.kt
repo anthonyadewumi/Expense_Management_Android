@@ -1,6 +1,7 @@
 package com.bonhams.expensemanagement.data.services
 
 import com.bonhams.expensemanagement.data.services.requests.*
+import com.google.gson.JsonObject
 import okhttp3.MultipartBody
 
 class ApiHelper(private val apiService: ApiService) {
@@ -25,6 +26,8 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) = apiService.changePassword(changePasswordRequest)
 
     suspend fun dropdownData() = apiService.dropdownData()
+    suspend fun getRequestExpences(mileageExpenseRequest: JsonObject) = apiService.getRequestExpences(mileageExpenseRequest)
+    suspend fun getRequestExpencesDetails(mileageExpenseRequest: JsonObject) = apiService.getRequestExpencesDetails(mileageExpenseRequest)
 
     suspend fun logoutUser() = apiService.logoutUser()
 

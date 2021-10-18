@@ -1,5 +1,6 @@
 package com.bonhams.expensemanagement.ui.claims.splitClaim
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,12 +13,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
 import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
-import com.bonhams.expensemanagement.data.model.Company
-import com.bonhams.expensemanagement.data.model.Department
-import com.bonhams.expensemanagement.data.model.ExpenseType
-import com.bonhams.expensemanagement.data.model.SplitClaimDetail
+import com.bonhams.expensemanagement.adapters.SplitAdapter
+import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
@@ -26,7 +27,9 @@ import com.bonhams.expensemanagement.databinding.FragmentSplitClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
+import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
+import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
@@ -41,7 +44,11 @@ class SplitClaimFragment() : Fragment() {
     private lateinit var viewModel: SplitClaimViewModel
     private lateinit var newClaimViewModel: NewClaimViewModel
     private lateinit var claimRequest: NewClaimRequest
+    private lateinit var splitAdapter: SplitAdapter
+    companion object {
+       public var splitItmlist: MutableList<SplitClaimItem> = mutableListOf()
 
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,22 +58,33 @@ class SplitClaimFragment() : Fragment() {
         val view = binding.root
         binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
-
         setupViewModel()
         setClickListeners()
+        setupSplitRecyclerView()
         setupSpinners()
         setupView()
 
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        System.out.println("call fregment")
+            viewModel.splitList.add("add more ")
+            splitAdapter.notifyDataSetChanged()
+
+    }
     fun setClaimRequestDetail(request: NewClaimRequest){
         claimRequest = request
     }
 
     private fun setClickListeners(){
         binding.layoutAddSplit.setOnClickListener(View.OnClickListener {
-            createNewSplitLayout()
+            val intent = Intent(requireActivity(), SplitClaimActivity::class.java)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+
+           // createNewSplitLayout()
         })
 
         binding.btnSubmit.setOnClickListener(View.OnClickListener {
@@ -95,7 +113,19 @@ class SplitClaimFragment() : Fragment() {
             NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(NewClaimViewModel::class.java)
     }
-
+    private fun setupSplitRecyclerView(){
+        repeat(3) { index ->
+            viewModel.splitList.add("Split $index")
+        }
+        val linearLayoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+        binding.rvsplit.layoutManager = linearLayoutManager
+        splitAdapter = SplitAdapter(splitItmlist as MutableList<SplitClaimItem?>)
+        binding.rvsplit.adapter = splitAdapter
+    }
     private fun setupSpinners(){
         // Company Adapter
         val companyAdapter = CustomSpinnerAdapter(

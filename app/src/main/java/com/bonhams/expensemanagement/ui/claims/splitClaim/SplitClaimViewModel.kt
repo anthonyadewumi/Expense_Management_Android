@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 class SplitClaimViewModel(private val splitClaimRepository: SplitClaimRepository) : ViewModel() {
 
     var splitCount = 0
+    var splitList: MutableList<String?> = mutableListOf<String?>()
 
     fun createNewClaim(newClaimRequest: NewClaimRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))

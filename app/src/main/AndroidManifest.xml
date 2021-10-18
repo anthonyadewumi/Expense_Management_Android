@@ -63,6 +63,15 @@
         <activity
             android:name=".ui.resetPassword.ResetPasswordActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.claims.newClaim.SplitClaimActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.rmExpence.ExpenceToBeAccepted"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.rmExpence.ReportingMangerExpenceDetails"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.main.MainActivity"
