@@ -12,6 +12,7 @@ class ExpenceRepository(private val apiHelper: ApiHelper) {
     suspend fun dropdownData() = apiHelper.dropdownData()
     suspend fun getRequestExpences(mileageExpenseRequest: JsonObject) = apiHelper.getRequestExpences(mileageExpenseRequest)
     suspend fun getRequestExpencesDetails(mileageExpenseRequest: JsonObject) = apiHelper.getRequestExpencesDetails(mileageExpenseRequest)
+    suspend fun acceptReject(data: JsonObject) = apiHelper.acceptReject(data)
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiHelper.createNewClaim(newClaimRequest)
     suspend fun uploadImage(claimImage :List<MultipartBody.Part>) = apiHelper.uploadImage(claimImage)
 }

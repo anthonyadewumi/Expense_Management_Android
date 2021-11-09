@@ -47,7 +47,7 @@ class ExpencesListAdapter(
         fun bindItems(item: ToBeAcceptedData,context:Context,expncelist: List<ToBeAcceptedData>) {
             binding.tvName.text = item.employeeName
             binding.tvDeparment.text = item.userType
-            binding.tvamount.text = "$ "+item.totalAmount
+            binding.tvAmount.text = "$ "+item.totalAmount
             binding.tvtotalClaims.text = item.totalClaims.toString()
             binding.tvemId.text = "Employee ID: "+item.employeeId
             //val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ")

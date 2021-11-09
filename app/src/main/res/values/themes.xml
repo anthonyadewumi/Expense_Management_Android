@@ -38,7 +38,10 @@
     <style name="outlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeWidth">5px</item>
         <item name="boxStrokeWidthFocused">@dimen/_2sdp</item>
+        <item name="strokeColor">@color/colorTextGray</item>
+<!--
         <item name="strokeColor">@color/colorTextDarkGray</item>
+-->
         <item name="android:radius">10dp</item>
         <item name="android:includeFontPadding">false</item>
         <item name="android:fontFamily">@font/inter_regular</item>
@@ -103,6 +106,11 @@
         <item name="android:includeFontPadding">false</item>
         <item name="android:fontFamily">@font/inter_regular</item>
         <item name="android:textSize">@dimen/_10ssp</item>
+    </style>
+    <style name="TextRegular11" parent="Theme.ExpenseManagement">
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
     </style>
 
     <style name="TextRegular12" parent="Theme.ExpenseManagement">

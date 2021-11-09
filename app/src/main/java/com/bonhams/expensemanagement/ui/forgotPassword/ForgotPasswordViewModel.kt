@@ -36,6 +36,7 @@ class ForgotPasswordViewModel(private val forgotPassword: ForgotPasswordReposito
     fun getForgotPasswordRequest(email: String): ForgotPasswordRequest {
         val loginRequest = ForgotPasswordRequest()
         loginRequest.email = email
+        loginRequest.role = "U"
         return loginRequest
     }
 

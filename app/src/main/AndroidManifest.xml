@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.bonhams.expensemanagement">
 
     <!--
@@ -7,6 +8,9 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- Application Permissions -->
@@ -23,7 +27,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -38,7 +42,8 @@
         android:roundIcon="@mipmap/ic_launcher_foreground"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.ExpenseManagement">
+        android:theme="@style/Theme.ExpenseManagement"
+        tools:replace="android:allowBackup">
 
         <activity
             android:name=".ui.splash.SplashScreenActivity"
@@ -65,6 +70,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.claims.newClaim.SplitClaimActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.claims.newClaim.SplitClaimDetalisActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.rmExpence.ExpenceToBeAccepted"

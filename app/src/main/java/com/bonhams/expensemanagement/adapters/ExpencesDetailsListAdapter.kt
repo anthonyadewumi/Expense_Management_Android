@@ -15,13 +15,15 @@ import com.bonhams.expensemanagement.databinding.ItemExpenceDetailsRowBinding
 import com.bonhams.expensemanagement.databinding.ItemExpenceItemRowBinding
 import com.bonhams.expensemanagement.ui.rmExpence.ExpenceToBeAccepted
 import com.bonhams.expensemanagement.ui.rmExpence.ReportingMangerExpenceDetails
+import com.bonhams.expensemanagement.utils.RecylerCallback
+import com.bonhams.expensemanagement.utils.RefreshPageListener
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
 class ExpencesDetailsListAdapter(
-    var expncelist: List<ExpenceDetailsData>,var context:Context
+    var expncelist: List<ExpenceDetailsData>,var context:Context,var recylerCallback: RecylerCallback
 ) : RecyclerView.Adapter<ExpencesDetailsListAdapter.ViewHolder>() {
 
     init {
@@ -33,7 +35,7 @@ class ExpencesDetailsListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
        // val attachmentItem = expncelist?.get(position)
-       holder.bindItems(expncelist[position],context)
+       holder.bindItems(expncelist[position],context,recylerCallback,position)
 
 
     }
@@ -46,19 +48,21 @@ class ExpencesDetailsListAdapter(
 
     class ViewHolder(itemBinding: ItemExpenceDetailsRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         private val binding: ItemExpenceDetailsRowBinding = itemBinding
-        fun bindItems(item: ExpenceDetailsData,context:Context) {
+        fun bindItems(item: ExpenceDetailsData,context:Context,recylerCallback: RecylerCallback,postion:Int) {
             binding.tvGroupName.text = item.expenseGroupName
             binding.tvExpenseType.text = item.claimType
+            binding.tvDesc.text = item.description
            binding.tvNetAmount.text = "$ "+item.netAmount
+           binding.tvTax.text = "$ "+item.tax
            binding.tvTotalAmount.text = "$ "+item.totalAmount
            binding.tvMerchant.text =item.claimTitle
-           // binding.tvtotalClaims.text = item.totalClaims.toString()
-           // binding.tvemId.text = "Employee ID: "+item.employeeId
-            //val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ")
-           // binding.tvdate.text =parseDateFormat(item.lastestSubmissionDate, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "dd MMM yy")
-            binding.claimCardView.setOnClickListener {
-                //val fp = Intent(context, ReportingMangerExpenceDetails::class.java)
-                //context.startActivity(fp)
+
+            binding.chkRequest.setOnClickListener {
+                if( binding.chkRequest.isChecked){
+                    with(recylerCallback) {
+                        callback("checked", item, postion)
+                    }
+                }else recylerCallback.callback("unchecked",item,postion)
             }
 
         }

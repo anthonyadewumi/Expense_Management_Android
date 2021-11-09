@@ -161,7 +161,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@android:color/transparent"
-                            style="@style/TextRegular12"
+                            style="@style/TextRegular11"
                             android:textColor="@color/white"
                             android:text="@string/edit"
                             android:padding="@dimen/_10sdp"
@@ -230,6 +230,7 @@
                         android:id="@+id/layoutSplitDetail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_12sdp"
                         android:orientation="vertical">
 
                         <LinearLayout
@@ -242,190 +243,287 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_7sdp"
+                                android:layout_height="wrap_content">
+
                             <TextView
-                                style="@style/TextRegular12"
-                                android:layout_width="wrap_content"
+                                style="@style/TextRegular11"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_10sdp"
                                 android:text="@string/company_star"
                                 android:textColor="@color/colorTextBlack" />
 
                             <Spinner
                                 android:id="@+id/spnCompany"
                                 style="@style/outlineBoxExposedDropdown"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_35sdp"
+                                android:layout_width="0dp"
+                                android:layout_weight="1.5"
+                                android:layout_height="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginTop="@dimen/_5sdp"
                                 android:background="@drawable/spinner_bg"
                                 android:hint="@string/expense_group"
-                                android:minHeight="@dimen/_30sdp"
-                                android:padding="@dimen/_10sdp"
+                                android:minHeight="@dimen/_28sdp"
+                                android:textSize="@dimen/_10sdp"
+                                android:padding="@dimen/_5sdp"
+                                android:gravity="center|start"
                                 android:textColor="@color/colorTextBlack"
-                                android:textSize="@dimen/_13ssp" />
-
+                                 />
+                            </LinearLayout>
+                             <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
                             <TextView
-                                style="@style/TextRegular12"
-                                android:layout_width="wrap_content"
+                                style="@style/TextRegular11"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_10sdp"
                                 android:text="@string/department_star"
                                 android:textColor="@color/colorTextBlack" />
 
                             <Spinner
                                 android:id="@+id/spnDepartment"
                                 style="@style/outlineBoxExposedDropdown"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_35sdp"
+                                android:layout_width="0dp"
+                                android:layout_weight="1.5"
+                                android:layout_height="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginTop="@dimen/_5sdp"
                                 android:background="@drawable/spinner_bg"
                                 android:hint="@string/department"
-                                android:minHeight="@dimen/_30sdp"
-                                android:padding="@dimen/_10sdp"
+                                android:minHeight="@dimen/_28sdp"
                                 android:textColor="@color/colorTextBlack"
-                                android:textSize="@dimen/_13ssp" />
-
+                                android:textSize="@dimen/_10sdp"
+                                android:gravity="center|start"
+                                android:padding="@dimen/_5sdp"
+                                />
+                             </LinearLayout>
+                             <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
                             <TextView
-                                style="@style/TextRegular12"
-                                android:layout_width="wrap_content"
+                                style="@style/TextRegular11"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_10sdp"
                                 android:text="@string/expense_star"
                                 android:textColor="@color/colorTextBlack" />
 
                             <Spinner
                                 android:id="@+id/spnExpense"
                                 style="@style/outlineBoxExposedDropdown"
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_35sdp"
+                                android:layout_width="0dp"
+                                android:layout_weight="1.5"
+                                android:layout_height="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginTop="@dimen/_5sdp"
                                 android:background="@drawable/spinner_bg"
                                 android:hint="@string/expense"
-                                android:minHeight="@dimen/_30sdp"
-                                android:padding="@dimen/_10sdp"
+                                android:minHeight="@dimen/_28sdp"
+                                android:padding="@dimen/_5sdp"
+                                android:gravity="center|start"
                                 android:textColor="@color/colorTextBlack"
-                                android:textSize="@dimen/_13ssp" />
-
+                                android:textSize="@dimen/_10sdp" />
+                             </LinearLayout>
+                             <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
                             <TextView
-                                style="@style/TextRegular12"
-                                android:layout_width="wrap_content"
+                                style="@style/TextRegular11"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_10sdp"
                                 android:text="@string/total_amount_star"
                                 android:textColor="@color/colorTextBlack" />
 
-                            <EditText
+                                 <com.cottacush.android.currencyedittext.CurrencyEditText
                                 android:id="@+id/edtTotalAmount"
-                                style="@style/TextRegular12"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:minHeight="@dimen/_35sdp"
+                                style="@style/TextRegular11"
+                                android:layout_width="0dp"
+                                android:layout_weight="1.5"
+                                android:layout_height="@dimen/_28sdp"
+                                android:minHeight="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:layout_marginTop="@dimen/_5sdp"
                                 android:background="@drawable/round_border_gray_white_bg"
                                 android:hint="@string/total_amount"
                                 android:imeOptions="actionNext"
-                                android:inputType="numberDecimal"
-                                android:padding="@dimen/_10sdp"
+                                android:inputType="number"
+                                     app:currencySymbol="$"
+                                     android:padding="@dimen/_5sdp"
+                                android:gravity="center|start"
                                 android:textColor="@color/colorTextBlack"
-                                android:textSize="@dimen/_13ssp" />
+                                android:textSize="@dimen/_10sdp" />
+                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:orientation="horizontal"
-                                android:weightSum="2"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
                                 android:layout_height="wrap_content">
 
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:layout_marginRight="@dimen/_5sdp"
-                                    android:orientation="vertical"
-                                    android:layout_height="wrap_content">
-
                                     <TextView
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="0dp"
+                                        android:layout_weight="1"
                                         android:layout_height="wrap_content"
                                         android:text="@string/tax_code"
-                                        style="@style/TextRegular12"
+                                        style="@style/TextRegular11"
                                         android:textColor="@color/colorTextBlack"
-                                        android:layout_marginTop="@dimen/_10sdp"/>
+                                        />
 
                                     <EditText
                                         android:id="@+id/edtTaxCode"
-                                        android:layout_width="match_parent"
+
+                                        android:layout_width="0dp"
+                                        android:layout_weight="1.5"
                                         android:layout_height="wrap_content"
-                                        android:minHeight="@dimen/_35sdp"
+                                        android:minHeight="@dimen/_28sdp"
                                         android:hint="@string/tax"
                                         android:imeOptions="actionNext"
                                         android:inputType="numberDecimal"
-                                        style="@style/TextRegular12"
+                                        style="@style/TextRegular11"
                                         android:editable="false"
                                         android:enabled="false"
                                         android:focusable="false"
                                         android:textColor="@color/colorTextBlack"
                                         android:background="@drawable/round_border_gray_white_bg"
-                                        android:textSize="@dimen/_13ssp"
-                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_10sdp"
+                                        android:gravity="center|start"
+                                        android:padding="@dimen/_5sdp"
                                         android:layout_gravity="center_vertical"
-                                        android:layout_marginTop="@dimen/_5sdp"/>
-
-
-                                    <!--
-                                                            <Spinner
-                                                                android:id="@+id/spntaxcode"
-                                                                android:layout_width="match_parent"
-                                                                android:layout_height="@dimen/_35sdp"
-                                                                android:hint="@string/tax_code"
-                                                                style="@style/outlineBoxExposedDropdown"
-                                                                android:textColor="@color/colorTextBlack"
-                                                                android:background="@drawable/spinner_bg"
-                                                                android:textSize="@dimen/_13ssp"
-                                                                android:padding="@dimen/_10sdp"
-                                                                android:layout_gravity="center_vertical"
-                                                                android:layout_marginTop="@dimen/_5sdp"/>
-                                    -->
-
+                                        />
 
                                 </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
-                                    android:orientation="vertical"
-                                    android:layout_marginLeft="@dimen/_5sdp"
-                                    android:layout_height="wrap_content">
-
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
                                     <TextView
-                                        android:layout_width="wrap_content"
+
+                                        android:layout_width="0dp"
+                                        android:layout_weight="1"
                                         android:layout_height="wrap_content"
                                         android:text="@string/tax_star"
-                                        style="@style/TextRegular12"
+                                        style="@style/TextRegular11"
                                         android:textColor="@color/colorTextBlack"
-                                        android:layout_marginTop="@dimen/_10sdp"/>
+                                       />
 
-                                    <EditText
+                                <com.cottacush.android.currencyedittext.CurrencyEditText
                                         android:id="@+id/edtTax"
-                                        android:layout_width="match_parent"
+                                        android:layout_width="0dp"
+                                        android:layout_weight="1.5"
                                         android:layout_height="wrap_content"
-                                        android:minHeight="@dimen/_35sdp"
+                                        android:minHeight="@dimen/_28sdp"
                                         android:hint="@string/tax"
+                                       android:inputType="number"
+                                        app:currencySymbol="$"
                                         android:imeOptions="actionNext"
-                                        android:inputType="numberDecimal"
-                                        style="@style/TextRegular12"
+                                        style="@style/TextRegular11"
                                         android:textColor="@color/colorTextBlack"
                                         android:background="@drawable/round_border_gray_white_bg"
-                                        android:textSize="@dimen/_13ssp"
-                                        android:padding="@dimen/_10sdp"
+                                        android:textSize="@dimen/_10sdp"
+                                        android:padding="@dimen/_5sdp"
+                                        android:gravity="center|start"
                                         android:layout_gravity="center_vertical"
-                                        android:layout_marginTop="@dimen/_5sdp"/>
+                                        />
 
 
                                 </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
+                                <TextView
+
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/auction_sales"
+                                    style="@style/TextRegular11"
+                                    android:textColor="@color/colorTextBlack"
+                                    />
+
+                                <EditText
+                                    android:id="@+id/edtAutionValue"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1.5"
+                                    android:layout_height="wrap_content"
+                                    android:minHeight="@dimen/_28sdp"
+                                    android:hint="@string/enter_value"
+                                    android:imeOptions="actionNext"
+                                    android:inputType="numberDecimal"
+                                    style="@style/TextRegular11"
+                                    android:textColor="@color/colorTextBlack"
+                                    android:background="@drawable/round_border_gray_white_bg"
+                                    android:textSize="@dimen/_10sdp"
+                                    android:padding="@dimen/_5sdp"
+                                    android:gravity="center|start"
+                                    android:layout_gravity="center_vertical"
+                                    />
 
 
                             </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/exp_code"
+                                    style="@style/TextRegular11"
+                                    android:textColor="@color/colorTextBlack"
+                                    />
+
+                                <TextView
+                                    android:id="@+id/tvAuctionExpCode"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1.5"
+                                    android:layout_height="wrap_content"
+                                    android:minHeight="@dimen/_28sdp"
+                                    android:hint="@string/exp_code"
+                                    android:imeOptions="actionNext"
+                                    android:inputType="numberDecimal"
+                                    style="@style/TextRegular11"
+                                    android:textColor="@color/colorTextBlack"
+                                    android:background="@drawable/round_border_gray_white_bg"
+                                    android:textSize="@dimen/_10sdp"
+                                    android:padding="@dimen/_5sdp"
+                                    android:gravity="center|start"
+                                    android:layout_gravity="center_vertical"
+                                    />
+
+
+                            </LinearLayout>
+
+
 
 
                             <TextView
@@ -438,7 +536,7 @@
                                 android:layout_marginTop="@dimen/_10sdp"/>
 
                             <EditText
-                                android:id="@+id/edtAutionValue"
+                                android:id="@+id/edtAutionValues"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:minHeight="@dimen/_35sdp"
@@ -463,13 +561,13 @@
                                 android:textColor="@color/colorTextBlack"
                                 android:layout_marginTop="@dimen/_10sdp"/>
                             <TextView
-                                android:id="@+id/tvAuctionExpCode"
+                                android:id="@+id/tvAuctionExpCodes"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:minHeight="@dimen/_35sdp"
                                 android:hint="@string/exp_code"
                                 android:visibility="gone"
-                                style="@style/TextRegular12"
+                                style="@style/TextRegular11"
                                 android:textColor="@color/colorTextBlack"
                                 android:background="@drawable/round_border_gray_white_bg"
                                 android:textSize="@dimen/_13ssp"
@@ -479,7 +577,7 @@
 
                             <androidx.appcompat.widget.AppCompatButton
                                 android:id="@+id/btnSplit"
-                                style="@style/TextRegular12"
+                                style="@style/TextRegular11"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_15sdp"
@@ -523,9 +621,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="@drawable/round_corner_theme"
-                            android:text="@string/submit"
+                            android:text="@string/done"
                             android:textAllCaps="false"
-                            style="@style/TextRegular12"
+                            style="@style/TextRegular11"
                             android:textColor="@color/white"
                             android:textStyle="bold"/>
                     </LinearLayout>

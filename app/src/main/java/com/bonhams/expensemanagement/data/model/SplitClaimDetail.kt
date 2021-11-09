@@ -5,5 +5,8 @@ data class SplitClaimDetail (
     val department: String = "",
     val expenseType: String = "",
     val totalAmount: String = "",
-    val tax: String = ""
+    val tax: Double = 0.0,
+    val taxCode: Int = 0,
+    var auction: String? = "",
+    var expenseCode: String? = ""
 )

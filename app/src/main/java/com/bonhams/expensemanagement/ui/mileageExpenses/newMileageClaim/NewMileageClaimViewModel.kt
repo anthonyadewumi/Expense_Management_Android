@@ -21,6 +21,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
     lateinit var currencyList: List<Currency>
     lateinit var mileageTypeList: List<MileageType>
     lateinit var taxList: List<Tax>
+    lateinit var MileageRateList: List<MilageRate>
    // var attachmentsList: MutableList<String> = mutableListOf()
     var attachmentsList: MutableList<String?> = mutableListOf<String?>()
 
@@ -90,7 +91,8 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         newClaimRequest.auction = auction
         newClaimRequest.expenseCode = expencecode
         newClaimRequest.attachments = attachments
-        
+        newClaimRequest.expenseGroup = expenseGroup
+
         return newClaimRequest
     }
 
@@ -106,7 +108,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         else if(newClaimRequest.expenseType.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_expense_type)
         else if(newClaimRequest.merchantName.isNullOrEmpty())
-            isValid = Pair(false, R.string.please_enter_merchant_name)
+            isValid = Pair(true, R.string.please_enter_merchant_name)
         else if(newClaimRequest.tripFrom.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_starting_location)
         else if(newClaimRequest.tripTo.isNullOrEmpty())

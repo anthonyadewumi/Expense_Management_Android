@@ -3,6 +3,7 @@ package com.bonhams.expensemanagement.data.model
 import com.google.gson.annotations.SerializedName
 
 data class ExpenseType (
+    @SerializedName("id")
     val id: String = "",
     val name: String = "",
     val description: String = "",

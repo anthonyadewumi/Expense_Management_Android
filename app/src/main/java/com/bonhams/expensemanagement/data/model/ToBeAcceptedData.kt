@@ -11,9 +11,9 @@ data class ToBeAcceptedData(
     @SerializedName("employeeName")
     val employeeName: String = "",
     @SerializedName("reportingTo")
-    val reportingTo: Int = 0,
+    val reportingTo: String = "",
     @SerializedName("totalAmount")
-    val totalAmount: Int = 0,
+    val totalAmount: Double = 0.0,
     @SerializedName("totalClaims")
     val totalClaims: Int = 0,
     @SerializedName("lastestSubmissionDate")

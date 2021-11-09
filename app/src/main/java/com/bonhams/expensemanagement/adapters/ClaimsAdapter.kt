@@ -38,13 +38,13 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
             binding.tvSubmittedOn.text = Utils.getFormattedDate(item.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
             binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
-            if(!item.reportingMStatus.isNullOrEmpty()) {
+            if(!item.status.isNullOrEmpty()) {
                 binding.tvStatus.text =
-                    item.reportingMStatus.replaceFirstChar(Char::uppercase)
+                    item.status.replaceFirstChar(Char::uppercase)
 
                 when {
-                    item.reportingMStatus.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
-                    item.reportingMStatus.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                    item.status.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
+                    item.status.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
                     else -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
                 }
             }

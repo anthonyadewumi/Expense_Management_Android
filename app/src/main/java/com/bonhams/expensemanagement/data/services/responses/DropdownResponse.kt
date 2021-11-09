@@ -30,4 +30,6 @@ class DropdownResponse {
     val userType: List<UserType>? = null
     @SerializedName("tax")
     val tax: List<Tax> = emptyList()
+    @SerializedName("mileage_rate")
+    val milageRate: List<MilageRate> = emptyList()
 }

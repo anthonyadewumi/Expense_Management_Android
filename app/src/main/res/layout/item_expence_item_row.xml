@@ -120,13 +120,12 @@
                         android:maxLines="2"
                         android:ellipsize="end"/>
                     <TextView
-                        android:id="@+id/tvamount"
+                        android:id="@+id/tvAmount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.5"
                         android:layout_marginStart="@dimen/_5sdp"
                         style="@style/TextRegular12"
-                        android:text="$ 23456"
                         android:textColor="@color/colorTextDarkGray"
                         android:gravity="start|center_vertical"
                         android:maxLines="2"

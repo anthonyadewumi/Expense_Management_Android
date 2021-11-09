@@ -58,7 +58,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
         contextActivity = activity as? BaseActivity
 
         setupViewModel()
-        initAdapter()
+      //  initAdapter()
         initSwipeToRefresh()
         initSearch()
 
@@ -102,7 +102,10 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
     }
 
 
-
+    override fun onResume() {
+        super.onResume()
+        initAdapter()
+    }
 
 
 

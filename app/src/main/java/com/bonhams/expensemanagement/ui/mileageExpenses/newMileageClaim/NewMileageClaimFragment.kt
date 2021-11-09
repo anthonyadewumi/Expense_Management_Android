@@ -2,6 +2,7 @@ package com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
@@ -18,6 +19,7 @@ import android.view.Window
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -67,6 +69,7 @@ class NewMileageClaimFragment() : Fragment() {
 
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var mileageDetail: MileageDetail
+    private lateinit var gpsMileageDetail: GpsMileageDetail
     private lateinit var fromResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var toResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var refreshPageListener: RefreshPageListener
@@ -76,7 +79,7 @@ class NewMileageClaimFragment() : Fragment() {
     private var toadd: String = ""
     private var expenseCode: String = ""
     private var taxcodeId: String = ""
-    private var milageRate:Double=4.0
+    private var milageRate:Double=0.0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -103,6 +106,12 @@ class NewMileageClaimFragment() : Fragment() {
             mileageDetail = it
         }
     }
+    fun setAutoMileageDetails(detail: GpsMileageDetail?){
+        detail?.let {
+            gpsMileageDetail=it
+
+        }
+    }
 
     fun setRefreshPageListener(refreshListener: RefreshPageListener){
         refreshPageListener = refreshListener
@@ -127,7 +136,8 @@ class NewMileageClaimFragment() : Fragment() {
                 binding.edtParkAmount.setText(mileageDetail.parking)
                 binding.edtTotalAmount.setText(mileageDetail.totalAmount)
                 binding.edtTax.setText(mileageDetail.tax)
-                binding.tvNetAmount.text = mileageDetail.netAmount
+                //binding.tvNetAmount.text = mileageDetail.netAmount
+                binding.tvNetAmount.setText(mileageDetail.netAmount.toString())
                 binding.edtDescription.setText(mileageDetail.description)
 
 
@@ -235,6 +245,10 @@ class NewMileageClaimFragment() : Fragment() {
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 binding.edtTitle.setText(viewModel.companyList[position].code)
+                milageRate=  getMileageRate(viewModel.companyList[position].id.toInt())
+                println("milage rate amount :"+milageRate)
+
+                if(milageRate<1)showAleartDialog("Mileage Rate is not available for Company "+viewModel.companyList[position].name)
 
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -429,6 +443,13 @@ class NewMileageClaimFragment() : Fragment() {
                 Log.e(TAG, "setupSpinners: ${e.message}")
             }
         }
+        if(this::gpsMileageDetail.isInitialized){
+            binding.tvDateOfTrip.text = gpsMileageDetail.startDate
+            binding.tvDateOfSubmission.text = gpsMileageDetail.stopDate
+            binding.tvTripFrom.text = gpsMileageDetail.fromLocation
+            binding.tvTripTo.text = gpsMileageDetail.toLoaction
+            getmatrixDistanceObserver(gpsMileageDetail.fromLocation,gpsMileageDetail.toLoaction)
+        }
     }
 
     private fun setupTextWatcher(){
@@ -438,7 +459,7 @@ class NewMileageClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(s.toString(), binding.edtTax.text.toString())
+                updateNetAmount(binding.edtTotalAmount.getNumericValue(), binding.edtTax.getNumericValue(),binding.edtParkAmount.getNumericValue())
             }
         })
 
@@ -448,7 +469,16 @@ class NewMileageClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(binding.edtTotalAmount.text.toString(), s.toString())
+                updateNetAmount(binding.edtTotalAmount.getNumericValue(), binding.edtTax.getNumericValue(),binding.edtParkAmount.getNumericValue())
+            }
+        })
+        binding.edtPetrolAmount.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+               // updateNetAmount(binding.edtTotalAmount.getNumericValue(), binding.edtTax.getNumericValue(),binding.edtParkAmount.getNumericValue())
             }
         })
         binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
@@ -584,11 +614,11 @@ class NewMileageClaimFragment() : Fragment() {
                 binding.edtClaimedMiles.text.toString().trim(),
                 binding.switchRoundTrip.isChecked,
                 if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
-                binding.edtPetrolAmount.text.toString().trim(),
-                binding.edtParkAmount.text.toString().trim(),
-                binding.edtTotalAmount.text.toString().trim(),
-                binding.edtTax.text.toString().trim(),
-                binding.tvNetAmount.text.toString().trim(),
+                binding.edtPetrolAmount.getNumericValue().toString().trim(),
+                binding.edtParkAmount.getNumericValue().toString().trim(),
+                binding.edtTotalAmount.getNumericValue().toString().trim(),
+                binding.edtTax.getNumericValue().toString().trim(),
+                binding.tvNetAmount.getNumericValue().toString().trim(),
                 binding.edtDescription.text.toString().trim(),
                 if (!taxcodeId.isEmpty()) taxcodeId else "",
                 binding.edtAutionValue.text.toString().trim(),
@@ -616,6 +646,8 @@ class NewMileageClaimFragment() : Fragment() {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
+                        binding.mProgressBars.visibility = View.GONE
+
                         resource.data?.let { response ->
                             val distance=
                                 response.rows[0].elements.get(0).distance?.value?.let { it1 ->
@@ -624,9 +656,10 @@ class NewMileageClaimFragment() : Fragment() {
                                     )
                                 }
                             val fare= distance?.times(milageRate)
-                            val decimal =
-                                fare?.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN) }
-                            binding.edtClaimedMiles.setText(distance.toString())
+                            val decimal = fare?.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN) }
+                            val decimalmiles = distance?.let { it1 -> BigDecimal(it1).setScale(1, RoundingMode.HALF_EVEN) }
+                            binding.edtClaimedMiles.setText(decimalmiles.toString())
+                            println("total amount :"+decimal)
                             binding.edtTotalAmount.setText(decimal.toString())
                         }
                     }
@@ -680,25 +713,23 @@ class NewMileageClaimFragment() : Fragment() {
             viewModel.currencyList = dropdownResponse.currencyType
             viewModel.mileageTypeList = dropdownResponse.mileageType
             viewModel.taxList = dropdownResponse.tax
+            viewModel.MileageRateList = dropdownResponse.milageRate
+            println("MileageRateList :"+viewModel.MileageRateList)
 
             setupSpinners()
         }
     }
 
-    private fun updateNetAmount(total: String, tax: String){
+    private fun updateNetAmount(total: Double, tax: Double,petrolAmount: Double){
         try {
-            var totalAmount = 0.0
-            var taxAmount = 0.0
+            var totalAmount = total
+            var taxAmount =tax
 
-            if (!total.isEmpty()) {
-                totalAmount = total.toDouble()
-            }
-            if (!tax.isEmpty()) {
-                taxAmount = tax.toDouble()
-            }
 
-            val netAmount = totalAmount - taxAmount
-            binding.tvNetAmount.text = "$netAmount"
+
+            var netAmount = totalAmount - taxAmount
+            binding.tvNetAmount.setText(netAmount.toString())
+            //binding.tvNetAmount.text = "$netAmount"
         }
         catch (error: Exception){
             Log.e(TAG, "updateNetAmount: ${error.message}")
@@ -715,6 +746,21 @@ class NewMileageClaimFragment() : Fragment() {
             binding.rvAttachments.visibility = View.GONE
             binding.tvNoFileSelected.visibility = View.VISIBLE
         }
+    }
+    private fun showAleartDialog(message:String){
+        val dialogBuilder = AlertDialog.Builder(requireContext())
+        dialogBuilder.setMessage(message)
+            .setCancelable(false)
+            .setPositiveButton("OK", DialogInterface.OnClickListener {
+                    dialog, id -> dialog.dismiss()
+            })
+            // negative button text and action
+            /*.setNegativeButton("Cancel", DialogInterface.OnClickListener {
+                    dialog, id -> dialog.cancel()
+            })*/
+        val alert = dialogBuilder.create()
+        alert.setTitle("Mileage Rate")
+        alert.show()
     }
 
     private fun setCreateClaimObserver(mileageClaimRequest: NewMileageClaimRequest) {
@@ -761,8 +807,13 @@ class NewMileageClaimFragment() : Fragment() {
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success) {
             shouldRefreshPage = true
+
+            val intent = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity(). finish()
+
 //            (contextActivity as? MainActivity)?.backButtonPressed()
-            (contextActivity as? MainActivity)?.clearFragmentBackstack()
+           // (contextActivity as? MainActivity)?.clearFragmentBackstack()
         }
     }
 
@@ -883,6 +934,17 @@ class NewMileageClaimFragment() : Fragment() {
     }
     private fun meterToKiloMeter(meter:Int):Double{
         return meter * 0.001
+    }
+    private fun getMileageRate(compnyid:Int):Double{
+        var uniteprice="0"
+        viewModel.MileageRateList.forEach {
+            println("it.company_id :"+it.company_id +" And compnyid "+compnyid)
+            if(it.company_id==compnyid){
+                uniteprice=it.unit_price
+                return@forEach
+            }
+        }
+        return uniteprice.toDouble()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

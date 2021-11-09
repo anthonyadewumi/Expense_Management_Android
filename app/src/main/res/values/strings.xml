@@ -5,6 +5,7 @@
     <string name="please_login_to_continue">Please Login to continue</string>
     <string name="enter_password">Enter Password</string>
     <string name="enter_user_id">Enter User ID</string>
+    <string name="enter_value">Enter Value</string>
     <string name="forgot_password_question">Forgot Password?</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="remember_me">Remember Me</string>
@@ -13,7 +14,7 @@
     <string name="scan">Scan</string>
     <string name="notifications">Notifications</string>
     <string name="my_profile">My Profile</string>
-    <string name="forgot_password_heading">Please provide your registered email address below.\nWe will send you a reset password link</string>
+    <string name="forgot_password_heading">Please provide your registered email address below.\nWe will send you a reset password link.</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
     <string name="no_notification_found">No notifications found</string>
     <string name="submitted_on_colon">Submitted On :</string>
@@ -33,6 +34,8 @@
     <string name="create_copy_underline"><u>Create Copy</u></string>
     <string name="enter_your_email">Enter your email</string>
     <string name="submit">Submit</string>
+    <string name="next">Next</string>
+    <string name="done">DONE</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
@@ -40,6 +43,7 @@
     <string name="company_name">Company Name</string>
     <string name="department_name">Department Name</string>
     <string name="car_type">Car Type</string>
+    <string name="mileage_rate">Mileage Rate</string>
     <string name="car_type_star">Car Type*</string>
     <string name="country">Country</string>
     <string name="mileage_type">Mileage Type</string>
@@ -50,11 +54,13 @@
     <string name="confirm_your_password">Confirm your password</string>
     <string name="reset">Reset</string>
     <string name="merchant_name">Merchant Name</string>
+    <string name="expence_code">Expense Code</string>
     <string name="merchant_name_star">Merchant Name*</string>
     <string name="expense_group">Expense Group</string>
     <string name="expense_group_star">Expense Group*</string>
     <string name="expense_type">Expense Type</string>
     <string name="expense_type_star">Expense Type*</string>
+    <string name="send_reminder"><font color='#8A3CAC'><u>Tap here to Send Reminder</u></font></string>
     <string name="company_number">Company Number</string>
     <string name="department">Department</string>
     <string name="department_star">Department*</string>
@@ -68,17 +74,20 @@
     <string name="expence_type">Expense  Type</string>
     <string name="merchant">Merchant</string>
     <string name="amount">Amount</string>
-    <string name="aution_value">Auction Value</string>
+    <string name="aution_value">Auction No</string>
     <string name="total_amount_star">Total Amount*</string>
     <string name="tax">Tax</string>
     <string name="tax_codes">Tax Code</string>
-    <string name="tax_star">Tax*</string>
+    <string name="tax_star">Applicable Tax*</string>
+    <string name="tax_applicable">Applicable Tax</string>
     <string name="net_amount">Net Amount</string>
     <string name="exp_code">Expense Code</string>
     <string name="auction_sales">Auction/Sales</string>
     <string name="auction_sales_exp">Auction/Sales Expense Code</string>
     <string name="reporting_manager_status">Reporting Manager Approval Status</string>
+    <string name="rm_status">RM Approval Status</string>
     <string name="finance_manager_status">Finance Manager Approval Status</string>
+    <string name="f_manager_status">FM Approval Status</string>
     <string name="description">Description</string>
     <string name="attachments">Attachments</string>
     <string name="back">Back</string>
@@ -96,8 +105,9 @@
     <string name="mileage_details">Mileage Details</string>
     <string name="edit">Edit</string>
     <string name="password_reset">Password Reset</string>
-    <string name="please_enter_your_new_password">Please enter your new password</string>
+    <string name="please_enter_your_new_password">Please enter your new password.</string>
     <string name="split">Split</string>
+    <string name="splits">Splits:</string>
     <string name="upload_a_pic_underline"><u>Upload a picture</u></string>
     <string name="no_files_selected">No Files Selected</string>
     <string name="logout">Logout</string>
@@ -111,6 +121,7 @@
     <string name="trip_details_colon">Trip Details:</string>
     <string name="round_trip">Round Trip</string>
     <string name="date_of_trip">Date Of Trip</string>
+    <string name="date_of_trip_date_formate">DD-MM-YYYY</string>
     <string name="from">From</string>
     <string name="from_star">From*</string>
     <string name="to">To</string>
@@ -123,9 +134,9 @@
     <string name="claimed_miles">Claimed Miles</string>
     <string name="claimed_miles_star">Claimed Miles*</string>
     <string name="petrol_amount">Petrol Amount</string>
-    <string name="park_amount">Park Amount</string>
+    <string name="park_amount">Parking Amount</string>
     <string name="date">Date</string>
-    <string name="user_name">Username</string>
+    <string name="user_name">User Name</string>
     <string name="company">Company</string>
     <string name="company_star">Company*</string>
     <string name="expense">Expense</string>
@@ -138,6 +149,7 @@
     <string name="take_photo">Take Photo</string>
     <string name="pending">Pending</string>
     <string name="rejected">Rejected</string>
+    <string name="rejecte">Reject</string>
     <string name="search">Search</string>
     <string name="submitted_on">Submitted On</string>
     <string name="no_result_found">No Data Available</string>
@@ -160,6 +172,7 @@
     <string name="please_enter_all_mandatory_fields">Please enter all mandatory fields</string>
     <string name="delete">Delete</string>
     <string name="delete_claim">Delete Claim</string>
+    <string name="reminder_claim">Reminder  Send</string>
     <string name="are_you_sure_you_want_to_delete_claim">Are you sure you want to delete this claim?</string>
     <string name="title_star">Title*</string>
     <string name="title">Title</string>

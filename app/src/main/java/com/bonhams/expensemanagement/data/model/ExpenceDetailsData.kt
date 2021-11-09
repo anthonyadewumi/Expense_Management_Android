@@ -24,4 +24,8 @@ data class ExpenceDetailsData(
     val submittedOn: String = "",
     @SerializedName("createdBy")
     val createdBy: Int = 0,
+    @SerializedName("tax")
+    val tax: Double = 0.0,
+    @SerializedName("description")
+    val description: String = "",
 )

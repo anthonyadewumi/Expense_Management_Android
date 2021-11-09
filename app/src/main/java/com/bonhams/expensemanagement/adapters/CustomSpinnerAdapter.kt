@@ -41,7 +41,7 @@ class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource
                 title.text = item.type.replaceFirstChar(Char::uppercase)
             }
             is Department -> {
-                title.text = item.name.replaceFirstChar(Char::uppercase)
+                title.text = item.cost_code
             }
             is Currency -> {
                 title.text = item.name.replaceFirstChar(Char::uppercase)

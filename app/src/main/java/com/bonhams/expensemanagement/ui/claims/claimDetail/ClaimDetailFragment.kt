@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -27,6 +28,7 @@ import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
+import com.google.gson.JsonObject
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 
@@ -53,7 +55,7 @@ class ClaimDetailFragment() : Fragment() {
         setupViewModel()
         setupAttachmentRecyclerView()
         setupView()
-
+        setClickListner()
         return view
     }
 
@@ -78,9 +80,64 @@ class ClaimDetailFragment() : Fragment() {
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
                 )
                 binding.tvCurrency.text = claimDetail.currencyTypeName
-                binding.tvTotalAmount.text = claimDetail.totalAmount
-                binding.tvTax.text = claimDetail.tax
-                binding.tvNetAmount.text = claimDetail.netAmount
+                binding.tvTotalAmount.setText(claimDetail.currencySymbol+" "+claimDetail.totalAmount)
+                binding.tvTax.setText(claimDetail.currencySymbol+" "+claimDetail.tax)
+                binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+claimDetail.netAmount)
+                binding.tvTaxCode.text = claimDetail.tax_code
+
+                 println("claimDetail.rm_updation_date"+claimDetail.rm_updation_date)
+                when (claimDetail.reportingMStatus) {
+                    Constants.STATUS_PENDING -> {
+                        binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorTextDarkGray))
+
+                      binding.lnRMReminder.visibility=View.VISIBLE
+                    }
+                    Constants.STATUS_APPROVED -> {
+                        binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorGreen))
+                        binding.tvRMStatusDate.visibility=View.VISIBLE
+                        binding.tvRMStatusDate.text = Utils.getFormattedDate(
+                            claimDetail.rm_updation_date,
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                        )
+
+                    }
+                    else -> {
+                        binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorRed))
+                        binding.tvRMStatusDate.visibility=View.VISIBLE
+                        binding.tvRMStatusDate.text = Utils.getFormattedDate(
+                            claimDetail.rm_updation_date,
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                        )
+
+                    }
+                }
+                when (claimDetail.financeMStatus) {
+                    Constants.STATUS_PENDING -> {
+                        binding.tvFMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorTextDarkGray))
+                        binding.lnFMReminder.visibility=View.VISIBLE
+
+
+                    }
+                    Constants.STATUS_APPROVED -> {
+                        binding.tvFMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorGreen))
+                        binding.tvFMStatusDate.visibility=View.VISIBLE
+
+                        binding.tvFMStatusDate.text = Utils.getFormattedDate(
+                            claimDetail.fm_updation_date,
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                        )
+
+                    }
+                    else -> {
+                        binding.tvFMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorRed))
+                        binding.tvFMStatusDate.visibility=View.VISIBLE
+                        binding.tvFMStatusDate.text = Utils.getFormattedDate(
+                            claimDetail.fm_updation_date,
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                        )
+                    }
+                }
+
                 binding.tvRMStatus.text = claimDetail.reportingMStatus
                 binding.tvFMStatus.text = claimDetail.financeMStatus
                 binding.tvDescription.text = claimDetail.description
@@ -106,6 +163,16 @@ class ClaimDetailFragment() : Fragment() {
         mainViewModel.appbarMenuClick?.observe(viewLifecycleOwner, {
             showPopupMenu(it)
         })
+    }
+    private fun setClickListner() {
+        binding.tvRMReminder.setOnClickListener {
+            showReminderAlert("We have sent a reminder to Reporting Manager for approval.")
+
+        }
+        binding.tvFMReminder.setOnClickListener {
+            showReminderAlert("We have sent a reminder to Finance Manager for approval.")
+
+        }
     }
 
     private fun setupAttachmentRecyclerView(){
@@ -156,12 +223,43 @@ class ClaimDetailFragment() : Fragment() {
             }
         })
     }
+    private fun sendReminder(){
+        val jsonObject = JsonObject().also {
+            it.addProperty("claim_id", claimDetail.id.toInt())
+        }
+        viewModel.sendReminder(jsonObject).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                Log.d(TAG, "deleteClaim: ${resource.status}")
+                                setResponseForReminder(response)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        Log.e(TAG, "deleteClaim: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
 
+                    }
+                }
+            }
+        })
+    }
     private fun setResponse(commonResponse: CommonResponse){
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success){
             (contextActivity as? MainActivity)?.clearFragmentBackstack()
         }
+    }
+    private fun setResponseForReminder(commonResponse: CommonResponse){
+        Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
+
     }
 
     private fun showPopupMenu(view: View) {
@@ -215,4 +313,35 @@ class ClaimDetailFragment() : Fragment() {
             dialog.show()
             }
         }
+    private fun showReminderAlert(message:String){
+        contextActivity?.let { activity ->
+            val dialog = Dialog(activity)
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.reminder_alert_dialog)
+            val title = dialog.findViewById(R.id.txtTitle) as TextView
+            val body = dialog.findViewById(R.id.txtDescription) as TextView
+            val input = dialog.findViewById(R.id.edtDescription) as EditText
+            val yesBtn = dialog.findViewById(R.id.btnPositive) as Button
+            val noBtn = dialog.findViewById(R.id.btnNegative) as TextView
+
+            input.visibility = View.GONE
+            title.text = resources.getString(R.string.reminder_claim)
+            body.text = message
+            yesBtn.text = "OK"
+            //noBtn.text = resources.getString(R.string.cancel)
+
+            yesBtn.setOnClickListener {
+                dialog.dismiss()
+                if (NoInternetUtils.isConnectedToInternet(activity))
+                    sendReminder()
+                else
+                    Toast.makeText(activity, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
+            }
+          //  noBtn.setOnClickListener { dialog.dismiss() }
+            dialog.show()
+        }
+    }
+
 }

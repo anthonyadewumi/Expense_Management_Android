@@ -2,6 +2,8 @@ package com.bonhams.expensemanagement.ui.claims.newClaim
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -14,12 +16,14 @@ import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.LoginRequest
+import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
 import com.bonhams.expensemanagement.data.services.responses.LoginResponse
 import com.bonhams.expensemanagement.databinding.ActivityLoginBinding
 import com.bonhams.expensemanagement.databinding.ActivitySplitClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.splitItmlist
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.totalAmount
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
@@ -40,13 +44,11 @@ class SplitClaimActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_split_claim)
         binding.lifecycleOwner = this
         setupViewModel()
-        setClickListeners()
         setDropdownDataObserver()
-        setupView()
+        setClickListeners()
+
     }
 
-    private fun setupView(){
-    }
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
             NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
@@ -54,22 +56,75 @@ class SplitClaimActivity : BaseActivity() {
     }
     private fun setClickListeners(){
         binding.btnSubmit.setOnClickListener {
-            val companyOne = binding.spnCompany.selectedItem as Company?
-            val departmentOne = binding.spnDepartment.selectedItem as Department?
-            val expenseTypeOne = binding.spnExpense.selectedItem as ExpenseType?
-            val totalAmountOne = binding.edtTotalAmount.text
-            val taxCodeOne = binding.edtTaxCode.text
-            val tax = binding.edtTax.text
-            val splitOne = SplitClaimItem(companyOne?.id!!,companyOne?.code!!, departmentOne?.id!!, expenseTypeOne?.expenseCodeID!!,
-                totalAmountOne.toString(), taxCodeOne.toString(),tax.toString())
-                splitItmlist.add(splitOne)
-                finish()
+            if(validatesplitClaim()) {
 
+                try {
+                    val companyOne = binding.spnCompany.selectedItem as Company?
+                    val departmentOne = binding.spnDepartment.selectedItem as Department?
+                    val expenseTypeOne = binding.spnExpense.selectedItem as ExpenseType?
+                    val totalAmountOne = binding.edtTotalAmount.getNumericValue()
+                    val taxCodeOne = binding.edtTaxCode.text
+                    val mtax = binding.edtTax.getNumericValue()
+                    println("companynumber :" + companyOne?.id)
+                    println("companycode :" + companyOne?.code)
+                    println("departmentOne :" + departmentOne?.id)
+                    println("expenseTypeOne :" + expenseTypeOne?.id)
+                    println("taxcode id :" + expenseTypeOne?.taxCodeID)
+                    println("expence codeid id :" + expenseTypeOne?.expenseCodeID)
+                    val splitOne = SplitClaimItem(
+                        companyOne?.id?:"0",
+                        companyOne?.code?:"0", departmentOne?.id?:"0", expenseTypeOne?.id!!,
+                        totalAmountOne.toString(),
+                        expenseTypeOne.taxCodeID, mtax,companyOne?.name?:"",departmentOne?.name?:"",
+                        expenseTypeOne.name,binding.edtAutionValue.text.toString(),binding.tvAuctionExpCode.text.toString(),
+                        expenseTypeOne.expenseCodeID
+                    )
+
+                    splitItmlist.add(splitOne)
+                    finish()
+
+                } catch (e: Exception) {
+                }
+            }
         }
         binding.layoutBack.setOnClickListener {
                 finish()
         }
+        binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
 
+                }else{
+                    binding.tvAuctionExpCode.text = ""
+                }
+            }
+        })
+    }
+    private fun validatesplitClaim(): Boolean {
+
+        if(binding.edtTotalAmount.text.isNullOrEmpty()){
+            Toast.makeText(this, "Please Enter The Amount", Toast.LENGTH_SHORT).show()
+            return false
+        }else if(binding.edtTax.text.isNullOrEmpty()){
+            Toast.makeText(this, "Please Enter Applicable Tax ", Toast.LENGTH_SHORT).show()
+           return false
+        }
+        val amount=binding.edtTotalAmount.getNumericValue()
+        return if(amount<totalAmount){
+            totalAmount -= amount
+            true
+        }else {
+            Toast.makeText(this, "Please Enter The Amount below $totalAmount", Toast.LENGTH_SHORT)
+                .show()
+            false
+
+        }
+       return true
     }
     private fun setDropdownDataObserver() {
         viewModel.getDropDownData().observe(this, Observer {

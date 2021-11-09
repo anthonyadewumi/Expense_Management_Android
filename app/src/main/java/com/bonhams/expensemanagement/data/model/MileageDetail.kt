@@ -8,6 +8,8 @@ data class MileageDetail (
     val description: String = "",
     val totalAmount: String = "",
     val submittedOn: String = "",
+
+    @SerializedName("status")
     val status: String = "",
     val reportingMStatus: String = "",
     val financeMStatus: String = "",
@@ -16,7 +18,7 @@ data class MileageDetail (
     @SerializedName("group.name")
     val groupName: String = "",
     val type: String = "",
-    @SerializedName("companyname")
+    @SerializedName("companyName")
     val companyName: String = "",
     val department: String = "",
     @SerializedName("currency_id")
@@ -24,6 +26,8 @@ data class MileageDetail (
     val currency: String = "",
     @SerializedName("currency_symbol")
     val currencySymbol: String = "",
+    @SerializedName("currency_type_name")
+    val currencyTypeNamename: String = "",
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",
@@ -39,5 +43,13 @@ data class MileageDetail (
     @SerializedName("user_id")
     val userID: String = "",
     val createdBy: String = "",
-    val attachments: String = ""
+    val attachments: String = "",
+    @SerializedName("tax_code")
+    val tax_code: String = "",
+    @SerializedName("mileageRate")
+    val mileageRate: String = "",
+    @SerializedName("rm_updation_date")
+    val rm_updation_date: String = "",
+    @SerializedName("fm_updation_date")
+    val fm_updation_date: String = ""
 )

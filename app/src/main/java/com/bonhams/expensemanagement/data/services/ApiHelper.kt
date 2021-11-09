@@ -14,9 +14,13 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun claimsList(claimListRequest: ClaimsRequest) = apiService.claimsList(claimListRequest)
 
+    suspend fun financeRequestList(claimListRequest: ClaimsRequest) = apiService.financeRequestList(claimListRequest)
+
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiService.createNewClaim(newClaimRequest)
+    suspend fun getnoticationData(request: JsonObject) = apiService.getnoticationData(request)
 
     suspend fun deleteClaim(deleteClaimRequest: DeleteClaimRequest) = apiService.deleteClaim(deleteClaimRequest)
+    suspend fun sendReminder(claimId: JsonObject) = apiService.sendReminder(claimId)
     suspend fun uploadImage(claimImage :List<MultipartBody.Part>) = apiService.uploadImage(claimImage)
 
     suspend fun mileageExpensesList(mileageExpenseRequest: MileageExpenseRequest) = apiService.mileageList(mileageExpenseRequest)
@@ -28,6 +32,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun dropdownData() = apiService.dropdownData()
     suspend fun getRequestExpences(mileageExpenseRequest: JsonObject) = apiService.getRequestExpences(mileageExpenseRequest)
     suspend fun getRequestExpencesDetails(mileageExpenseRequest: JsonObject) = apiService.getRequestExpencesDetails(mileageExpenseRequest)
+    suspend fun acceptReject(data: JsonObject) = apiService.acceptReject(data)
 
     suspend fun logoutUser() = apiService.logoutUser()
 

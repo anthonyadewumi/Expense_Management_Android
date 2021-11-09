@@ -5,6 +5,7 @@ import androidx.lifecycle.liveData
 import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.data.services.requests.DeleteClaimRequest
 import com.bonhams.expensemanagement.utils.Resource
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 
 class ClaimDetailViewModel(private val claimDetailRepository: ClaimDetailRepository) : ViewModel() {
@@ -15,6 +16,14 @@ class ClaimDetailViewModel(private val claimDetailRepository: ClaimDetailReposit
         emit(Resource.loading(data = null))
         try {
             emit(Resource.success(data = claimDetailRepository.deleteClaim(deleteClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun sendReminder(claimId: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = claimDetailRepository.sendReminder(claimId)))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }

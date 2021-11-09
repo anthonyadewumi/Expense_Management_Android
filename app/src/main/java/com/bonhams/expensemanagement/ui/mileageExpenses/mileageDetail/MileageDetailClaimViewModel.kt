@@ -2,8 +2,11 @@ package com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.bonhams.expensemanagement.data.model.ClaimDetail
+import com.bonhams.expensemanagement.data.services.requests.DeleteClaimRequest
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.utils.Resource
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 
 class MileageDetailClaimViewModel(private val mileageClaimRepository: MileageDetailClaimRepository) : ViewModel() {
@@ -19,7 +22,22 @@ class MileageDetailClaimViewModel(private val mileageClaimRepository: MileageDet
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
-
+    fun sendReminder(claimId: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mileageClaimRepository.sendReminder(claimId)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun deleteClaim(deleteClaimRequest: DeleteClaimRequest) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mileageClaimRepository.deleteClaim(deleteClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
     fun getDropDownData() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -62,5 +80,11 @@ class MileageDetailClaimViewModel(private val mileageClaimRepository: MileageDet
 //        newClaimRequest.attachments = attachments
         
         return newClaimRequest
+    }
+    fun getDeleteClaimRequest(claim_id: String): DeleteClaimRequest{
+        val deleteClaimRequest = DeleteClaimRequest()
+        deleteClaimRequest.claimId = claim_id
+
+        return deleteClaimRequest
     }
 }

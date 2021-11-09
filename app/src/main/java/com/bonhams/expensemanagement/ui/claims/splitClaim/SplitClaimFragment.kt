@@ -31,11 +31,12 @@ import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
+import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bonhams.expensemanagement.utils.Status
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 
-class SplitClaimFragment() : Fragment() {
+class SplitClaimFragment() : Fragment() , RecylerCallback {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -47,6 +48,7 @@ class SplitClaimFragment() : Fragment() {
     private lateinit var splitAdapter: SplitAdapter
     companion object {
        public var splitItmlist: MutableList<SplitClaimItem> = mutableListOf()
+       public var totalAmount: Double=0.0
 
     }
     override fun onCreateView(
@@ -58,12 +60,13 @@ class SplitClaimFragment() : Fragment() {
         val view = binding.root
         binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
+        splitItmlist.clear()
+
         setupViewModel()
         setClickListeners()
         setupSplitRecyclerView()
-        setupSpinners()
+       // setupSpinners()
         setupView()
-
         return view
     }
 
@@ -71,11 +74,15 @@ class SplitClaimFragment() : Fragment() {
         super.onResume()
         System.out.println("call fregment")
             viewModel.splitList.add("add more ")
-            splitAdapter.notifyDataSetChanged()
+        binding.tvTotalAmount.setText(totalAmount.toString())
+
+        splitAdapter.notifyDataSetChanged()
 
     }
     fun setClaimRequestDetail(request: NewClaimRequest){
         claimRequest = request
+        System.out.println("claimRequest: ${claimRequest.totalAmount}")
+
     }
 
     private fun setClickListeners(){
@@ -98,11 +105,15 @@ class SplitClaimFragment() : Fragment() {
     }
 
     private fun setupView(){
-        binding.tvMerchantName.text = claimRequest.merchantName
-        binding.tvDate.text = claimRequest.dateSubmitted
-        binding.tvUserName.text = AppPreferences.fullName
-        binding.tvTotalAmount.text = claimRequest.totalAmount
+//        binding.tvMerchantName.text = claimRequest.expenseCode
+     //   binding.tvDate.text = claimRequest.dateSubmitted
+     //   binding.tvUserName.text = AppPreferences.fullName
+        totalAmount=claimRequest.netAmount.toString().toDouble()
+        //binding.tvTotalAmount.text = "$ "+totalAmount
+        binding.tvTotalAmount.setText(totalAmount.toString())
+
     }
+
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
@@ -123,7 +134,7 @@ class SplitClaimFragment() : Fragment() {
             false
         )
         binding.rvsplit.layoutManager = linearLayoutManager
-        splitAdapter = SplitAdapter(splitItmlist as MutableList<SplitClaimItem?>)
+        splitAdapter = SplitAdapter(splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
         binding.rvsplit.adapter = splitAdapter
     }
     private fun setupSpinners(){
@@ -293,12 +304,25 @@ class SplitClaimFragment() : Fragment() {
     }
 
     private fun createNewClaim() {
-        if(!validateAllSplitDetails()){
+        println("chk split item size :"+splitItmlist.size)
+        splitItmlist.forEach {
+            val splitOne = SplitClaimDetail(it?.companyNumber!!, it?.department!!, it.expenseType!!,
+                it.totalAmount, it.tax,it.taxcode.toInt(),it.auctionSales,it.expenseCodeID)
+            claimRequest.split.add(splitOne)
+
+        }
+        println("chk split item claimRequest :"+claimRequest.split.size)
+
+
+      /*  if(!validateAllSplitDetails()){
             onCreateClaimFailed()
             return
         }
 
         binding.btnSubmit.visibility = View.GONE
+*/
+
+        claimRequest.netAmount= totalAmount.toString()
         setCreateClaimObserver(claimRequest)
     }
 
@@ -323,7 +347,7 @@ class SplitClaimFragment() : Fragment() {
             }
 
             val splitOne = SplitClaimDetail(companyOne?.id!!, departmentOne?.id!!, expenseTypeOne?.expenseCodeID!!,
-                totalAmountOne.toString(), taxCodeOne.toString())
+                totalAmountOne.toString(), taxCodeOne.toString().toDouble())
 
             Log.d(
                 TAG, "validateAllSplitDetails Split 0 : " +
@@ -353,7 +377,7 @@ class SplitClaimFragment() : Fragment() {
                 }
 
                 val splitOne = SplitClaimDetail(companyOne?.id!!, departmentOne?.id!!, expenseTypeOne?.expenseCodeID!!,
-                    totalAmountOne.toString(), taxCodeOne.toString())
+                    totalAmountOne.toString(), taxCodeOne.toString().toDouble())
 
                 Log.d(
                     TAG, "validateAllSplitDetails Split 0 : " +
@@ -386,7 +410,7 @@ class SplitClaimFragment() : Fragment() {
                     }
 
                     val split = SplitClaimDetail(company?.id!!, department?.id!!, expenseType?.expenseCodeID!!,
-                        totalAmount.toString(), taxCode.toString())
+                        totalAmount.toString(), taxCode.toString().toDouble())
 
                     claimRequest.split.add(split)
                     Log.d(
@@ -413,13 +437,26 @@ class SplitClaimFragment() : Fragment() {
         binding.btnSubmit.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success) {
+
+            val intent = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity(). finish()
+
 //            (contextActivity as? MainActivity)?.backButtonPressed()
-            (contextActivity as? MainActivity)?.clearFragmentBackstack()
+           // (contextActivity as? MainActivity)?.clearFragmentBackstack()
         }
     }
 
     private fun onCreateClaimFailed() {
         binding.btnSubmit.isEnabled = true
         Toast.makeText(contextActivity, getString(R.string.please_enter_all_mandatory_fields), Toast.LENGTH_SHORT).show()
+    }
+
+    override fun callback(action: String, data: Any, postion: Int) {
+        val amount=data as Double
+        totalAmount += amount
+       // binding.tvTotalAmount.text = "$ "+totalAmount
+        binding.tvTotalAmount.setText(totalAmount.toString())
+
     }
 }

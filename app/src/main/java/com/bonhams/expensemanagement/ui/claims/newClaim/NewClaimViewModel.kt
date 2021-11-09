@@ -14,6 +14,7 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
 
     lateinit var expenseGroupList: List<ExpenseGroup>
     lateinit var expenseTypeList: List<ExpenseType>
+    lateinit var expenseTypeListExpenseGroup: List<ExpenseType>
     lateinit var departmentList: List<Department>
     lateinit var currencyList: List<Currency>
     lateinit var companyList: List<Company>

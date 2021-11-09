@@ -56,13 +56,17 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
         contextActivity = activity as? BaseActivity
 
         setupViewModel()
-        initAdapter()
         initSwipeToRefresh()
         initSearch()
         
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        initAdapter()
+
+    }
     private fun setupViewModel() {
         viewModel = ViewModelProvider(this,
             MileageExpensesViewModelFactory(this, ApiHelper(RetrofitBuilder.apiService))

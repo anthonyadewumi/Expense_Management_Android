@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
+import com.bonhams.expensemanagement.data.model.NotificationData
 import com.bonhams.expensemanagement.data.model.NotificationItem
+import com.bonhams.expensemanagement.databinding.ItemExpenceItemRowBinding
 
 
 class NotificationAdapter(
-    var listOrders: List<NotificationItem>?
+    var listOrders: List<NotificationData>?
 ) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
 
     init {
@@ -19,7 +21,7 @@ class NotificationAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v =
             LayoutInflater.from(parent.context).inflate(R.layout.item_notification, parent, false)
-        return NotificationAdapter.ViewHolder(v)
+        return ViewHolder(v)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -32,8 +34,7 @@ class NotificationAdapter(
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(item: NotificationItem) {
-
+        fun bindItems(item: NotificationData) {
         }
     }
 }

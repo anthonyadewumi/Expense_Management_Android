@@ -59,11 +59,20 @@ interface ApiService {
     @POST("claim-list")
     suspend fun claimsList(@Body claimListRequest: ClaimsRequest) : ClaimsResponse
 
+    @POST("request_list")
+    suspend fun financeRequestList(@Body claimListRequest: ClaimsRequest) : AcceptRequestResponse
+
     @POST("create-claim")
     suspend fun createNewClaim(@Body newClaimRequest: NewClaimRequest) : CommonResponse
 
-    @POST("admin/delete-claim")
+    @POST("notification_list ")
+    suspend fun getnoticationData(@Body request: JsonObject) : NotificationListResponse
+
+    @POST("delete-claim")
     suspend fun deleteClaim(@Body deleteClaimRequest: DeleteClaimRequest): CommonResponse
+
+    @POST("send-reminder")
+    suspend fun sendReminder(@Body claimId: JsonObject): CommonResponse
 
     @Multipart
     @POST("upload-claim-attachment")
@@ -87,7 +96,10 @@ interface ApiService {
     @POST("request_detail")
     suspend fun getRequestExpencesDetails(@Body mileageExpenseRequest: JsonObject): ExpenceDetailsResponse
 
-    @GET("logOut")
+    @POST("acc-rej-claim")
+    suspend fun acceptReject(@Body data: JsonObject): ExpenceDetailsResponse
+
+    @GET("logout")
     suspend fun logoutUser(): CommonResponse
 
     @GET("my_profile")

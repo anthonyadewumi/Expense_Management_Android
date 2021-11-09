@@ -20,15 +20,20 @@ import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
 import com.bonhams.expensemanagement.databinding.ActivityExpenceAcceptedBinding
 import com.bonhams.expensemanagement.databinding.ActivityReportingMangerExpenceDetailsBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
-class ReportingMangerExpenceDetails : BaseActivity() {
+class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
     private lateinit var binding: ActivityReportingMangerExpenceDetailsBinding
     private lateinit var viewModel: ExpenceViewModel
     public lateinit var toBeAcceptedDataList: List<ToBeAcceptedData>
+    val idList = mutableListOf<Int>()
+    val idListAll = mutableListOf<Int>()
     private var expenseCode: String = ""
     private var taxcodeId: String = ""
     private var requestid: String = "0"
@@ -87,7 +92,13 @@ class ReportingMangerExpenceDetails : BaseActivity() {
                 finish()
         }
         binding.chkAll.setOnClickListener {
-            showStatusFilterBottomSheet()
+            if(binding.chkAll.isChecked)
+            {
+                idList.clear()
+                idList.addAll(idListAll)
+                showStatusFilterBottomSheet()
+
+            }
         }
     }
     private fun setupExpenceRecyclerView(toBeAcceptedDataList: List<ExpenceDetailsData>){
@@ -98,7 +109,7 @@ class ReportingMangerExpenceDetails : BaseActivity() {
             false
         )
         binding.rmExpenceDetails.layoutManager = linearLayoutManager
-        expencesListAdapter = ExpencesDetailsListAdapter(toBeAcceptedDataList,this)
+        expencesListAdapter = ExpencesDetailsListAdapter(toBeAcceptedDataList,this,this)
         binding.rmExpenceDetails.adapter = expencesListAdapter
     }
     private fun setDropdownDataObserver(serchkey:String) {
@@ -110,6 +121,10 @@ class ReportingMangerExpenceDetails : BaseActivity() {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
+                                response.expenceDetailsData.forEach {
+                                    idListAll.add(it.requestId)
+                                }
+
                                 setupExpenceRecyclerView(response.expenceDetailsData)
 
                             } catch (e: Exception) {
@@ -128,39 +143,74 @@ class ReportingMangerExpenceDetails : BaseActivity() {
         })
     }
 
-    private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
+    private fun acceptRejectObserver(accept_reject:Int) {
+        val data= JsonObject()
+        val jsonIdArray=JsonArray()
+        idList.forEach {jsonIdArray.add(it)}
+        data.add("claim_ids",jsonIdArray)
+        data.addProperty("action",accept_reject)
+        data.addProperty("user_id",requestid.toInt())
 
+        data.addProperty("role", AppPreferences.userType)
+        viewModel.acceptReject(data).observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                Toast.makeText(this, response.message, Toast.LENGTH_SHORT).show()
 
-
+                                setDropdownDataObserver("")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+//                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
     }
+
     private fun showStatusFilterBottomSheet(){
         this.let {
             val dialog = BottomSheetDialog(this, R.style.CustomBottomSheetDialogTheme)
             val view = layoutInflater.inflate(R.layout.accept_reject_bottom_sheet, null)
             dialog.setCancelable(true)
             dialog.setContentView(view)
-          //  val bottomOptionPending = view.findViewById<TextView>(R.id.bottomOptionOne)
-           // val bottomOptionApproved = view.findViewById<TextView>(R.id.bottomOptionTwo)
-           // val bottomOptionRejected = view.findViewById<TextView>(R.id.bottomOptionThree)
-            val bottomOptionCancel = view.findViewById<TextView>(R.id.bottomOptionCancel)
+            val bottomOptionReject = view.findViewById<TextView>(R.id.bottomOptionReject)
+            val bottomOptionAccept = view.findViewById<TextView>(R.id.bottomOptionAccept)
+            bottomOptionAccept.setOnClickListener {
+                dialog.dismiss()
+                acceptRejectObserver(1)
+            }
+            bottomOptionReject.setOnClickListener {
+                dialog.dismiss()
+                acceptRejectObserver(2)
 
-          /*  bottomOptionPending.setOnClickListener {
-                dialog.dismiss()
-                viewModel.statusPicker.value = Constants.STATUS_PENDING
-            }
-            bottomOptionApproved.setOnClickListener {
-                dialog.dismiss()
-                viewModel.statusPicker.value = Constants.STATUS_APPROVED
-            }
-            bottomOptionRejected.setOnClickListener {
-                dialog.dismiss()
-                viewModel.statusPicker.value = Constants.STATUS_REJECTED
-            }*/
-            bottomOptionCancel.setOnClickListener {
-                dialog.dismiss()
             }
             dialog.show()
         }
+    }
+
+    override fun callback(action: String, data: Any, postion: Int) {
+        try {
+            if(action == "checked"){
+                idList.add((data as ExpenceDetailsData).requestId)
+                showStatusFilterBottomSheet()
+            }else{
+                idList.remove((data as ExpenceDetailsData).requestId)
+
+            }
+        } catch (e: Exception) {
+        }
+        println("idList :$idList")
+
     }
 
 

@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.05" />
+            app:layout_constraintGuide_percent="0.03" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,226 +90,328 @@
             app:layout_constraintLeft_toLeftOf="@id/guidelineVerticalLeft"
             app:layout_constraintRight_toRightOf="@id/guidelineVerticalRight"
             app:layout_constraintTop_toBottomOf="@+id/guideline">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/first_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                />
 
             <TextView
                 android:id="@+id/tvFirstName"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/first_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/last_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+               />
 
             <TextView
                 android:id="@+id/tvLastName"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/last_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+               />
+        </LinearLayout>
+ <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/email"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                />
 
             <TextView
                 android:id="@+id/tvEmail"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+                />
+ </LinearLayout>
+ <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/phone_number"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                />
 
             <TextView
                 android:id="@+id/tvPhoneNumber"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/phone_number"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+                />
+ </LinearLayout>
+ <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/company_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+             />
 
             <TextView
                 android:id="@+id/tvCompanyName"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/company_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
+                />
+ </LinearLayout>
+             <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/department_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                />
 
             <TextView
                 android:id="@+id/tvDepartmentName"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/department_name"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+               />
+             </LinearLayout>
+             <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/car_type"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+               />
 
             <TextView
                 android:id="@+id/tvCarType"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_type"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+                />
+             </LinearLayout>
+             <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/country"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                />
 
             <TextView
                 android:id="@+id/tvCountry"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/country"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+               />
+             </LinearLayout>
+             <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/mileage_type"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+              />
 
             <TextView
                 android:id="@+id/tvMileageType"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/mileage_type"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
-
+                />
+             </LinearLayout>
+             <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_height="wrap_content">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/default_approver"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
-                android:layout_marginTop="@dimen/_10sdp"/>
+                />
 
             <TextView
                 android:id="@+id/tvDefaultApprover"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/default_approver"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
-                android:minHeight="@dimen/_30sdp"
-                android:textSize="@dimen/_13ssp"
-                android:padding="@dimen/_10sdp"
+                android:minHeight="@dimen/_28sdp"
+                android:textSize="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:gravity="center|start"
                 android:layout_gravity="center_vertical"
-                android:layout_marginTop="@dimen/_5sdp"/>
+                />
+             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout

@@ -22,6 +22,8 @@ data class ClaimDetail(
     val createdOn: String = "",
     val reportingMStatus: String = "",
     val financeMStatus: String = "",
+    @SerializedName("status")
+    val status: String = "",
     @SerializedName("expense_group_id")
     val expenseGroupID: String = "",
     @SerializedName("expense_group_name")
@@ -45,5 +47,11 @@ data class ClaimDetail(
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",
-    val attachments: String = ""
+    val attachments: String = "",
+    @SerializedName("tax_code")
+    val tax_code: String = "",
+    @SerializedName("rm_updation_date")
+    val rm_updation_date: String = "",
+    @SerializedName("fm_updation_date")
+    val fm_updation_date: String = ""
 )

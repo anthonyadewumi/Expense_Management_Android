@@ -41,12 +41,14 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
             binding.tvSubmittedOn.text = Utils.getFormattedDate(item.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
             binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
             binding.tvStatus.text = item.status.replaceFirstChar(Char::uppercase)
+          //  binding.tvStatus.text = item.reportingMStatus.replaceFirstChar(Char::uppercase)
 
             when {
                 item.status.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
                 item.status.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
                 else -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
             }
+
 
             binding.tvCreateCopy.setOnClickListener(View.OnClickListener {
                 mileageListener.onMileageExpenseCreateCopyClicked(item, position)

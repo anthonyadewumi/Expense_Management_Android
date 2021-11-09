@@ -41,11 +41,8 @@ import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
@@ -112,7 +109,8 @@ class NewClaimFragment() : Fragment() {
                     ) else ""
                 binding.edtTotalAmount.setText(claimDetail.totalAmount)
                 binding.edtTax.setText(claimDetail.tax)
-                binding.tvNetAmount.text = claimDetail.netAmount
+           //  binding.tvNetAmount.text = claimDetail.netAmount
+                binding.tvNetAmount.setText(claimDetail.netAmount)
                 binding.edtDescription.setText(claimDetail.description)
                 if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
                         .isNotEmpty()
@@ -188,6 +186,9 @@ class NewClaimFragment() : Fragment() {
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
+
+
+
         // Expense Type Adapter
         val expenseTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -199,9 +200,10 @@ class NewClaimFragment() : Fragment() {
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 expenseCode=viewModel.expenseTypeList.get(position).activityCode
-                taxcodeId=viewModel.expenseTypeList.get(position).taxCodeID
+                taxcodeId= viewModel.expenseTypeList[position].taxCodeID
                 viewModel.taxList.forEach {
-                   if(it.id.toString().equals(taxcodeId)) {
+
+                    if(it.id.toString() == taxcodeId) {
                        binding.edtTaxcode.setText(it.tax_code)
 
                    }
@@ -218,7 +220,6 @@ class NewClaimFragment() : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
         // Company List Adapter
         val companyAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -277,7 +278,26 @@ class NewClaimFragment() : Fragment() {
         binding.spnCurrency.adapter = currencyAdapter
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                println("currency symbol:"+viewModel.currencyList.get(position).symbol)
+                println("currency code:"+viewModel.currencyList.get(position).code)
+                val code=viewModel.currencyList.get(position).code
+                val symbol=viewModel.currencyList.get(position).symbol
+                binding.edtTotalAmount.setText("")
+                binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                binding.edtTotalAmount.setLocale(code)
+
+                binding.edtTax.setText("")
+                binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                binding.edtTax.setLocale(code)
+
+                binding.tvNetAmount.setText("")
+                binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                binding.tvNetAmount.setLocale(code)
+
+
+
+            }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
@@ -326,13 +346,15 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun setupTextWatcher(){
+
+     //   binding.edtTotalAmount.addTextChangedListener(NumberTextWatcher(binding.edtTotalAmount, "#,###"))
         binding.edtTotalAmount.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(s.toString(), binding.edtTax.text.toString())
+                updateNetAmount(binding.edtTotalAmount.getNumericValue().toString(), binding.edtTax.getNumericValue().toString())
             }
         })
 
@@ -342,7 +364,7 @@ class NewClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(binding.edtTotalAmount.text.toString(), s.toString())
+                updateNetAmount(binding.edtTotalAmount.getNumericValue().toString(),binding.edtTax.getNumericValue().toString())
             }
         })
         binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
@@ -396,8 +418,17 @@ class NewClaimFragment() : Fragment() {
                 taxAmount = tax.toDouble()
             }
 
-            val netAmount = totalAmount - taxAmount
-            binding.tvNetAmount.text = "$netAmount"
+            if(taxAmount>totalAmount){
+                Toast.makeText(contextActivity, "The tax amount must not be greater than the total amount", Toast.LENGTH_SHORT).show()
+
+                binding.tvNetAmount.setText("0.0")
+
+            }else {
+                val netAmount = totalAmount - taxAmount
+                // binding.tvNetAmount.text = "$netAmount"
+                binding.tvNetAmount.setText(String.format("%.2f", netAmount))
+                //binding.tvNetAmount.text =
+            }
         }
         catch (error: Exception){
             Log.e(TAG, "updateNetAmount: ${error.message}")
@@ -566,9 +597,9 @@ class NewClaimFragment() : Fragment() {
                 Constants.DD_MMM_YYYY_FORMAT
             ),
             if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
-            binding.edtTotalAmount.text.toString().trim(),
-            binding.edtTax.text.toString().trim(),
-            binding.tvNetAmount.text.toString().trim(),
+            binding.edtTotalAmount.getNumericValue().toString().trim(),
+            binding.edtTax.getNumericValue().toString().trim(),
+            binding.tvNetAmount.getNumericValue().toString().trim(),
             binding.edtDescription.text.toString().trim(),
             if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
             binding.edtAutionValue.text.toString().trim(),
@@ -593,8 +624,11 @@ class NewClaimFragment() : Fragment() {
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success) {
             shouldRefreshPage = true
+            val intent = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity(). finish()
 //            (contextActivity as? MainActivity)?.backButtonPressed()
-            (contextActivity as? MainActivity)?.clearFragmentBackstack()
+        //    (contextActivity as? MainActivity)?.clearFragmentBackstack()
         }
     }
 

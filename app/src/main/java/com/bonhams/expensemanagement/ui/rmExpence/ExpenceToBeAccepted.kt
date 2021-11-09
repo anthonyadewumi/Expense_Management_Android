@@ -42,19 +42,24 @@ class ExpenceToBeAccepted : BaseActivity() {
         binding.lifecycleOwner = this
         setupViewModel()
         setClickListeners()
-        setDropdownDataObserver(" ")
+      //  setDropdownDataObserver(" ")
         setupView()
         initSearch()
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        setDropdownDataObserver("","","")
+
+    }
     private fun setupView(){
     }
 
     private fun initSearch() {
         binding.edtSearchClaim.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_SEARCH) {
-                setDropdownDataObserver(binding.edtSearchClaim.text!!.trim().toString())
+                setDropdownDataObserver(binding.edtSearchClaim.text!!.trim().toString()," "," ")
                 true
             } else {
                 false
@@ -86,8 +91,10 @@ class ExpenceToBeAccepted : BaseActivity() {
             val startDate: Long = it.first
             val endDate: Long = it.second
             Log.d("Expense to accepted : ", "showDateRangePicker: start Date: ${Utils.getDateInDisplayFormat(startDate)}   end Date: ${Utils.getDateInDisplayFormat(endDate)}")
-            viewModel.dateRange.value = it
-            viewModel.datePicker.value = Pair(Utils.getDateInServerRequestFormat(startDate), Utils.getDateInServerRequestFormat(endDate))
+            setDropdownDataObserver("",Utils.getDateInDisplayFormat(startDate),Utils.getDateInDisplayFormat(endDate))
+
+              viewModel.dateRange.value = it
+           viewModel.datePicker.value = Pair(Utils.getDateInServerRequestFormat(startDate), Utils.getDateInServerRequestFormat(endDate))
         })
 
         dateRangePicker.addOnCancelListener {
@@ -113,7 +120,7 @@ class ExpenceToBeAccepted : BaseActivity() {
             if(binding.tilSearchClaim.isVisible){
                 binding.tilSearchClaim.visibility=View.GONE
                 binding.edtSearchClaim.setText("")
-                setDropdownDataObserver(" ")
+                setDropdownDataObserver("","","")
 
             }else{
                 binding.tilSearchClaim.visibility=View.VISIBLE
@@ -139,10 +146,12 @@ class ExpenceToBeAccepted : BaseActivity() {
         expencesListAdapter = ExpencesListAdapter(toBeAcceptedDataList,this)
         binding.rmExpenceList.adapter = expencesListAdapter
     }
-    private fun setDropdownDataObserver(serchkey:String) {
+    private fun setDropdownDataObserver(serchkey:String,fromdate:String,todate:String) {
        val data= JsonObject()
         data.addProperty("numberOfItems",20)
         data.addProperty("page",1)
+       // data.addProperty("from",fromdate)
+       // data.addProperty("to",todate)
         data.addProperty("searchKey",serchkey)
         viewModel.getRequestExpences(data).observe(this, Observer {
             it?.let { resource ->
