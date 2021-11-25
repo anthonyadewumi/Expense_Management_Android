@@ -47,12 +47,14 @@ class SplitClaimDetalisActivity : BaseActivity() {
 
     private fun setupView(){
         val item = intent.getSerializableExtra("SplitItem") as SplitClaimItem?
+        val currancyCode = intent.getSerializableExtra("currencyCode") as String?
+        val currencySymbol = intent.getSerializableExtra("currencySymbol") as String?
         binding.editCompnyName.setText(item?.compnyName)
         binding.editDepartName.setText(item?.departmentName)
         binding.editExpenceType.setText(item?.expenceTypeName)
-        binding.edtTotalAmount.setText("$ "+item?.totalAmount)
+        binding.edtTotalAmount.setText(currencySymbol+" "+item?.totalAmount)
         binding.edtTaxCode.setText(item?.taxcode)
-        binding.edtTax.setText("$ "+item?.tax.toString())
+        binding.edtTax.setText(currencySymbol+" "+item?.tax.toString())
         binding.edtAutionSales.setText(item?.auctionSales)
         binding.editExpenceCode.setText(item?.expenceCode)
     }

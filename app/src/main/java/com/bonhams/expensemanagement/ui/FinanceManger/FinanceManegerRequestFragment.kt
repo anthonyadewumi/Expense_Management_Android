@@ -164,7 +164,7 @@ class FinanceManegerRequestFragment : Fragment(), FinanceRequestListAdapter.OnCl
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.resetFilters()
             homeViewModel.resetFilters()
-            // claimsAdapter.refresh()
+            claimsAdapter.refresh()
         }
     }
 

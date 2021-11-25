@@ -234,6 +234,7 @@
                                 android:layout_height="wrap_content">
                             <CheckBox
                                 android:id="@+id/chkAll"
+                                android:visibility="gone"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentStart="true"
@@ -248,6 +249,7 @@
                                 android:id="@+id/ivCalendar"
                                 android:layout_width="@dimen/_30sdp"
                                 android:layout_height="@dimen/_30sdp"
+                                android:visibility="gone"
                                 android:padding="@dimen/_6sdp"
                                 android:layout_alignParentRight="true"
                                 android:src="@drawable/ic_calendar"

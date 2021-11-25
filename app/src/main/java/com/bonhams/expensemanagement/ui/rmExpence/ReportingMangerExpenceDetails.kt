@@ -1,8 +1,12 @@
 package com.bonhams.expensemanagement.ui.rmExpence
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import android.view.Window
 import android.view.inputmethod.EditorInfo
 import android.widget.*
 import androidx.core.view.isVisible
@@ -49,7 +53,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
         empname = intent.getStringExtra("employeeName").toString()
         setupViewModel()
         setClickListeners()
-        setDropdownDataObserver(" ")
+        setDropdownDataObserver("")
         setupView()
         initSearch()
     }
@@ -76,12 +80,14 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
     }
 
     private fun setClickListeners(){
-      //  binding.appbarGreeting.text="rtio"
+        binding.appbarGreeting.text = "Hello ${AppPreferences.firstName}!"
+
+        //  binding.appbarGreeting.text="rtio"
         binding.layoutAppBarSearch.setOnClickListener {
             if(binding.tilSearchClaim.isVisible){
                 binding.tilSearchClaim.visibility=View.GONE
                 binding.edtSearchClaim.setText("")
-                setDropdownDataObserver(" ")
+                setDropdownDataObserver("")
 
             }else{
                 binding.tilSearchClaim.visibility=View.VISIBLE
@@ -121,6 +127,13 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
+                                if(response.expenceDetailsData.isNotEmpty()){
+                                    binding.chkAll.visibility=View.VISIBLE
+                                    binding.ivCalendar.visibility=View.VISIBLE
+                                }else{
+                                    binding.chkAll.visibility=View.GONE
+                                    binding.ivCalendar.visibility=View.GONE
+                                }
                                 response.expenceDetailsData.forEach {
                                     idListAll.add(it.requestId)
                                 }
@@ -143,13 +156,17 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
         })
     }
 
-    private fun acceptRejectObserver(accept_reject:Int) {
+    private fun acceptRejectObserver(accept_reject:Int,reson:String) {
         val data= JsonObject()
         val jsonIdArray=JsonArray()
         idList.forEach {jsonIdArray.add(it)}
         data.add("claim_ids",jsonIdArray)
         data.addProperty("action",accept_reject)
         data.addProperty("user_id",requestid.toInt())
+        if(accept_reject==2){
+            data.addProperty("reason",reson)
+
+        }
 
         data.addProperty("role", AppPreferences.userType)
         viewModel.acceptReject(data).observe(this, Observer {
@@ -187,11 +204,13 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
             val bottomOptionAccept = view.findViewById<TextView>(R.id.bottomOptionAccept)
             bottomOptionAccept.setOnClickListener {
                 dialog.dismiss()
-                acceptRejectObserver(1)
+                acceptRejectObserver(1,"")
             }
             bottomOptionReject.setOnClickListener {
+
+                showRejectAlert()
                 dialog.dismiss()
-                acceptRejectObserver(2)
+               // acceptRejectObserver(2)
 
             }
             dialog.show()
@@ -200,9 +219,14 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
 
     override fun callback(action: String, data: Any, postion: Int) {
         try {
+
             if(action == "checked"){
                 idList.add((data as ExpenceDetailsData).requestId)
                 showStatusFilterBottomSheet()
+            }else if(action == "details") {
+
+                val fp = Intent(this, RequestClaimDetails::class.java)
+                startActivity(fp)
             }else{
                 idList.remove((data as ExpenceDetailsData).requestId)
 
@@ -213,5 +237,34 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
 
     }
 
+    private fun showRejectAlert() {
+        val dialog = Dialog(this)
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.reject_alert_dialog)
+        val input = dialog.findViewById(R.id.edtDescription) as EditText
+        val yesBtn = dialog.findViewById(R.id.btnSubmit) as Button
+        val noBtn = dialog.findViewById(R.id.btnCancel) as TextView
 
+        yesBtn.setOnClickListener {
+
+            if(input.text.isNullOrEmpty()){
+                input.error = "Please enter the reason"
+            }else{
+                input.error = null
+                dialog.dismiss()
+                println("reason :"+input.text)
+                acceptRejectObserver(2,input.text.toString())
+            }
+
+         //   logoutUser()
+        }
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+            finish()
+        }
+        dialog.show()
+    }
 }

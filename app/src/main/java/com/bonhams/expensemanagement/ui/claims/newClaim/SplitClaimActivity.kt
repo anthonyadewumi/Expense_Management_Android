@@ -39,6 +39,8 @@ class SplitClaimActivity : BaseActivity() {
     private lateinit var viewModel: NewClaimViewModel
     private var expenseCode: String = ""
     private var taxcodeId: String = ""
+    private var compnyId: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_split_claim)
@@ -127,6 +129,18 @@ class SplitClaimActivity : BaseActivity() {
        return true
     }
     private fun setDropdownDataObserver() {
+
+        val currancyCode = intent.getSerializableExtra("currencyCode") as String?
+        val currencySymbol = intent.getSerializableExtra("currencySymbol") as String?
+        if (currencySymbol != null) {
+            binding.edtTotalAmount.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
+            binding.edtTax.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
+        }
+        if (currancyCode != null) {
+            binding.edtTotalAmount.setLocale(currancyCode)
+            binding.edtTax.setLocale(currancyCode)
+        }
+
         viewModel.getDropDownData().observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
@@ -152,9 +166,9 @@ class SplitClaimActivity : BaseActivity() {
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
         viewModel.expenseGroupList = dropdownResponse.expenseGroup
-        viewModel.expenseTypeList = dropdownResponse.expenseType
-        viewModel.departmentList = dropdownResponse.departmentList
-        viewModel.currencyList  = dropdownResponse.currencyType
+        viewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType.toMutableList()
+        viewModel.departmentListCompany = dropdownResponse.departmentList as MutableList<Department>
+        viewModel.currencyList  = dropdownResponse.currencyType as MutableList<Currency>
         viewModel.carTypeList  = dropdownResponse.carType
         viewModel.statusTypeList  = dropdownResponse.statusType
         viewModel.mileageTypeList  = dropdownResponse.mileageType
@@ -166,7 +180,37 @@ class SplitClaimActivity : BaseActivity() {
     private fun setupSpinners(){
 
 
-        // Expense Type Adapter
+        // Expense Group Adapter
+        val expenseGroupAdapter = CustomSpinnerAdapter(
+            this,
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        binding.spnExpenseGroup.adapter = expenseGroupAdapter
+        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val groupid =viewModel.expenseGroupList[position].id
+                println("selected group ID :$groupid")
+                viewModel.expenseTypeList.clear()
+                viewModel.expenseTypeListExpenseGroup.forEach {
+                    if(it.expenseGroupID == groupid&&it.companyID==compnyId.toString()){
+                        viewModel.expenseTypeList.add(it)
+                        // println("selected expenseTypeList Added :" )
+
+                    }else if(it.companyID.isNullOrEmpty()){
+                        viewModel.expenseTypeList.add(it)
+
+                    }
+                }
+                setupExpenceType()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+
+
+       /* // Expense Type Adapter
         val expenseTypeAdapter = CustomSpinnerAdapter(
             this,
             R.layout.item_spinner,
@@ -196,7 +240,7 @@ class SplitClaimActivity : BaseActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
+*/
         // Company List Adapter
         val companyAdapter = CustomSpinnerAdapter(
             this,
@@ -204,19 +248,29 @@ class SplitClaimActivity : BaseActivity() {
             viewModel.companyList
         )
         binding.spnCompany.adapter = companyAdapter
-        var compnypostion=0
-        viewModel.companyList.forEachIndexed { index, element ->
+      /*  viewModel.companyList.forEachIndexed { index, element ->
 
             if(AppPreferences.company.equals(element.name)){
                 compnypostion=index
                 return@forEachIndexed
             }
         }
-        binding.spnCompany.setSelection(compnypostion)
+        binding.spnCompany.setSelection(compnypostion)*/
 
         binding.spnCompany.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                compnyId=viewModel.companyList[position].id.toInt()
+                viewModel.departmentList.clear()
+                viewModel.departmentListCompany.forEach {
+                    println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
+
+                    if(it.company_id == compnyId.toString()){
+                        viewModel.departmentList.add(it)
+                    }
+                }
+                setupDeparmentType()
+
                 // System.out.println("selected appoint :"+ viewModel.companyList[position].code)
                 //binding.edtTitle.setText(viewModel.companyList[position].code)
             }
@@ -224,6 +278,44 @@ class SplitClaimActivity : BaseActivity() {
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
+
+
+
+    }
+    private fun setupExpenceType(){
+        // Expense Type Adapter
+        val expenseTypeAdapter = CustomSpinnerAdapter(
+            this,
+            R.layout.item_spinner,
+            viewModel.expenseTypeList
+        )
+        binding.spnExpense.adapter = expenseTypeAdapter
+        binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                expenseCode=viewModel.expenseTypeList.get(position).activityCode
+                taxcodeId= viewModel.expenseTypeList[position].taxCodeID
+                viewModel.taxList.forEach {
+
+                    if(it.id.toString() == taxcodeId) {
+                        binding.edtTaxCode.setText(it.tax_code)
+
+                    }
+                }
+
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
+
+                }else{
+                    binding.tvAuctionExpCode.text = ""
+                }
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+    private fun setupDeparmentType() {
         // Department Adapter
         val departmentAdapter = CustomSpinnerAdapter(
             this,
@@ -231,7 +323,7 @@ class SplitClaimActivity : BaseActivity() {
             viewModel.departmentList
         )
         binding.spnDepartment.adapter = departmentAdapter
-        var postion=0
+        /* var postion=0
         viewModel.departmentList.forEachIndexed { index, element ->
 
             if(AppPreferences.department.equals(element.name)){
@@ -239,17 +331,19 @@ class SplitClaimActivity : BaseActivity() {
                 return@forEachIndexed
             }
         }
-        binding.spnDepartment.setSelection(postion)
+        binding.spnDepartment.setSelection(postion)*/
         binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View,
+                position: Int,
+                id: Long
+            ) {
+            }
+
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
-
-
     }
-
-
-}
+    }

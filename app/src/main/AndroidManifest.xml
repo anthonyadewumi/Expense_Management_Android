@@ -80,6 +80,9 @@
         <activity
             android:name=".ui.rmExpence.ReportingMangerExpenceDetails"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.rmExpence.RequestClaimDetails"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.main.MainActivity"

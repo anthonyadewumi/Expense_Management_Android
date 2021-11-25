@@ -1,5 +1,6 @@
 package com.bonhams.expensemanagement.ui.main
 
+import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,9 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
     var appbarSearchClick: MutableLiveData<Boolean>? = MutableLiveData(false)
     var appbarMenuClick: MutableLiveData<View>? = MutableLiveData()
     var appbarEditClick: MutableLiveData<View>? = MutableLiveData()
+    var appbarSaveClick: MutableLiveData<View>? = MutableLiveData()
+    var appbarbackClick: MutableLiveData<View>? = MutableLiveData()
+    var validEmail = true
 
     init {
         responseLogout = MutableLiveData()
@@ -34,4 +38,22 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+    fun validateEmail(email: String, error: String): String? {
+        var errorStr: String? = null
+
+        if (email.isEmpty()){
+            errorStr = error
+            validEmail = true
+        }
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() && !TextUtils.isDigitsOnly(email)){
+            errorStr = error
+            validEmail = true
+        }
+        else {
+            validEmail = false
+        }
+
+        return errorStr
+    }
+
 }

@@ -182,7 +182,6 @@
                 android:minHeight="@dimen/_28sdp"
                 android:hint="@string/net_amount"
                      android:inputType="number"
-                     app:currencySymbol="$"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"

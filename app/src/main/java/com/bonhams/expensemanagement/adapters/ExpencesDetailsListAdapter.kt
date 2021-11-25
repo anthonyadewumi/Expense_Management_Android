@@ -64,7 +64,12 @@ class ExpencesDetailsListAdapter(
                     }
                 }else recylerCallback.callback("unchecked",item,postion)
             }
+            binding.claimCardView.setOnClickListener {
+                with(recylerCallback) {
+                    callback("details", item, postion)
 
+                }
+            }
         }
 
         fun parseDateFormat(

@@ -2,25 +2,30 @@ package com.bonhams.expensemanagement.ui.main
 
 import android.Manifest
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.BuildConfig
@@ -36,7 +41,6 @@ import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
-import com.bonhams.expensemanagement.ui.home.FinanceHomeFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
 import com.bonhams.expensemanagement.ui.login.LoginActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
@@ -86,45 +90,62 @@ class MainActivity : BaseActivity() {
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         println("user type :"+AppPreferences.userType)
 
-        if(AppPreferences.userType.equals("Reporting Manager")){
+        when (AppPreferences.userType) {
+            "Reporting Manager" -> {
 
-            navDrawerItems.clear()
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
-        //    navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved", 7))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
+                navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
+                //    navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved", 7))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
 
 
-          //  navDrawerItems.add(3, NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved ", 7))
-        }else if(AppPreferences.userType.equals("Finance Department")){
-            navDrawerItems.clear()
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
-        }else{
-            navDrawerItems.clear()
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
-           // navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
-            navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
+                //  navDrawerItems.add(3, NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved ", 7))
+            }
+            "Finance Department" -> {
+
+                navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
+                //    navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved", 7))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
+
+                /*  navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))*/
+            }
+            else -> {
+                navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
+                // navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
+            }
         }
         binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_camera)
 
-        if(AppPreferences.userType.equals("Finance Department")){
+        if(AppPreferences.userType == "Finance Department"){
             try {
-                binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_camera)
-                binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_expense_plus)
+              //  binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_camera)
+              //  binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_expense_plus)
              //   navDrawerItems.removeAt(0)
               //  navDrawerItems.removeAt(1)
              //   navDrawerItems.removeAt(2)
@@ -142,13 +163,15 @@ class MainActivity : BaseActivity() {
         setNoInternetSnackbar()
         fragmentBackstackListener()
         if (savedInstanceState == null) {
-            if(AppPreferences.userType.equals("Finance Department")){
+            val fragment = HomeFragment()
+            changeFragment(fragment)
+            /*if(AppPreferences.userType.equals("Finance Department")){
                 val fragment = FinanceHomeFragment()
                 changeFragment(fragment)
             }else{
                 val fragment = HomeFragment()
                 changeFragment(fragment)
-            }
+            }*/
 
 
         }
@@ -189,11 +212,11 @@ class MainActivity : BaseActivity() {
             binding.bottomNavigationView.menu.setGroupCheckable(0, true, true)
             when (menuItem.itemId) {
                 R.id.bottom_nav_home -> {
-                    if(AppPreferences.userType.equals("Finance Department")){
+                    if(AppPreferences.userType == "Finance Department"){
                         setupAppbar()
                         showBottomNavbar(true)
                         removeAnyOtherFragVisible()
-                        val fragment = FinanceHomeFragment()
+                        val fragment = HomeFragment()
                         changeFragment(fragment)
                         return@OnNavigationItemSelectedListener true
                     }else{
@@ -245,9 +268,11 @@ class MainActivity : BaseActivity() {
                     hideAppbarBackAndMenu(true)
                     showAppbarEdit(true)
                     showBottomNavbar(true)
+
                     val fragment = MyProfileFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
+
                 }
             }
             false
@@ -256,6 +281,7 @@ class MainActivity : BaseActivity() {
     private fun setupClickListeners(){
         binding.appBar.layoutBack.setOnClickListener(View.OnClickListener {
             if (supportFragmentManager.backStackEntryCount > 0) {
+                viewModel.appbarbackClick?.value = it
                 backButtonPressed()
             }
         })
@@ -271,7 +297,14 @@ class MainActivity : BaseActivity() {
         })
 
         binding.appBar.appbarEdit.setOnClickListener(View.OnClickListener {
+            //binding.appBar.appbarSave.visibility = View.VISIBLE
+
             viewModel.appbarEditClick?.value = it
+        })
+        binding.appBar.appbarSave.setOnClickListener(View.OnClickListener {
+            //binding.appBar.appbarSave.visibility = View.VISIBLE
+
+            viewModel.appbarSaveClick?.value = it
         })
         binding.appBar.ivMore.setOnClickListener(View.OnClickListener {
             viewModel.appbarMenuClick?.value = it
@@ -288,7 +321,7 @@ class MainActivity : BaseActivity() {
             Log.d(TAG, "setupViewModel: ${it.message}")
         })
     }
-    
+
     private fun setupAppbar(){
         binding.appBar.appbarTitle.visibility = View.GONE
         binding.appBar.layoutAppBarMenu.visibility = View.VISIBLE
@@ -423,8 +456,10 @@ class MainActivity : BaseActivity() {
                         setAppbarTitle(getString(R.string.my_profile))
                         showBottomNavbar(false)
                         showAppbarBackButton(true)
+
                         val fragment = MyProfileFragment()
                         addFragment(fragment)
+
                         /*setAppbarTitle(getString(R.string.profile))
                         setupAppbar()
                         binding.bottomNavigationView.selectedItemId = R.id.bottom_nav_my_profile*/
@@ -632,6 +667,7 @@ class MainActivity : BaseActivity() {
         showAppbarSearch(false)
     }
 
+
     fun hideAppbarBackAndMenu(hide: Boolean){
         binding.appBar.layoutAppBarMenu.visibility = if(!hide) View.VISIBLE else View.INVISIBLE
     }
@@ -646,9 +682,18 @@ class MainActivity : BaseActivity() {
     fun showAppbarEdit(show: Boolean){
         binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
         binding.appBar.appbarEdit.visibility = if(show) View.VISIBLE else View.GONE
+        binding.appBar.appbarSave.visibility = View.GONE
         binding.appBar.ivSearch.visibility = View.GONE
         binding.appBar.ivMore.visibility = View.GONE
     }
+    fun showAppbarEditSave(show: Boolean){
+        binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
+        binding.appBar.appbarSave.visibility = if(show) View.VISIBLE else View.GONE
+        binding.appBar.appbarEdit.visibility = View.GONE
+        binding.appBar.ivSearch.visibility = View.GONE
+        binding.appBar.ivMore.visibility = View.GONE
+    }
+
 
     fun showAppbarMore(show: Boolean){
         binding.appBar.layoutAppBarSearch.visibility = if(show) View.VISIBLE else View.INVISIBLE
@@ -749,14 +794,17 @@ class MainActivity : BaseActivity() {
                 }
                 else if(fragName.equals(MyProfileFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.profile))
+
                     hideAppbarBackAndMenu(true)
                     showAppbarEdit(true)
                     showBottomNavbar(true)
+
                 }
                 else if(fragName.equals(EditProfileFragment::class.java.simpleName, true)){
-                    setAppbarTitle(getString(R.string.profile))
+                    setAppbarTitle(getString(R.string.edit_profile))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
+                    showAppbarEditSave(true)
                 }
                 else if(fragName.equals(ChangePasswordFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.change_password))

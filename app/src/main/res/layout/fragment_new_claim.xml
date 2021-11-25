@@ -52,7 +52,6 @@
     android:orientation="horizontal"
     android:layout_weight="2"
     android:gravity="center"
-    android:visibility="gone"
     android:layout_height="wrap_content">
 
                 <TextView
@@ -83,7 +82,40 @@
                     android:layout_gravity="center_vertical"
                     />
 </LinearLayout>
-            <LinearLayout
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/company_name"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        />
+
+                    <Spinner
+                        android:id="@+id/spnCompanyNumber"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.5"
+                        android:layout_height="@dimen/_28sdp"
+                        android:hint="@string/expense_type"
+                        android:gravity="center|start"
+
+                        style="@style/outlineBoxExposedDropdown"
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/spinner_purple_bg"
+                        android:textSize="@dimen/_10sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_gravity="center_vertical"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
                 android:layout_width="match_parent"
                 android:orientation="horizontal"
                 android:layout_weight="2"
@@ -107,7 +139,7 @@
                     android:hint="@string/expense_group"
                     style="@style/outlineBoxExposedDropdown"
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/spinner_bg"
+                    android:background="@drawable/spinner_purple_bg"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
                     android:gravity="center|start"
@@ -139,41 +171,9 @@
                     android:hint="@string/expense_type"
                     style="@style/outlineBoxExposedDropdown"
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/spinner_bg"
+                    android:background="@drawable/spinner_purple_bg"
                     android:gravity="center|start"
 
-                    android:textSize="@dimen/_10sdp"
-                    android:padding="@dimen/_5sdp"
-                    android:layout_gravity="center_vertical"
-                    />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="horizontal"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="@string/company_name"
-                    style="@style/TextRegular11"
-                    android:textColor="@color/colorTextBlack"
-                    />
-
-                <Spinner
-                    android:id="@+id/spnCompanyNumber"
-                    android:layout_width="0dp"
-                    android:layout_weight="1.5"
-                    android:layout_height="@dimen/_28sdp"
-                    android:hint="@string/expense_type"
-                    android:gravity="center|start"
-
-                    style="@style/outlineBoxExposedDropdown"
-                    android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/spinner_bg"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
                     android:layout_gravity="center_vertical"
@@ -211,7 +211,7 @@
                     android:gravity="center|start"
 
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/round_border_gray_white_bg"
+                    android:background="@drawable/round_border_app_light_bg"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
                     android:layout_gravity="center_vertical"
@@ -257,7 +257,7 @@
                     android:hint="@string/department"
                     style="@style/outlineBoxExposedDropdown"
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/spinner_bg"
+                    android:background="@drawable/spinner_purple_bg"
                     android:gravity="center|start"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
@@ -292,7 +292,7 @@
                     android:gravity="center|start"
 
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/round_border_gray_white_bg"
+                    android:background="@drawable/round_border_app_light_bg"
                     app:drawableRightCompat="@drawable/ic_calendar_input_drawable"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
@@ -324,7 +324,7 @@
                     android:hint="@string/currency"
                     style="@style/outlineBoxExposedDropdown"
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/spinner_bg"
+                    android:background="@drawable/spinner_purple_bg"
                     android:gravity="center|start"
 
                     android:textSize="@dimen/_10sdp"
@@ -364,7 +364,7 @@
 
                     style="@style/TextRegular11"
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/round_border_gray_white_bg"
+                    android:background="@drawable/round_border_app_light_bg"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
                     android:layout_gravity="center_vertical"
@@ -387,6 +387,25 @@
                     style="@style/TextRegular11"
                     android:textColor="@color/colorTextBlack"
                     />
+
+
+                <Spinner
+                    android:id="@+id/spntaxcode"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.5"
+                    android:layout_height="@dimen/_28sdp"
+                    android:hint="@string/tax_code"
+                    android:visibility="gone"
+                    style="@style/outlineBoxExposedDropdown"
+                    android:textColor="@color/colorTextBlack"
+                    android:background="@drawable/spinner_purple_bg"
+                    android:textSize="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:gravity="center|start"
+
+                    android:layout_gravity="center_vertical"
+                    />
+
                 <EditText
                     android:id="@+id/edtTaxcode"
                     android:layout_width="0dp"
@@ -443,7 +462,7 @@
                      app:currencySymbol="$"
                     style="@style/TextRegular11"
                     android:textColor="@color/colorTextBlack"
-                    android:background="@drawable/round_border_gray_white_bg"
+                    android:background="@drawable/round_border_app_light_bg"
                     android:textSize="@dimen/_10sdp"
                     android:padding="@dimen/_5sdp"
                     android:layout_gravity="center_vertical"

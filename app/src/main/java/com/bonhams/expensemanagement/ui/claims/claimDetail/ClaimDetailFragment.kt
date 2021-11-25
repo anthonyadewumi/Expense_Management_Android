@@ -166,11 +166,11 @@ class ClaimDetailFragment() : Fragment() {
     }
     private fun setClickListner() {
         binding.tvRMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Reporting Manager for approval.")
+            showReminderAlert("We have sent a reminder to Reporting Manager for approval.","RM")
 
         }
         binding.tvFMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Finance Manager for approval.")
+            showReminderAlert("We have sent a reminder to Finance Manager for approval.","FD")
 
         }
     }
@@ -223,9 +223,10 @@ class ClaimDetailFragment() : Fragment() {
             }
         })
     }
-    private fun sendReminder(){
+    private fun sendReminder(userType:String){
         val jsonObject = JsonObject().also {
             it.addProperty("claim_id", claimDetail.id.toInt())
+            it.addProperty("for_user", userType)
         }
         viewModel.sendReminder(jsonObject).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
@@ -313,7 +314,7 @@ class ClaimDetailFragment() : Fragment() {
             dialog.show()
             }
         }
-    private fun showReminderAlert(message:String){
+    private fun showReminderAlert(message:String,userType:String){
         contextActivity?.let { activity ->
             val dialog = Dialog(activity)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -335,7 +336,7 @@ class ClaimDetailFragment() : Fragment() {
             yesBtn.setOnClickListener {
                 dialog.dismiss()
                 if (NoInternetUtils.isConnectedToInternet(activity))
-                    sendReminder()
+                    sendReminder(userType)
                 else
                     Toast.makeText(activity, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
             }

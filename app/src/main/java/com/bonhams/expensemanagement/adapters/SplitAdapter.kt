@@ -22,7 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 
 
 class SplitAdapter(
-    var splitList: MutableList<SplitClaimItem?>,var mcontext:Context,var recylerCallback: RecylerCallback
+   var currencyCode :String ,var currencySymbol: String ,var splitList: MutableList<SplitClaimItem?>,var mcontext:Context,var recylerCallback: RecylerCallback
 ) : RecyclerView.Adapter<SplitAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,10 +31,10 @@ class SplitAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val attachmentItem = splitList?.get(position)
-        attachmentItem?.let { holder.bindItems(it) }
+        attachmentItem?.let { holder.bindItems(it,currencyCode,currencySymbol) }
 
             holder.removeItems(splitList, position,recylerCallback)
-            holder.details(splitList, position,mcontext)
+            holder.details(splitList, position,mcontext,currencyCode,currencySymbol)
 
     }
     override fun getItemCount(): Int {
@@ -45,11 +45,11 @@ class SplitAdapter(
 
     class ViewHolder(itemBinding: ItemSplitRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         private val binding: ItemSplitRowBinding = itemBinding
-        fun bindItems(item: SplitClaimItem) {
+        fun bindItems(item: SplitClaimItem, currencyCode :String , currencySymbol: String ) {
            binding.tvTitles.setText(item?.compnyName)
            binding.tvTitle.setText(item?.expenceTypeName)
-           binding.tvamount.setText(" $ "+item?.totalAmount)
-           binding.tvtax.setText("Tax : $ "+item?.tax)
+           binding.tvamount.setText(currencySymbol+item?.totalAmount)
+           binding.tvtax.setText("Tax : "+currencySymbol+item?.tax)
            binding.tvtaxcode.setText("Tax Code : "+item?.taxcode)
         }
 
@@ -62,7 +62,7 @@ class SplitAdapter(
                 }
 
             }
-        fun details(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,context:Context) {
+        fun details(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,context:Context,currencyCode :String , currencySymbol: String ) {
             val itemData=listAttachments?.get(postion)
                 binding.tvTitle.setOnClickListener {
                     val splitItem = SplitClaimItem(
@@ -72,6 +72,8 @@ class SplitAdapter(
                     )
                     val intent = Intent(context, SplitClaimDetalisActivity::class.java)
                     intent.putExtra("SplitItem", splitItem)
+                    intent.putExtra("currencyCode", currencyCode)
+                    intent.putExtra("currencySymbol", currencySymbol)
                     context.  startActivity(intent)
 
                 }

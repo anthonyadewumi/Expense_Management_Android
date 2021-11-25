@@ -2,26 +2,30 @@ package com.bonhams.expensemanagement.ui.gpsTracking
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.*
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.GpsMileageDetail
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -30,7 +34,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Locale
@@ -42,6 +45,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var googleMap: GoogleMap
+    private lateinit var progDialog: ProgressDialog
     private val locationPermissionCode = 2
     private var Latitude = 0.0
     private var Longitude = 0.0
@@ -52,8 +56,9 @@ class GPSTrackingFragment : Fragment(),LocationListener {
 
     private val callback = OnMapReadyCallback { map ->
       //  obtieneLocalizacion()
-        googleMap=map
         getLocation()
+
+        googleMap=map
 
        /* val currentlocation = LatLng(Latitude, Longitude)
         map.addMarker(MarkerOptions().position(currentlocation).title("Marker in current location"))
@@ -73,6 +78,15 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         (contextActivity as MainActivity).showAppbarBackButton(true)
 
         val startStop = view.findViewById(R.id.mStartStop) as AppCompatButton?
+        progDialog= ProgressDialog(requireContext())
+        progDialog.setTitle("Getting current location...")
+        progDialog.show()
+        println("map ready start")
+        if(AppPreferences.gpsStart == "Stop"){
+            startStop?.text="Stop"
+            startlocation= AppPreferences.gpsStartLocation
+            startDate=AppPreferences.gpsStartDate
+        }
 
         startStop?.setOnClickListener {
             if(startStop.text.toString().equals("Start")){
@@ -83,10 +97,14 @@ class GPSTrackingFragment : Fragment(),LocationListener {
                 startlocation= getCompleteAddressString(Latitude,Longitude)
 
                 startStop.text="Stop"
+                AppPreferences.gpsStartDate=startDate
+                AppPreferences.gpsStartLocation=startlocation
+                AppPreferences.gpsStart="Stop"
             }else{
                 getLocation()
 
                 startStop.text="Start"
+                AppPreferences.gpsStart="Start"
                 stoplocation= getCompleteAddressString(Latitude,Longitude)
                 stopDate=getCurrentDate()
 
@@ -97,7 +115,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
             }
         }
 
-       // getLocation()
+        //getLocation()
         return view
     }
     fun getCurrentDate():String{
@@ -135,20 +153,43 @@ class GPSTrackingFragment : Fragment(),LocationListener {
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+        statusCheck()
         if ((ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
-        }
-       locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, locationListener);
 
+          /*  ActivityCompat.requestPermissions(
+                requireActivity(), arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), locationPermissionCode
+            )*/
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), locationPermissionCode
+            )
+           // ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
+        }else {
+
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                5000,
+                5f,
+                locationListener
+            );
+        }
     }
 
     override fun onLocationChanged(location: Location) {
     }
+
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
         if (requestCode == locationPermissionCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
+                getLocation()
             }
             else {
                 Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
@@ -160,6 +201,12 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         override fun onLocationChanged(location: Location) {
             Latitude=location.latitude
             Longitude=location.longitude
+            try {
+                if(progDialog.isShowing)
+                progDialog.dismiss()
+            } catch (e: Exception) {
+            }
+
             val currentlocation = LatLng(Latitude, Longitude)
             googleMap.clear()
             googleMap.setMinZoomPreference(11f)
@@ -218,7 +265,22 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         }
         return strAdd
     }
+    fun statusCheck() {
+        val manager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        if (!manager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps()
+        }
+    }
 
-
-
+    private fun buildAlertMessageNoGps() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+            .setCancelable(false)
+            .setPositiveButton("Yes",
+                DialogInterface.OnClickListener { dialog, id -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) })
+            .setNegativeButton("No",
+                DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
+        val alert: AlertDialog = builder.create()
+        alert.show()
+    }
 }

@@ -25,6 +25,9 @@ object AppPreferences {
     private val USERTYPE = Pair("userType", "")
     private val PHONE_NUMBER = Pair("phone_number", "")
     private val PROFILE_PIC = Pair("profile_pic", "")
+    private val GPS_START_DATE = Pair("gps_start_date", "")
+    private val GPS_START_LOCATION = Pair("gps_start_location", "")
+    private val GPS_START = Pair("gps_start", "start")
 
     fun init(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -143,7 +146,21 @@ object AppPreferences {
         set(value) = prefs.edit {
             it.putString(PROFILE_PIC.first, value)
         }
-
+var gpsStartDate: String
+        get() = prefs.getString(GPS_START_DATE.first, GPS_START_DATE.second)!!
+        set(value) = prefs.edit {
+            it.putString(GPS_START_DATE.first, value)
+        }
+var gpsStartLocation: String
+        get() = prefs.getString(GPS_START_LOCATION.first, GPS_START_LOCATION.second)!!
+        set(value) = prefs.edit {
+            it.putString(GPS_START_LOCATION.first, value)
+        }
+    var gpsStart: String
+        get() = prefs.getString(GPS_START.first, GPS_START.second)!!
+        set(value) = prefs.edit {
+            it.putString(GPS_START.first, value)
+        }
 
     fun clearPrefs(){
         // User selected remember me. Store email and password
@@ -161,6 +178,9 @@ object AppPreferences {
                 it.remove(LAST_NAME.first)
 //                it.remove(EMAIL.first)
                 it.remove(PROFILE_PIC.first)
+                it.remove(GPS_START_LOCATION.first)
+                it.remove(GPS_START.first)
+                it.remove(GPS_START_DATE.first)
             }
         }
         else { // User did not select remember me. Clear all details
@@ -178,6 +198,7 @@ object AppPreferences {
                 it.remove(LAST_NAME.first)
                 it.remove(EMAIL.first)
                 it.remove(PROFILE_PIC.first)
+
             }
         }
     }

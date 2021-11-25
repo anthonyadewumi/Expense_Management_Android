@@ -15,8 +15,10 @@ data class MileageDetail (
     val financeMStatus: String = "",
     @SerializedName("group.id")
     val groupID: String = "",
-    @SerializedName("group.name")
+    @SerializedName("expense_group_name")
     val groupName: String = "",
+    @SerializedName("expense_type_name")
+    val expense_type_name: String = "",
     val type: String = "",
     @SerializedName("companyName")
     val companyName: String = "",
@@ -28,7 +30,8 @@ data class MileageDetail (
     val currencySymbol: String = "",
     @SerializedName("currency_type_name")
     val currencyTypeNamename: String = "",
-    val tax: String = "",
+    @SerializedName("tax")
+    val mtax: Int = 0,
     val netAmount: String = "",
     val merchant: String = "",
     val tripDate: String = "",

@@ -13,10 +13,13 @@ import okhttp3.MultipartBody
 class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : ViewModel() {
 
     lateinit var expenseGroupList: List<ExpenseGroup>
-    lateinit var expenseTypeList: List<ExpenseType>
+    var expenseTypeList: MutableList<ExpenseType> = mutableListOf<ExpenseType>()
     lateinit var expenseTypeListExpenseGroup: List<ExpenseType>
-    lateinit var departmentList: List<Department>
-    lateinit var currencyList: List<Currency>
+    lateinit var departmentListCompany: List<Department>
+    var departmentList: MutableList<Department> = mutableListOf<Department>()
+
+    //lateinit var currencyList: List<Currency>
+    var currencyList: MutableList<Currency> = mutableListOf<Currency>()
     lateinit var companyList: List<Company>
     lateinit var carTypeList: List<CarType>
     lateinit var mileageTypeList: List<MileageType>
@@ -71,8 +74,14 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
         newClaimRequest.netAmount = netAmount
         newClaimRequest.description = description
         newClaimRequest.taxCode = taxCode
-        newClaimRequest.auction = auction
-        newClaimRequest.expenseCode = expenseCode
+        if(auction.isNullOrEmpty()){
+            newClaimRequest.auction ="0"
+            newClaimRequest.expenseCode ="0"
+        }else{
+            newClaimRequest.auction = auction
+            newClaimRequest.expenseCode = expenseCode
+        }
+
         newClaimRequest.attachments = attachments
       //  newClaimRequest.claimImage = claimImage
         return newClaimRequest

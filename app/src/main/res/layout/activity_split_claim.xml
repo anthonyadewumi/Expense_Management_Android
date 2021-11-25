@@ -266,7 +266,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/spinner_bg"
+                                android:background="@drawable/spinner_purple_bg"
                                 android:hint="@string/expense_group"
                                 android:minHeight="@dimen/_28sdp"
                                 android:textSize="@dimen/_10sdp"
@@ -297,7 +297,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/spinner_bg"
+                                android:background="@drawable/spinner_purple_bg"
                                 android:hint="@string/department"
                                 android:minHeight="@dimen/_28sdp"
                                 android:textColor="@color/colorTextBlack"
@@ -306,7 +306,41 @@
                                 android:padding="@dimen/_5sdp"
                                 />
                              </LinearLayout>
-                             <LinearLayout
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:orientation="horizontal"
+                                android:layout_weight="2"
+                                android:gravity="center"
+                                android:layout_marginTop="@dimen/_12sdp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    style="@style/TextRegular11"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/expense_group_star"
+                                    android:textColor="@color/colorTextBlack" />
+
+                                <Spinner
+                                    android:id="@+id/spnExpenseGroup"
+                                    style="@style/outlineBoxExposedDropdown"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1.5"
+                                    android:layout_height="@dimen/_28sdp"
+                                    android:layout_gravity="center_vertical"
+                                    android:background="@drawable/spinner_purple_bg"
+                                    android:hint="@string/expense_group"
+                                    android:minHeight="@dimen/_28sdp"
+                                    android:padding="@dimen/_5sdp"
+                                    android:gravity="center|start"
+                                    android:textColor="@color/colorTextBlack"
+                                    android:textSize="@dimen/_10sdp" />
+                            </LinearLayout>
+
+
+
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:orientation="horizontal"
                                 android:layout_weight="2"
@@ -318,7 +352,7 @@
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:text="@string/expense_star"
+                                android:text="@string/expense_type_star"
                                 android:textColor="@color/colorTextBlack" />
 
                             <Spinner
@@ -328,7 +362,7 @@
                                 android:layout_weight="1.5"
                                 android:layout_height="@dimen/_28sdp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/spinner_bg"
+                                android:background="@drawable/spinner_purple_bg"
                                 android:hint="@string/expense"
                                 android:minHeight="@dimen/_28sdp"
                                 android:padding="@dimen/_5sdp"

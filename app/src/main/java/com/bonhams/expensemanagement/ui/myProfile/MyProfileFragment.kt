@@ -69,8 +69,17 @@ class MyProfileFragment() : Fragment() {
             val fragment = EditProfileFragment()
             (contextActivity as? MainActivity)?.addFragment(fragment)
         })
+        mainViewModel.appbarbackClick?.observe(viewLifecycleOwner, {
+            setupView()
+
+        })
     }
 
+    override fun onResume() {
+        super.onResume()
+        println("on resimed call")
+        setupView()
+    }
     private fun setupView(){
         Glide.with(this)
             .load(AppPreferences.profilePic)
@@ -84,11 +93,21 @@ class MyProfileFragment() : Fragment() {
             .circleCrop()
             .into(binding.ivProfilePic)
 
+        binding.tvEmpId.isEnabled=false
+        binding.tvFirstName.isEnabled=false
+        binding.tvLastName.isEnabled=false
+        binding.tvEmail.isEnabled=false
+        binding.tvPhoneNumber.isEnabled=false
+
+
         binding.tvEmpId.text = AppPreferences.employeeId
-        binding.tvFirstName.text = AppPreferences.firstName
-        binding.tvLastName.text = AppPreferences.lastName
-        binding.tvEmail.text = AppPreferences.email
-        binding.tvPhoneNumber.text = AppPreferences.phoneNumber
+        binding.tvFirstName.setText(AppPreferences.firstName)
+        binding.tvLastName.setText(AppPreferences.lastName)
+        binding.tvEmail.setText(AppPreferences.email)
+        binding.tvPhoneNumber.setText(AppPreferences.phoneNumber)
+
+
+
     }
 
     private fun setMyProfileObserver() {
@@ -121,10 +140,12 @@ class MyProfileFragment() : Fragment() {
         viewModel.setResponse(response)
 
         binding.tvEmpId.text = response.profileDetail?.employID
-        binding.tvFirstName.text = response.profileDetail?.fname
-        binding.tvLastName.text = response.profileDetail?.lname
-        binding.tvEmail.text = response.profileDetail?.email
-        binding.tvPhoneNumber.text = response.profileDetail?.contactNo
+
+        binding.tvFirstName.setText(response.profileDetail?.fname)
+        binding.tvLastName.setText(response.profileDetail?.lname)
+        binding.tvEmail.setText(response.profileDetail?.email)
+        binding.tvPhoneNumber.setText(response.profileDetail?.contactNo)
+
         binding.tvCompanyName.text = response.profileDetail?.companyName
         binding.tvDepartmentName.text = response.profileDetail?.departmentName
         binding.tvCarType.text = response.profileDetail?.carType

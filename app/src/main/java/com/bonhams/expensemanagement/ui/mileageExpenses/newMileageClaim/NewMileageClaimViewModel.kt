@@ -13,12 +13,19 @@ import java.util.*
 
 class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageClaimRepository) : ViewModel() {
 
+    lateinit var expenseGroupList: List<ExpenseGroup>
+    var expenseTypeList: MutableList<ExpenseType> = mutableListOf<ExpenseType>()
+    lateinit var expenseTypeListExpenseGroup: List<ExpenseType>
+    lateinit var departmentListCompany: List<Department>
+    var departmentList: MutableList<Department> = mutableListOf<Department>()
+
+
     lateinit var companyList: List<Company>
-    lateinit var departmentList: List<Department>
-    lateinit var expenseTypeList: List<ExpenseType>
+
+    var expenseCode: MutableList<ExpenseCode> = mutableListOf<ExpenseCode>()
     lateinit var distanceList: List<ExpenseGroup>
     lateinit var carTypeList: List<CarType>
-    lateinit var currencyList: List<Currency>
+    var currencyList: MutableList<Currency> = mutableListOf<Currency>()
     lateinit var mileageTypeList: List<MileageType>
     lateinit var taxList: List<Tax>
     lateinit var MileageRateList: List<MilageRate>
@@ -107,8 +114,6 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
             isValid = Pair(false, R.string.please_select_department)
         else if(newClaimRequest.expenseType.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_expense_type)
-        else if(newClaimRequest.merchantName.isNullOrEmpty())
-            isValid = Pair(true, R.string.please_enter_merchant_name)
         else if(newClaimRequest.tripFrom.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_starting_location)
         else if(newClaimRequest.tripTo.isNullOrEmpty())

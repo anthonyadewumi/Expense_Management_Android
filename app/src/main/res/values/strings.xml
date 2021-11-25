@@ -23,6 +23,9 @@
     <string name="total_amount_colon">Total Amount :</string>
     <string name="claims">Claims</string>
     <string name="mileage_expenses">Mileage Expenses</string>
+    <string name="please_enter_reson">Please enter reason</string>
+    <string name="close">Close</string>
+    <string name="reson_dis">The provided reason will be updated to the user</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -54,6 +57,7 @@
     <string name="confirm_your_password">Confirm your password</string>
     <string name="reset">Reset</string>
     <string name="merchant_name">Merchant Name</string>
+    <string name="milses_km">Mils/KM</string>
     <string name="expence_code">Expense Code</string>
     <string name="merchant_name_star">Merchant Name*</string>
     <string name="expense_group">Expense Group</string>
@@ -91,11 +95,14 @@
     <string name="description">Description</string>
     <string name="attachments">Attachments</string>
     <string name="back">Back</string>
+    <string name="n_a">N/A</string>
     <string name="good_to_see_you">Good to see you</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="type_here">Type here... </string>
     <string name="start">Start</string>
     <string name="profile">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
     <string name="scan_receipt">Scan Receipt</string>
     <string name="create_new_claim">Create New Claim</string>
     <string name="create_mileage_claim">Create Mileage Claim</string>
@@ -104,6 +111,7 @@
     <string name="claim_details">Claim Details</string>
     <string name="mileage_details">Mileage Details</string>
     <string name="edit">Edit</string>
+    <string name="save">Save</string>
     <string name="password_reset">Password Reset</string>
     <string name="please_enter_your_new_password">Please enter your new password.</string>
     <string name="split">Split</string>
@@ -119,6 +127,8 @@
     <string name="validate_password_not_match">Confirm Password does not match new password</string>
     <string name="check_internet_msg">Please check your internet connection</string>
     <string name="trip_details_colon">Trip Details:</string>
+    <string name="trip_default_colon">Default:</string>
+    <string name="mileage_details_colon">Mileage Details:</string>
     <string name="round_trip">Round Trip</string>
     <string name="date_of_trip">Date Of Trip</string>
     <string name="date_of_trip_date_formate">DD-MM-YYYY</string>
@@ -172,8 +182,10 @@
     <string name="please_enter_all_mandatory_fields">Please enter all mandatory fields</string>
     <string name="delete">Delete</string>
     <string name="delete_claim">Delete Claim</string>
+    <string name="accept_claim">Accept Claim</string>
     <string name="reminder_claim">Reminder  Send</string>
     <string name="are_you_sure_you_want_to_delete_claim">Are you sure you want to delete this claim?</string>
+    <string name="are_you_sure_you_want_to_accept_claim">Are you sure you want to accept this claim?</string>
     <string name="title_star">Title*</string>
     <string name="title">Title</string>
     <string name="please_enter_title">Please enter title</string>

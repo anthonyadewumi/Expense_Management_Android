@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -75,13 +76,15 @@ class MileageDetailFragment() : Fragment() {
         if(this::mileageDetail.isInitialized) {
             binding.tvTitle.text = mileageDetail.title
             binding.tvCompanyName.text = mileageDetail.companyName
-            binding.tvMileageType.text = mileageDetail.department
+            binding.tvMileageType.text = mileageDetail.type
             binding.tvDepartment.text = mileageDetail.department
             binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                 mileageDetail.submittedOn,
                 Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
             )
-            binding.tvExpenseType.text = mileageDetail.type
+            binding.tvExpenceGroup.text = mileageDetail.groupName
+            binding.tvExpenceType.text = mileageDetail.expense_type_name
+           // binding.tvExpenseType.text = mileageDetail.type
             binding.tvMerchantName.text = mileageDetail.merchant
             binding.tvDateOfTrip.text = Utils.getFormattedDate(
                 mileageDetail.tripDate,
@@ -96,13 +99,17 @@ class MileageDetailFragment() : Fragment() {
             binding.tvPetrolAmount.text =mileageDetail.currencySymbol+" "+mileageDetail.petrolAmount
             binding.tvParkAmount.text = mileageDetail.currencySymbol+" "+mileageDetail.parking
             binding.tvTotalAmount.text = mileageDetail.currencySymbol+" "+mileageDetail.totalAmount
-            binding.tvTax.text = mileageDetail.currencySymbol+" "+mileageDetail.tax
+            binding.tvApplicableTax.text = mileageDetail.currencySymbol+" "+mileageDetail.mtax
             binding.tvNetAmount.text = mileageDetail.currencySymbol+" "+mileageDetail.netAmount
             binding.tvTaxCode.text = mileageDetail.tax_code
             binding.tvDescription.text = mileageDetail.description
             binding.tvRMStatus.text = mileageDetail.reportingMStatus
             binding.tvFMStatus.text = mileageDetail.financeMStatus
             binding.tvMileageRate.text = mileageDetail.mileageRate
+            if(mileageDetail.type=="KM") binding.txtMilesKM.text="Claimed KM" else{
+                binding.txtMilesKM.text="Claimed Miles"
+
+            }
 
             when (mileageDetail.reportingMStatus) {
                 Constants.STATUS_PENDING -> {
@@ -168,9 +175,6 @@ class MileageDetailFragment() : Fragment() {
 
                 }
             }
-
-
-
             binding.switchRoundTrip.isChecked = mileageDetail.isRoundTrip == "1"
             binding.switchRoundTrip.isEnabled = false
             /*if(mileageDetail.attachments.trim().isEmpty())
@@ -180,12 +184,42 @@ class MileageDetailFragment() : Fragment() {
     }
     private fun setClickListner() {
         binding.tvRMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Reporting Manager for approval.")
+            showReminderAlert("We have sent a reminder to Reporting Manager for approval.","RM")
 
         }
         binding.tvFMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Finance Manager for approval.")
+            showReminderAlert("We have sent a reminder to Finance Manager for approval.","FD")
 
+        }
+        binding.rlDetails.setOnClickListener {
+            if(binding.lnDetailsView.isVisible){
+                binding.lnDetailsView.visibility=View.GONE
+                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_right);
+
+            }else{
+                binding.lnDetailsView.visibility=View.VISIBLE
+                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_down);
+            }
+        }
+        binding.rlMilegae.setOnClickListener {
+            if(binding.lnMeilageContant.isVisible){
+                binding.lnMeilageContant.visibility=View.GONE
+                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_right);
+
+            }else{
+                binding.lnMeilageContant.visibility=View.VISIBLE
+                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_down);
+            }
+        }
+        binding.rlDefault.setOnClickListener {
+            if(binding.lnDefaultContent.isVisible){
+                binding.lnDefaultContent.visibility=View.GONE
+                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_right);
+
+            }else{
+                binding.lnDefaultContent.visibility=View.VISIBLE
+                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_down);
+            }
         }
     }
     private fun setupViewModel() {
@@ -272,7 +306,7 @@ class MileageDetailFragment() : Fragment() {
         }
     }
 
-    private fun showReminderAlert(message:String){
+    private fun showReminderAlert(message:String,userType:String){
         contextActivity?.let { activity ->
             val dialog = Dialog(activity)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -294,7 +328,7 @@ class MileageDetailFragment() : Fragment() {
             yesBtn.setOnClickListener {
                 dialog.dismiss()
                 if (NoInternetUtils.isConnectedToInternet(activity))
-                    sendReminder()
+                    sendReminder(userType)
                 else
                     Toast.makeText(activity, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
             }
@@ -302,9 +336,10 @@ class MileageDetailFragment() : Fragment() {
             dialog.show()
         }
     }
-    private fun sendReminder(){
+    private fun sendReminder(userType:String){
         val jsonObject = JsonObject().also {
             it.addProperty("claim_id", mileageDetail.id)
+            it.addProperty("for_user", userType)
         }
         viewModel.sendReminder(jsonObject).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->

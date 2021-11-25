@@ -104,6 +104,9 @@ interface ApiService {
 
     @GET("my_profile")
     suspend fun profileDetail(): MyProfileResponse
+
+    @POST("edit-profile")
+    suspend fun editProfile(@Body data: JsonObject): EditProfileResponse
 }
 interface GoogleApiService {
     @GET("maps/api/distancematrix/json")

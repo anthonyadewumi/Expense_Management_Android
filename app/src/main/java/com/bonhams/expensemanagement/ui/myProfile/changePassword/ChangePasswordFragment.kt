@@ -84,7 +84,7 @@ class ChangePasswordFragment() : Fragment() {
     }
 
     private fun setChangePasswordObserver(changePasswordRequest: ChangePasswordRequest) {
-        viewModel.getChangePassword(changePasswordRequest).observe(this, Observer {
+        viewModel.getChangePassword(changePasswordRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {

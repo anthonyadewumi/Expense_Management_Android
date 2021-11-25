@@ -61,6 +61,9 @@ class NewClaimFragment() : Fragment() {
     private var shouldRefreshPage: Boolean = false
     private var expenseCode: String = ""
     private var taxcodeId: String = ""
+    private var compnyId: Int = 0
+    private var currencyCode: String = ""
+    private var currencySymbol: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,7 +81,6 @@ class NewClaimFragment() : Fragment() {
         setDropdownDataObserver()
         setupView()
         setupTextWatcher()
-
         return view
     }
 
@@ -95,21 +97,21 @@ class NewClaimFragment() : Fragment() {
     private fun setupView(){
         try {
             if (this::claimDetail.isInitialized) {
-              /*  binding.edtTitle.setText(
-                    claimDetail.title.replaceFirstChar(Char::uppercase) ?: claimDetail.title
-                )*/
+                println("isCopyClaim total amount :"+claimDetail.totalAmount)
+
+                /*  binding.edtTitle.setText(
+                      claimDetail.title.replaceFirstChar(Char::uppercase) ?: claimDetail.title
+                  )*/
                 binding.edtMerchantName.setText(
                     claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
                 )
 //            binding.edtCompanyNumber.setText(claimDetail.companyName)
                 binding.tvDateOfSubmission.text = if (!claimDetail.createdOn.trim().isNullOrEmpty())
-                    Utils.getFormattedDate(
-                        claimDetail.createdOn,
-                        Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                    Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
                     ) else ""
                 binding.edtTotalAmount.setText(claimDetail.totalAmount)
                 binding.edtTax.setText(claimDetail.tax)
-           //  binding.tvNetAmount.text = claimDetail.netAmount
+                // binding.tvNetAmount.text = claimDetail.netAmount
                 binding.tvNetAmount.setText(claimDetail.netAmount)
                 binding.edtDescription.setText(claimDetail.description)
                 if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
@@ -159,7 +161,7 @@ class NewClaimFragment() : Fragment() {
     }
 
     private fun setupSpinners(){
-     /*   // Tax Adapter
+       // Tax Adapter
         val taxAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
@@ -171,7 +173,7 @@ class NewClaimFragment() : Fragment() {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }*/
+        }
         // Expense Group Adapter
         val expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -179,53 +181,42 @@ class NewClaimFragment() : Fragment() {
             viewModel.expenseGroupList
         )
         binding.spnExpenseGroup.adapter = expenseGroupAdapter
-        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-
-
-
-
-        // Expense Type Adapter
-        val expenseTypeAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.expenseTypeList
-        )
-        binding.spnExpenseType.adapter = expenseTypeAdapter
-        binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+       binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                expenseCode=viewModel.expenseTypeList.get(position).activityCode
-                taxcodeId= viewModel.expenseTypeList[position].taxCodeID
-                viewModel.taxList.forEach {
+                   val groupid =viewModel.expenseGroupList[position].id
+                println("selected group ID :$groupid")
+                viewModel.expenseTypeList.clear()
+                viewModel.expenseTypeListExpenseGroup.forEach {
+                  //  println("selected group ID :$groupid")
+                   // println("selected expenseGroupID  :"+it.expenseGroupID )
+                  //  println("selected companyID  :"+it.companyID )
+                   // println("selected compnyId  :"+compnyId )
 
-                    if(it.id.toString() == taxcodeId) {
-                       binding.edtTaxcode.setText(it.tax_code)
+                    if(it.expenseGroupID == groupid&&it.companyID==compnyId.toString()){
+                        viewModel.expenseTypeList.add(it)
+                       // println("selected expenseTypeList Added :" )
 
-                   }
+                    }else if(it.companyID.isNullOrEmpty()){
+                        viewModel.expenseTypeList.add(it)
+
+                    }
                 }
-
-                if(!binding.edtAutionValue.text.toString().isEmpty()){
-                    binding.tvAuctionExpCode.text = expenseCode
-
-                }else{
-                    binding.tvAuctionExpCode.text = ""
-                }
+                setupExpenceType()
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Toast.makeText(requireContext(), "Nothing selected", Toast.LENGTH_SHORT).show();
 
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+
+
+
+
         // Company List Adapter
-        val companyAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.companyList
-        )
+        val companyAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_spinner, viewModel.companyList)
         binding.spnCompanyNumber.adapter = companyAdapter
         var compnypostion=0
         viewModel.companyList.forEachIndexed { index, element ->
@@ -240,35 +231,110 @@ class NewClaimFragment() : Fragment() {
         binding.spnCompanyNumber.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-               // System.out.println("selected appoint :"+ viewModel.companyList[position].code)
+                compnyId=viewModel.companyList[position].id.toInt()
+
+                println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
+                viewModel.departmentList.clear()
+                viewModel.departmentListCompany.forEach {
+                    println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
+
+                    if(it.company_id == compnyId.toString()){
+                        viewModel.departmentList.add(it)
+                    }
+                }
+                setupDeparmentType()
+                viewModel.currencyList.forEach {
+                    if(it.id.toInt()==viewModel.companyList[position].currency_type_id){
+                        val symbol=it.symbol
+                        val code=it.code
+                        currencyCode=code
+                        currencySymbol=symbol
+                        // binding.edtTotalAmount.text = null
+                        // binding.edtTax.text = null
+                        // binding.tvNetAmount.text = null
+                        // binding.edtTotalAmount.clearFocus()
+                        //binding.edtTax.clearFocus()
+                        // binding.tvNetAmount.clearFocus()
+
+                        binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                        binding.edtTotalAmount.setLocale(code)
+
+                        binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                        binding.edtTax.setLocale(code)
+
+                        binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                        binding.tvNetAmount.setLocale(code)
+                        val currency: Currency? =
+                            viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                        val currencyPos = viewModel.currencyList.indexOf(currency)
+                        if (currencyPos >= 0) {
+                            binding.spnCurrency.setSelection(currencyPos)
+                        }
+                    }
+                }
                 binding.edtTitle.setText(viewModel.companyList[position].code)
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Toast.makeText(requireContext(), "Nothing selected", Toast.LENGTH_SHORT).show();
 
-        // Department Adapter
-        val departmentAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.departmentList
-        )
-        binding.spnDepartment.adapter = departmentAdapter
-        var postion=0
-        viewModel.departmentList.forEachIndexed { index, element ->
-
-            if(AppPreferences.department.equals(element.name)){
-                postion=index
-                return@forEachIndexed
             }
-        }
-        binding.spnDepartment.setSelection(postion)
-        binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
-            override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+
+
+       /* binding.spnCompanyNumber.addOnLayoutChangeListener(View.OnLayoutChangeListener { view, i, i1, i2, i3, i4, i5, i6, i7 ->
+            val position=binding.spnCompanyNumber.selectedItemPosition
+            compnyId=viewModel.companyList[position].id.toInt()
+
+            println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
+            viewModel.departmentList.clear()
+            viewModel.departmentListCompany.forEach {
+                println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
+
+                if(it.company_id == compnyId.toString()){
+                    viewModel.departmentList.add(it)
+                }
+            }
+            setupDeparmentType()
+            viewModel.currencyList.forEach {
+                if(it.id.toInt()==viewModel.companyList[position].currency_type_id){
+                    val symbol=it.symbol
+                    val code=it.code
+                    currencyCode=code
+                    currencySymbol=symbol
+                   // binding.edtTotalAmount.text = null
+                   // binding.edtTax.text = null
+                   // binding.tvNetAmount.text = null
+                   // binding.edtTotalAmount.clearFocus()
+                    //binding.edtTax.clearFocus()
+                   // binding.tvNetAmount.clearFocus()
+
+                    binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                    binding.edtTotalAmount.setLocale(code)
+
+                    binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                    binding.edtTax.setLocale(code)
+
+                    binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                    binding.tvNetAmount.setLocale(code)
+                    val currency: Currency? =
+                        viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                    val currencyPos = viewModel.currencyList.indexOf(currency)
+                    if (currencyPos >= 0) {
+                        binding.spnCurrency.setSelection(currencyPos)
+                    }
+                }
+            }
+            binding.edtTitle.setText(viewModel.companyList[position].code)
+        })*/
+       /* binding.spnCompanyNumber.addOnLayoutChangeListener(View.OnLayoutChangeListener { view, i, i1, i2, i3, i4, i5, i6, i7 ->
+           val position=binding.spnExpenseGroup.selectedItemPosition
+
+        })*/
+
+
+
         // Currency Adapter
         val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -276,31 +342,46 @@ class NewClaimFragment() : Fragment() {
             viewModel.currencyList
         )
         binding.spnCurrency.adapter = currencyAdapter
+
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                println("currency symbol:"+viewModel.currencyList.get(position).symbol)
-                println("currency code:"+viewModel.currencyList.get(position).code)
-                val code=viewModel.currencyList.get(position).code
-                val symbol=viewModel.currencyList.get(position).symbol
-                binding.edtTotalAmount.setText("")
+                //binding.edtTotalAmount.text = null
+               // binding.edtTax.text = null
+               // binding.tvNetAmount.text = null
+              //  binding.edtTotalAmount.clearFocus()
+               // binding.edtTax.clearFocus()
+               // binding.tvNetAmount.clearFocus()
+
+                val code = viewModel.currencyList[position].code
+                val symbol = viewModel.currencyList[position].symbol
+                currencyCode=code
+                currencySymbol=symbol
+               // binding.edtTotalAmount.text = null
+               // binding.edtTax.text = null
+               // binding.tvNetAmount.text = null
+               // binding.edtTotalAmount.clearFocus()
+               // binding.edtTax.clearFocus()
+              //  binding.tvNetAmount.clearFocus()
+
                 binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                 binding.edtTotalAmount.setLocale(code)
 
-                binding.edtTax.setText("")
                 binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                 binding.edtTax.setLocale(code)
 
-                binding.tvNetAmount.setText("")
                 binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                 binding.tvNetAmount.setLocale(code)
-
-
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Toast.makeText(requireContext(), "Nothing selected", Toast.LENGTH_SHORT).show();
 
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+
+
 
         if(this::claimDetail.isInitialized){
             try {
@@ -344,7 +425,61 @@ class NewClaimFragment() : Fragment() {
             }
         }
     }
+    private fun setupExpenceType(){
+        // Expense Type Adapter
+        if(viewModel.expenseTypeList.size>0) {
+            val expenseTypeAdapter = CustomSpinnerAdapter(
+                requireContext(),
+                R.layout.item_spinner,
+                viewModel.expenseTypeList
+            )
+            binding.spnExpenseType.adapter = expenseTypeAdapter
+        }
 
+        binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                expenseCode=viewModel.expenseTypeList.get(position).activityCode
+                taxcodeId= viewModel.expenseTypeList[position].taxCodeID
+                viewModel.taxList.forEach {
+
+                    if(it.id.toString() == taxcodeId) {
+                        binding.edtTaxcode.setText(it.tax_code)
+
+                    }
+                }
+
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
+
+                }else{
+                    binding.tvAuctionExpCode.text = ""
+                }
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+    private fun setupDeparmentType(){
+        // Department Adapter
+        val departmentAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.departmentList
+        )
+        binding.spnDepartment.adapter = departmentAdapter
+       /* var postion=0
+        viewModel.departmentList.forEachIndexed { index, element ->
+
+            if(AppPreferences.department == element.name){
+                postion=index
+                return@forEachIndexed
+            }
+        }
+        binding.spnDepartment.setSelection(postion)*/
+
+    }
     private fun setupTextWatcher(){
 
      //   binding.edtTotalAmount.addTextChangedListener(NumberTextWatcher(binding.edtTotalAmount, "#,###"))
@@ -354,7 +489,8 @@ class NewClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(binding.edtTotalAmount.getNumericValue().toString(), binding.edtTax.getNumericValue().toString())
+                    updateNetAmount(binding.edtTotalAmount.getNumericValue().toString(), binding.edtTax.getNumericValue().toString())
+
             }
         })
 
@@ -364,7 +500,7 @@ class NewClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(binding.edtTotalAmount.getNumericValue().toString(),binding.edtTax.getNumericValue().toString())
+                   updateNetAmount(binding.edtTotalAmount.getNumericValue().toString(), binding.edtTax.getNumericValue().toString())
             }
         })
         binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
@@ -463,9 +599,10 @@ class NewClaimFragment() : Fragment() {
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
         viewModel.expenseGroupList = dropdownResponse.expenseGroup
-        viewModel.expenseTypeList = dropdownResponse.expenseType
-        viewModel.departmentList = dropdownResponse.departmentList
-        viewModel.currencyList  = dropdownResponse.currencyType
+       // viewModel.expenseTypeList = dropdownResponse.expenseType
+        viewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType
+        viewModel.departmentListCompany = dropdownResponse.departmentList
+        viewModel.currencyList  = dropdownResponse.currencyType as MutableList<Currency>
         viewModel.carTypeList  = dropdownResponse.carType
         viewModel.statusTypeList  = dropdownResponse.statusType
         viewModel.mileageTypeList  = dropdownResponse.mileageType
@@ -575,6 +712,7 @@ class NewClaimFragment() : Fragment() {
 
             val fragment = SplitClaimFragment()
             fragment.setClaimRequestDetail(newClaimRequest)
+            fragment.setCurrency(currencyCode,currencySymbol)
             (contextActivity as? MainActivity)?.addFragment(fragment)
         }
         catch (e: Exception){

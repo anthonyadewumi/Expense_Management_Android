@@ -46,6 +46,8 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     private lateinit var newClaimViewModel: NewClaimViewModel
     private lateinit var claimRequest: NewClaimRequest
     private lateinit var splitAdapter: SplitAdapter
+    private var currencyCode: String = ""
+    private var currencySymbol: String = ""
     companion object {
        public var splitItmlist: MutableList<SplitClaimItem> = mutableListOf()
        public var totalAmount: Double=0.0
@@ -72,10 +74,10 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
 
     override fun onResume() {
         super.onResume()
-        System.out.println("call fregment")
+        println("call fregment")
             viewModel.splitList.add("add more ")
-        binding.tvTotalAmount.setText(totalAmount.toString())
 
+        binding.tvTotalAmount.setText(totalAmount.toString())
         splitAdapter.notifyDataSetChanged()
 
     }
@@ -84,10 +86,17 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         System.out.println("claimRequest: ${claimRequest.totalAmount}")
 
     }
+    fun setCurrency(code: String,symbol:String){
+        currencyCode=code
+        currencySymbol=symbol
+
+    }
 
     private fun setClickListeners(){
         binding.layoutAddSplit.setOnClickListener(View.OnClickListener {
             val intent = Intent(requireActivity(), SplitClaimActivity::class.java)
+            intent.putExtra("currencyCode", currencyCode)
+            intent.putExtra("currencySymbol", currencySymbol)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
@@ -108,6 +117,9 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
 //        binding.tvMerchantName.text = claimRequest.expenseCode
      //   binding.tvDate.text = claimRequest.dateSubmitted
      //   binding.tvUserName.text = AppPreferences.fullName
+
+        binding.tvTotalAmount.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
+        binding.tvTotalAmount.setLocale(currencyCode)
         totalAmount=claimRequest.netAmount.toString().toDouble()
         //binding.tvTotalAmount.text = "$ "+totalAmount
         binding.tvTotalAmount.setText(totalAmount.toString())
@@ -134,7 +146,7 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
             false
         )
         binding.rvsplit.layoutManager = linearLayoutManager
-        splitAdapter = SplitAdapter(splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
+        splitAdapter = SplitAdapter(currencyCode,currencySymbol,splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
         binding.rvsplit.adapter = splitAdapter
     }
     private fun setupSpinners(){

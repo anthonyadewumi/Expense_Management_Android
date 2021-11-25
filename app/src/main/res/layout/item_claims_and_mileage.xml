@@ -20,10 +20,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/_5sdp"
+            android:weightSum="1"
             android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight=".3"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:background="@drawable/ic_baseline_receipt_24"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight=".7"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
@@ -41,6 +53,7 @@
                         android:layout_marginStart="@dimen/_5sdp"
                         android:text="Expense Title"
                         android:layout_toLeftOf="@id/tvCreateCopy"
+                        android:layout_below="@+id/tvCreateCopy"
                         android:singleLine="false"
                         style="@style/TextMedium12"
                         android:textColor="@color/colorTextBlack" />
@@ -68,7 +81,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.1"
+                        android:layout_weight="1.5"
                         android:layout_marginStart="@dimen/_5sdp"
                         style="@style/TextRegular12"
                         android:text="@string/submitted_on_colon"
@@ -81,7 +94,7 @@
                         android:id="@+id/tvSubmittedOn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.9"
+                        android:layout_weight="1.5"
                         android:text="02 May"
                         style="@style/TextRegular12"
                         android:textColor="@color/colorTextDarkGray"
@@ -102,7 +115,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.1"
+                        android:layout_weight="1.5"
                         android:layout_marginStart="@dimen/_5sdp"
                         style="@style/TextRegular12"
                         android:text="@string/total_amount_colon"
@@ -115,7 +128,7 @@
                         android:id="@+id/tvTotalAmount"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.9"
+                        android:layout_weight="1.5"
                         android:text="$ 100"
                         style="@style/TextRegular12"
                         android:textColor="@color/colorTextDarkGray"
@@ -136,7 +149,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.1"
+                        android:layout_weight="1.5"
                         android:layout_marginStart="@dimen/_5sdp"
                         style="@style/TextRegular12"
                         android:text="@string/status_colon"
@@ -149,7 +162,7 @@
                         android:id="@+id/tvStatus"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.9"
+                        android:layout_weight="1.5"
                         android:text="@string/approved"
                         style="@style/TextRegular12"
                         android:textColor="@color/colorGreen"
