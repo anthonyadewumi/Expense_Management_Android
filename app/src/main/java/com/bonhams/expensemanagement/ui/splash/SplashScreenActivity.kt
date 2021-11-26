@@ -41,7 +41,7 @@ class SplashScreenActivity : BaseActivity() {
 
     private fun startMainActivity(){
         val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
         startActivity(intent)
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish()

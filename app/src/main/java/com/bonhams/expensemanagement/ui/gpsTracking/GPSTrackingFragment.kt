@@ -9,7 +9,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.*
+import android.location.LocationListener
 import android.os.Bundle
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,8 +28,8 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.utils.AppPreferences
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -53,6 +55,10 @@ class GPSTrackingFragment : Fragment(),LocationListener {
     private var stoplocation = ""
     private var startDate = ""
     private var stopDate= ""
+    var FASTEST_INTERVAL: Long = 8 * 1000 // 8 SECOND
+    var UPDATE_INTERVAL: Long = 2000 // 2 SECOND
+    var FINE_LOCATION_REQUEST: Int = 888
+    lateinit var locationRequest: LocationRequest
 
     private val callback = OnMapReadyCallback { map ->
       //  obtieneLocalizacion()
@@ -118,6 +124,60 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         //getLocation()
         return view
     }
+
+    @SuppressLint("MissingPermission")
+    fun initLocationUpdate() {
+
+        // Check API revision for New Location Update
+        //https://developers.google.com/android/guides/releases#june_2017_-_version_110
+
+        //init location request to start retrieving location update
+        locationRequest = LocationRequest()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = UPDATE_INTERVAL
+        locationRequest.fastestInterval = FASTEST_INTERVAL
+
+        //Create LocationSettingRequest object using locationRequest
+        val locationSettingBuilder: LocationSettingsRequest.Builder = LocationSettingsRequest.Builder()
+        locationSettingBuilder.addLocationRequest(locationRequest)
+        val locationSetting: LocationSettingsRequest = locationSettingBuilder.build()
+
+        //Need to check whether location settings are satisfied
+        val settingsClient: SettingsClient = LocationServices.getSettingsClient(requireContext())
+        settingsClient.checkLocationSettings(locationSetting)
+        //More info :  // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
+
+
+        // new Google API SDK v11 uses getFusedLocationProviderClient(this)
+        val fusedLocationProviderClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                //super.onLocationResult(p0)
+                if (locationResult != null) {
+                    onLocationChangeds(locationResult.lastLocation)
+                }
+            }
+
+            override fun onLocationAvailability(p0: LocationAvailability?) {
+                super.onLocationAvailability(p0)
+            }
+        },
+            Looper.myLooper())
+
+    }
+
+   /* fun onLocationChanged(location: Location) {
+        // New location has now been determined
+        val msg = "Updated Location: " +
+                java.lang.Double.toString(location.latitude) + "," +
+                java.lang.Double.toString(location.longitude)
+        println("location :"+msg)
+
+        toast.setText(msg)
+        toast.show()
+    }*/
+
+
     fun getCurrentDate():String{
         val sdf = SimpleDateFormat("dd MMM yy")
         //val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
@@ -171,16 +231,34 @@ class GPSTrackingFragment : Fragment(),LocationListener {
            // ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
         }else {
 
-            locationManager.requestLocationUpdates(
+            initLocationUpdate()
+
+          /*  locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 5000,
                 5f,
                 locationListener
-            );
+            );*/
         }
     }
+    fun onLocationChangeds(location: Location) {
+        // New location has now been determined
+        Latitude=location.latitude
+        Longitude=location.longitude
+        try {
+            if(progDialog.isShowing)
+                progDialog.dismiss()
+        } catch (e: Exception) {
+        }
 
-    override fun onLocationChanged(location: Location) {
+        val currentlocation = LatLng(Latitude, Longitude)
+        googleMap.clear()
+        googleMap.setMinZoomPreference(11f)
+        googleMap.addMarker(MarkerOptions().position(currentlocation).title("Marker in current location"))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentlocation))
+        println("currentlocation $currentlocation")
+    }
+   override fun onLocationChanged(location: Location) {
     }
 
 
@@ -234,7 +312,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
             val addresses: List<Address>? = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1)
             var result: String? = null
 
-            if (addresses != null && addresses.size > 0) {
+            if (addresses != null && addresses.isNotEmpty()) {
                 val address = addresses[0]
                 val sb = StringBuilder()
                 for (i in 0 until address.maxAddressLineIndex) {
