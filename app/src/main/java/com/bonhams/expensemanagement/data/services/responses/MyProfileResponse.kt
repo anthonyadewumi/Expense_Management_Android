@@ -28,4 +28,6 @@ class ProfileDetails() {
     val employID: String = ""
     val approver: String = ""
     val countryCode: String = ""
+    @SerializedName("distance_covered")
+    val distance_covered: String = ""
 }

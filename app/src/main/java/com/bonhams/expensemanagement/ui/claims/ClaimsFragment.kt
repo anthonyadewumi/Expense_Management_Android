@@ -7,11 +7,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -20,7 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.ClaimsAdapter
 import com.bonhams.expensemanagement.adapters.ClaimsLoadStateAdapter
-import com.bonhams.expensemanagement.data.model.ClaimDetail
+import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
+import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.databinding.FragmentClaimsBinding
@@ -31,8 +35,11 @@ import com.bonhams.expensemanagement.ui.home.HomeViewModel
 import com.bonhams.expensemanagement.ui.home.HomeViewModelFactory
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.RefreshPageListener
+import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils.Companion.showKeyboard
+import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
@@ -99,6 +106,10 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
                 binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
         })
+        binding.txtTitle.text = "Total Amount Claimed"
+
+        getClaimTotal()
+
     }
 
 
@@ -106,8 +117,55 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
         super.onResume()
         initAdapter()
     }
+    private fun getClaimTotal() {
+        val jsonObject = JsonObject().also {
+            it.addProperty("data_of", "E")
+        }
+        viewModel.getClaimedTotal(jsonObject).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                viewModel.totalClaimedList=response.data
+                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
+                                setupSpinners()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+//                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
+    }
+    private fun setupSpinners(){
+        // Tax Adapter
+        val currencyAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.totalClaimedList
+        )
+        binding.spnCurrency.adapter = currencyAdapter
+        binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                binding.txtTotalClaimed.text = viewModel.totalClaimedList[position].total_amount.toString()
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
 
 
+    }
 
     private fun initAdapter() {
         claimsAdapter = ClaimsAdapter()

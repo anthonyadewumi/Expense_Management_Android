@@ -24,8 +24,14 @@ class UserDetails() {
     val userType: String = ""
     @SerializedName("companyName")
     val companyName: String = ""
+    @SerializedName("companyId")
+    val companyId: String = ""
+    @SerializedName("carType_id")
+    val carType_id: String = ""
     @SerializedName("departmentName")
     val departmentName: String = ""
+    @SerializedName("departmentId")
+    val departmentId: String = ""
     val carType: String = ""
     val mileageType: String = ""
     @SerializedName("employId")
@@ -39,5 +45,7 @@ class UserDetails() {
     val token: String = ""
     @SerializedName("refresh_token")
     val refreshToken: String = ""
+    @SerializedName("ledger_id")
+    val ledger_id: String = ""
 
 }

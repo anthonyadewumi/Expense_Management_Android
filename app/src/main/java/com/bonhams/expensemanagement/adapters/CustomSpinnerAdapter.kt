@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.*
+import com.bonhams.expensemanagement.data.services.responses.TotalClaimedData
 
 class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource: List<Any>) :
     ArrayAdapter<Any>(context, mResource, dataSource) {
@@ -47,7 +48,7 @@ class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource
                 title.text = item.name.replaceFirstChar(Char::uppercase)
             }
             is Company -> {
-                title.text = item.name.replaceFirstChar(Char::uppercase)
+                title.text = item.code
             }
             is StatusType -> {
                 title.text = item.status.replaceFirstChar(Char::uppercase)
@@ -63,6 +64,9 @@ class CustomSpinnerAdapter (context: Context, var mResource: Int, var dataSource
             }
             is Tax -> {
                 title.text = item.tax_code.replaceFirstChar(Char::uppercase)
+            }
+            is TotalClaimedData -> {
+                title.text = item.currency_type
             }
             is String -> {
                 title.text = item.replaceFirstChar(Char::uppercase)

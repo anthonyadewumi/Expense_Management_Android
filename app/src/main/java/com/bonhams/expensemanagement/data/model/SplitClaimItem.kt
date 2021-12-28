@@ -7,7 +7,7 @@ data class SplitClaimItem (
     val companyCode: String = "",
     val department: String = "",
     val expenseType: String = "",
-    val totalAmount: String = "",
+    var totalAmount: String = "",
     val taxcode: String = "",
     val tax: Double = 0.0,
     val compnyName: String = "",
@@ -16,5 +16,7 @@ data class SplitClaimItem (
     val auctionSales: String = "",
     val expenceCode: String = "",
     val expenseCodeID: String = "0",
+    val taxCodeValue: String = "0",
+    val split_id: String = "",
 
     ): Serializable

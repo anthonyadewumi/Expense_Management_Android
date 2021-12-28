@@ -27,14 +27,18 @@ import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonObject
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
 private const val TAG = "ClaimDetailFragment"
 
-class MileageDetailFragment() : Fragment() {
+class MileageDetailFragment() : Fragment() , RecylerCallback {
 
     private var contextActivity: BaseActivity? = null
     private lateinit var mileageDetail: MileageDetail
@@ -77,10 +81,10 @@ class MileageDetailFragment() : Fragment() {
             binding.tvTitle.text = mileageDetail.title
             binding.tvCompanyName.text = mileageDetail.companyName
             binding.tvMileageType.text = mileageDetail.type
-            binding.tvDepartment.text = mileageDetail.department
+            binding.tvDepartment.text = mileageDetail.cost_code
             binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                 mileageDetail.submittedOn,
-                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
             )
             binding.tvExpenceGroup.text = mileageDetail.groupName
             binding.tvExpenceType.text = mileageDetail.expense_type_name
@@ -88,7 +92,7 @@ class MileageDetailFragment() : Fragment() {
             binding.tvMerchantName.text = mileageDetail.merchant
             binding.tvDateOfTrip.text = Utils.getFormattedDate(
                 mileageDetail.tripDate,
-                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
             )
             binding.tvTripFrom.text = mileageDetail.fromLocation
             binding.tvTripTo.text = mileageDetail.toLocation
@@ -106,6 +110,16 @@ class MileageDetailFragment() : Fragment() {
             binding.tvRMStatus.text = mileageDetail.reportingMStatus
             binding.tvFMStatus.text = mileageDetail.financeMStatus
             binding.tvMileageRate.text = mileageDetail.mileageRate
+
+            if (!mileageDetail.attachments.isNullOrEmpty() && mileageDetail.attachments.trim().isNotEmpty()) {
+
+                val attachment=mileageDetail.attachments.split(",")
+                attachment.forEach {
+                    viewModel.attachmentsList.add(it)
+                }
+
+            }
+
             if(mileageDetail.type=="KM") binding.txtMilesKM.text="Claimed KM" else{
                 binding.txtMilesKM.text="Claimed Miles"
 
@@ -115,7 +129,7 @@ class MileageDetailFragment() : Fragment() {
                 Constants.STATUS_PENDING -> {
                     binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorTextDarkGray))
 
-                    binding.lnRMReminder.visibility=View.VISIBLE
+                    binding.ivRMReminder.visibility=View.VISIBLE
 
                 }
                 Constants.STATUS_APPROVED -> {
@@ -124,7 +138,7 @@ class MileageDetailFragment() : Fragment() {
                     try {
                         binding.tvRMStatusDate.text = Utils.getFormattedDate(
                             mileageDetail.rm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
                     } catch (e: Exception) {
                     }
@@ -136,7 +150,7 @@ class MileageDetailFragment() : Fragment() {
                     try {
                         binding.tvRMStatusDate.text = Utils.getFormattedDate(
                             mileageDetail.rm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
                     } catch (e: Exception) {
                     }
@@ -146,7 +160,7 @@ class MileageDetailFragment() : Fragment() {
             when (mileageDetail.financeMStatus) {
                 Constants.STATUS_PENDING -> {
                     binding.tvFMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorTextDarkGray))
-                    binding.lnFMReminder.visibility=View.VISIBLE
+                    binding.ivFMReminder.visibility=View.VISIBLE
 
 
                 }
@@ -156,7 +170,7 @@ class MileageDetailFragment() : Fragment() {
                     try {
                         binding.tvFMStatusDate.text = Utils.getFormattedDate(
                             mileageDetail.rm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
                     } catch (e: Exception) {
                     }
@@ -168,7 +182,7 @@ class MileageDetailFragment() : Fragment() {
                     try {
                         binding.tvFMStatusDate.text = Utils.getFormattedDate(
                             mileageDetail.rm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
                     } catch (e: Exception) {
                     }
@@ -183,42 +197,44 @@ class MileageDetailFragment() : Fragment() {
         refreshAttachments()
     }
     private fun setClickListner() {
-        binding.tvRMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Reporting Manager for approval.","RM")
+        binding.ivRMReminder.setOnClickListener {
+            showReminderAlert("Are you sure you want to send reminder to the Reporting  Manager?","RM")
 
         }
-        binding.tvFMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Finance Manager for approval.","FD")
+        binding.ivFMReminder.setOnClickListener {
+            showReminderAlert("Are you sure you want to send reminder to the Finance Manager?","FD")
+
+           // showReminderAlert("We have sent a reminder to Finance Manager for approval.","FD")
 
         }
         binding.rlDetails.setOnClickListener {
             if(binding.lnDetailsView.isVisible){
                 binding.lnDetailsView.visibility=View.GONE
-                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_right);
+                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_right)
 
             }else{
                 binding.lnDetailsView.visibility=View.VISIBLE
-                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_down);
+                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_down)
             }
         }
         binding.rlMilegae.setOnClickListener {
             if(binding.lnMeilageContant.isVisible){
                 binding.lnMeilageContant.visibility=View.GONE
-                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_right);
+                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_right)
 
             }else{
                 binding.lnMeilageContant.visibility=View.VISIBLE
-                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_down);
+                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_down)
             }
         }
         binding.rlDefault.setOnClickListener {
             if(binding.lnDefaultContent.isVisible){
                 binding.lnDefaultContent.visibility=View.GONE
-                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_right);
+                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_right)
 
             }else{
                 binding.lnDefaultContent.visibility=View.VISIBLE
-                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_down);
+                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_down)
             }
         }
     }
@@ -239,7 +255,7 @@ class MileageDetailFragment() : Fragment() {
             false
         )
         binding.rvAttachments.layoutManager = linearLayoutManager
-        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"detalis")
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"detalis",this)
         binding.rvAttachments.adapter = attachmentsAdapter
     }
 
@@ -322,7 +338,7 @@ class MileageDetailFragment() : Fragment() {
             input.visibility = View.GONE
             title.text = resources.getString(R.string.reminder_claim)
             body.text = message
-            yesBtn.text = "OK"
+            yesBtn.text = "Yes"
             //noBtn.text = resources.getString(R.string.cancel)
 
             yesBtn.setOnClickListener {
@@ -332,7 +348,7 @@ class MileageDetailFragment() : Fragment() {
                 else
                     Toast.makeText(activity, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
             }
-            //  noBtn.setOnClickListener { dialog.dismiss() }
+             noBtn.setOnClickListener { dialog.dismiss() }
             dialog.show()
         }
     }
@@ -341,7 +357,7 @@ class MileageDetailFragment() : Fragment() {
             it.addProperty("claim_id", mileageDetail.id)
             it.addProperty("for_user", userType)
         }
-        viewModel.sendReminder(jsonObject).observe(viewLifecycleOwner, Observer {
+        viewModel.sendReminder(jsonObject).observe(viewLifecycleOwner, {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -398,6 +414,40 @@ class MileageDetailFragment() : Fragment() {
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
         if(commonResponse.success){
             (contextActivity as? MainActivity)?.clearFragmentBackstack()
+        }
+    }
+    private fun showImagePopup(imageUrl:String) {
+        val dialog = Dialog(requireContext())
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.image_popup_dialog)
+
+        val image = dialog.findViewById(R.id.itemImage) as ImageView
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .apply(
+                RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+            )
+            .placeholder(R.drawable.mountains)
+            .error(R.drawable.mountains)
+            .into(image)
+
+
+        dialog.show()
+        val noBtn = dialog.findViewById(R.id.lnClose) as LinearLayout
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+    override fun callback(action: String, data: Any, postion: Int) {
+        if (action == "show") {
+            showImagePopup(data as String)
         }
     }
 }

@@ -41,6 +41,9 @@ import com.bonhams.expensemanagement.databinding.FragmentNewMileageClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -55,13 +58,17 @@ import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
 import java.util.*
 
 
-class NewMileageClaimFragment() : Fragment() {
+class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -79,13 +86,18 @@ class NewMileageClaimFragment() : Fragment() {
     private var fromadd: String = ""
     private var toadd: String = ""
     private var expenseCode: String = ""
+    private var mtaxcodeId: String = ""
     private var taxcodeId: String = ""
     private var expenseCodeId: String = ""
     private var milageRate:Double=0.0
     private var compnyId: Int = 0
     private var currencyCode: String = ""
+    private var distanceType: String = ""
     private var currencySymbol: String = ""
     private var countryName="United States"
+    private var companyDateFormate: String = ""
+    private var companyLocation: String = ""
+    private var icCreateCopy: Boolean = false
         override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -125,16 +137,27 @@ class NewMileageClaimFragment() : Fragment() {
     }
     private fun setupView(){
         try {
+            binding.tvCTotalClaimedMiles.text = AppPreferences.claimedMils
+
+            var dateFormate = if(companyDateFormate=="USA") {
+                Constants.MMM_DD_YYYY_FORMAT
+            }else{
+                Constants.DD_MM_YYYY_FORMAT
+
+            }
+            val sdf = SimpleDateFormat(dateFormate)
+            binding.tvotalClaimedDate.text = sdf.format(Calendar.getInstance().time)
             if (this::mileageDetail.isInitialized) {
+                icCreateCopy=true
              //   binding.edtTitle.setText(mileageDetail.title)
                 binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                     mileageDetail.submittedOn,
-                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
                 )
                 binding.edtMerchantName.setText(mileageDetail.merchant)
                 binding.tvDateOfTrip.text = Utils.getFormattedDate(
                     mileageDetail.tripDate,
-                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
                 )
                 binding.tvTripFrom.text = mileageDetail.fromLocation
                 binding.tvTripTo.text = mileageDetail.toLocation
@@ -257,7 +280,7 @@ class NewMileageClaimFragment() : Fragment() {
         noBtn.setOnClickListener {
             dialog.dismiss()
         }
-        dialog?.show()
+        dialog.show()
     }
 
 
@@ -271,32 +294,51 @@ class NewMileageClaimFragment() : Fragment() {
         )
         binding.spnCompanyName.adapter = companyAdapter
         var compnypostion=0
-        viewModel.companyList.forEachIndexed { index, element ->
+        if (this::mileageDetail.isInitialized) {
+             viewModel.companyList.forEachIndexed { index, element ->
+
+            if(mileageDetail.companyName.equals(element.name)){
+                compnypostion=index
+                return@forEachIndexed
+            }
+        }
+
+        }else{
+             viewModel.companyList.forEachIndexed { index, element ->
 
             if(AppPreferences.company.equals(element.name)){
                 compnypostion=index
                 return@forEachIndexed
             }
         }
+        }
+
         binding.spnCompanyName.setSelection(compnypostion)
         binding.spnCompanyName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 binding.edtTitle.setText(viewModel.companyList[position].code)
                 milageRate=  getMileageRate(viewModel.companyList[position].id.toInt())
-                println("milage rate amount :"+milageRate)
 
                 if(milageRate>0)
                 {
 
                 }else{
-                    showAleartDialog("Mileage Rate is not available for Company "+viewModel.companyList[position].name)
+                    showAleartDialog("Mileage Rate is not available for Company "+viewModel.companyList[position].code)
 
                 }
 
                 compnyId=viewModel.companyList[position].id.toInt()
+                companyDateFormate=viewModel.companyList[position].dateFormat
+                companyLocation=viewModel.companyList[position].location
 
-                println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
+                if(companyLocation=="UNITED STATE"){
+                    binding.spnMileageType.setSelection(0)
+                }else{
+                    binding.spnMileageType.setSelection(1)
+                }
+
+                println("selected company currency id :$companyLocation")
                 viewModel.departmentList.clear()
                 viewModel.departmentListCompany.forEach {
                     println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
@@ -305,6 +347,8 @@ class NewMileageClaimFragment() : Fragment() {
                         viewModel.departmentList.add(it)
                     }
                 }
+                binding.spnExpenseGroup.adapter=null
+                setupExpenceGroup()
                 setupDeparmentType()
 
                 viewModel.currencyList.forEach {
@@ -313,28 +357,45 @@ class NewMileageClaimFragment() : Fragment() {
                         val code=it.code
                         currencyCode=code
                         currencySymbol=symbol
+                        binding.edtTax.setText("0")
+                        binding.edtTotalAmount.setText("")
+                        binding.edtPetrolAmount.setText("")
+                        binding.edtParkAmount.setText("")
+                        binding.tvNetAmount.setText("")
+                        binding.tvDateOfSubmission.text = ""
+                        binding.tvDateOfTrip.text = ""
+                        binding.edtClaimedMiles2.setText("")
+                        binding.edtTax.addDecimalLimiter()
+                        binding.edtPetrolAmount.addDecimalLimiter()
+                        binding.edtParkAmount.addDecimalLimiter()
+                        binding.tvNetAmount.addDecimalLimiter()
 
-                        binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                        binding.edtTotalAmount.setLocale(code)
+                        binding.tvTaxCurrency.setText(symbol)
 
-                        binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                        binding.edtTax.setLocale(code)
 
-                        binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                        binding.tvNetAmount.setLocale(code)
 
-                        binding.edtPetrolAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                        binding.edtPetrolAmount.setLocale(code)
+                       // binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                        //binding.tvNetAmount.setLocale(code)
 
-                        binding.edtParkAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                        binding.edtParkAmount.setLocale(code)
+                        if(icCreateCopy){
+                             var postion=0
+         viewModel.currencyList.forEachIndexed { index, element ->
+             if(mileageDetail.currencyID == element.id){
+                 postion=index
+                 return@forEachIndexed
+             }
+         }
+         binding.spnCurrency.setSelection(postion)
+                        }else {
 
-                        val currency: Currency? =
-                            viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
-                        val currencyPos = viewModel.currencyList.indexOf(currency)
-                        if (currencyPos >= 0) {
-                            binding.spnCurrency.setSelection(currencyPos)
+                            val currency: Currency? =
+                                viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                            val currencyPos = viewModel.currencyList.indexOf(currency)
+                            if (currencyPos >= 0) {
+                                binding.spnCurrency.setSelection(currencyPos)
+                            }
                         }
+
                     }
                 }
 
@@ -352,101 +413,26 @@ class NewMileageClaimFragment() : Fragment() {
         binding.spnMileageType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val type=viewModel.mileageTypeList[position].type
+                if(type=="KM"){
+                    binding.txtMilesKm.text = "Calculated KM*"
+                    binding.txtMilesKmManuaaly.text = "Claimed KM*"
+                    binding.edtClaimedMiles.hint = " Calculated KM"
+                    binding.edtClaimedMiles2.hint = "Claimed KM"
+                    distanceType="KM"
+                }else{
+                    binding.txtMilesKm.text = "Calculated Miles*"
+                    binding.txtMilesKmManuaaly.text = "Claimed Miles*"
+                    binding.edtClaimedMiles.hint = "Calculated Miles"
+                    binding.edtClaimedMiles2.hint = "Claimed Miles"
+                    distanceType="Miles"
+                }
+
 //                val item = viewModel.mileageTypeList[position]
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
-      /*  // Department Adapter
-        val departmentAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.departmentList
-        )
-        binding.spnDepartment.adapter = departmentAdapter
-        var dpostion=0
-        viewModel.departmentList.forEachIndexed { index, element ->
-
-            if(AppPreferences.department.equals(element.name)){
-                dpostion=index
-                return@forEachIndexed
-            }
-        }
-        binding.spnDepartment.setSelection(dpostion)
-        binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-//                val item = viewModel.departmentList[position]
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }*/
-
-        // Expense Group Adapter
-        val expenseGroupAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.expenseGroupList
-        )
-        binding.spnExpenseGroup.adapter = expenseGroupAdapter
-        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val groupid =viewModel.expenseGroupList[position].id
-                println("selected group ID :$groupid")
-                viewModel.expenseTypeList.clear()
-                viewModel.expenseTypeListExpenseGroup.forEach {
-                    if(it.expenseGroupID == groupid&&it.companyID==compnyId.toString()){
-                        viewModel.expenseTypeList.add(it)
-                        // println("selected expenseTypeList Added :" )
-
-                    }else if(it.companyID.isNullOrEmpty()){
-                        viewModel.expenseTypeList.add(it)
-
-                    }
-                }
-                setupExpenceType()
-
-
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-
-
-
-/*
-        // Expense Type Adapter
-        val expenseTypeAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.expenseTypeList
-        )
-        binding.spnExpenseType.adapter = expenseTypeAdapter
-        binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                expenseCode=viewModel.expenseTypeList.get(position).activityCode
-                taxcodeId=viewModel.expenseTypeList.get(position).taxCodeID
-                viewModel.taxList.forEach {
-                    if(it.id.toString().equals(taxcodeId)) {
-                        binding.edtTaxcode.setText(it.tax_code)
-
-                    }
-                }
-
-                if(!binding.edtAutionValue.text.toString().isEmpty()){
-                    binding.tvAuctionExpCode.text = expenseCode
-
-                }else{
-                    binding.tvAuctionExpCode.text = ""
-                }
-//                val item = viewModel.expenseTypeList[position]
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }*/
 
         // Distance Adapter
         val distanceAdapter = CustomSpinnerAdapter(
@@ -465,18 +451,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
 
         // Tax Adapter
-        /*val taxAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.taxList
-        )
-        binding.spntaxcode.adapter = taxAdapter
-        binding.spntaxcode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {}
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }*/
+
 
         // Car Type Adapter
         val carTypeAdapter = CustomSpinnerAdapter(
@@ -510,22 +485,23 @@ class NewMileageClaimFragment() : Fragment() {
                 val symbol = viewModel.currencyList[position].symbol
                 currencyCode=code
                 currencySymbol=symbol
+                binding.tvTaxCurrency.text = symbol
+                binding.tvTotalAmountCurrency.text = symbol
+                binding.tvPetrolAmountCurrency.text = symbol
+                binding.tvParkAmountCurrency.text = symbol
+                binding.tvNetAmountCurrency.text = symbol
+                if(icCreateCopy){
 
+                    binding.edtClaimedMiles.setText(mileageDetail.claimedMileage)
+                    binding.edtPetrolAmount.setText(mileageDetail.petrolAmount)
+                    binding.edtParkAmount.setText(mileageDetail.parking)
+                    binding.edtTotalAmount.setText(mileageDetail.totalAmount)
+                    binding.edtTax.setText(mileageDetail.mtax.toString())
+                    //binding.tvNetAmount.text = mileageDetail.netAmount
+                    binding.tvNetAmount.setText(mileageDetail.netAmount)
+                    binding.edtDescription.setText(mileageDetail.description)
+                }
 
-                binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                binding.edtTotalAmount.setLocale(code)
-
-                binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                binding.edtTax.setLocale(code)
-
-                binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                binding.tvNetAmount.setLocale(code)
-
-                binding.edtPetrolAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                binding.edtPetrolAmount.setLocale(code)
-
-                binding.edtParkAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                binding.edtParkAmount.setLocale(code)
 
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -545,7 +521,7 @@ class NewMileageClaimFragment() : Fragment() {
                     viewModel.mileageTypeList.find { it.type == mileageDetail.type }
                 val mileageTypePos = viewModel.mileageTypeList.indexOf(mileageType)
                 if (mileageTypePos >= 0) {
-                    binding.spnCompanyName.setSelection(mileageTypePos)
+                    binding.spnMileageType.setSelection(mileageTypePos)
                 }
 
                 val department: Department? =
@@ -586,6 +562,9 @@ class NewMileageClaimFragment() : Fragment() {
             catch (e: Exception){
                 Log.e(TAG, "setupSpinners: ${e.message}")
             }
+        }else{
+            binding.edtMerchantName.setText(AppPreferences.ledgerId)
+
         }
         if(this::gpsMileageDetail.isInitialized){
             binding.tvDateOfTrip.text = gpsMileageDetail.startDate
@@ -603,15 +582,15 @@ class NewMileageClaimFragment() : Fragment() {
             viewModel.departmentList
         )
         binding.spnDepartment.adapter = departmentAdapter
-        /* var postion=0
+         var postion=0
          viewModel.departmentList.forEachIndexed { index, element ->
 
-             if(AppPreferences.department == element.name){
+             if(AppPreferences.departmentID == element.id){
                  postion=index
                  return@forEachIndexed
              }
          }
-         binding.spnDepartment.setSelection(postion)*/
+         binding.spnDepartment.setSelection(postion)
 
     }
     private fun setupTextWatcher(){
@@ -621,7 +600,18 @@ class NewMileageClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(binding.edtTotalAmount.getNumericValue(), binding.edtTax.getNumericValue(),binding.edtParkAmount.getNumericValue())
+                if(binding.edtTotalAmount.text.isNotEmpty())
+                updateNetAmount(binding.edtTotalAmount.text.toString().toDouble(), binding.edtTax.text.toString().toDouble())
+            }
+        })
+        binding.edtClaimedMiles2.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(binding.edtClaimedMiles2.text.isNotEmpty())
+                updateTotalAmount(binding.edtClaimedMiles2.text.toString().toDouble(),milageRate)
             }
         })
 
@@ -631,7 +621,8 @@ class NewMileageClaimFragment() : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                updateNetAmount(binding.edtTotalAmount.getNumericValue(), binding.edtTax.getNumericValue(),binding.edtParkAmount.getNumericValue())
+                if(binding.edtTax.text.isNotEmpty()&&binding.edtTotalAmount.text.isNotEmpty())
+                updateNetAmount(binding.edtTotalAmount.text.toString().toDouble(), binding.edtTax.text.toString().toDouble())
             }
         })
         binding.edtPetrolAmount.addTextChangedListener(object : TextWatcher {
@@ -681,15 +672,10 @@ class NewMileageClaimFragment() : Fragment() {
                        countryName= place.addressComponents?.asList()?.find { it.types.contains("country") }?.name.toString()
 
                         if(countryName=="United States"){
-                            binding.spnMileageType.setSelection(0)
-                            binding.txtMilesKm.text = "Claimed KM*"
-                            binding.edtClaimedMiles.hint = "KM"
+                           binding.spnMileageType.setSelection(0)
 
                         }else{
                             binding.spnMileageType.setSelection(1)
-                            binding.txtMilesKm.text = "Claimed Miles*"
-                            binding.edtClaimedMiles.hint = "Miles"
-
                         }
 
 
@@ -744,10 +730,83 @@ class NewMileageClaimFragment() : Fragment() {
             }
         }
     }
-    private fun setupMileageType(){
+    private fun setupTax(){
+
+        viewModel.taxList.forEach {
+
+            if(it.id.toString() == mtaxcodeId) {
+
+
+                binding.edtTaxcode.setText(it.tax_code)
+
+            }
+        }
+
+        val taxAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.taxList
+        )
+        binding.spntaxcode.adapter = taxAdapter
+
+        var postion=0
+        viewModel.taxList.forEachIndexed { index, element ->
+
+            if(element.id.toString() == mtaxcodeId) {
+
+                postion=index
+                return@forEachIndexed
+              //  binding.edtTaxcode.setText(it.tax_code)
+
+            }
+        }
+        binding.spntaxcode.setSelection(postion)
+
+        binding.spntaxcode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+
+                taxcodeId= viewModel.taxList[position].id.toString()
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+    private fun setupExpenceGroup(){
+        // Expense Group Adapter
+
+        val expenseGroupAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        binding.spnExpenseGroup.adapter = expenseGroupAdapter
+        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val groupid =viewModel.expenseGroupList[position].id
+                println("selected group ID :$groupid")
+                viewModel.expenseTypeList.clear()
+                viewModel.expenseTypeListExpenseGroup.forEach {
+                    if(it.expenseGroupID == groupid&&(it.companyID==compnyId.toString())){
+                        viewModel.expenseTypeList.add(it)
+                        // println("selected expenseTypeList Added :" )
+
+                    }else if(it.companyID.isNullOrEmpty()){
+                        //viewModel.expenseTypeList.add(it)
+
+                    }
+                }
+                setupExpenceType()
+
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
 
     }
-
     private fun setupExpenceType(){
         // Expense Type Adapter
         val expenseTypeAdapter = CustomSpinnerAdapter(
@@ -760,22 +819,16 @@ class NewMileageClaimFragment() : Fragment() {
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 //expenseCode=viewModel.expenseTypeList.get(position).activityCode
-                taxcodeId= viewModel.expenseTypeList[position].taxCodeID
+                mtaxcodeId= viewModel.expenseTypeList[position].taxCodeID
                 expenseCodeId= viewModel.expenseTypeList[position].expenseCodeID
-
+                setupTax()
                 viewModel.expenseCode.forEach {
                     if(it.id.toString() == expenseCodeId) {
                         expenseCode=it.expenseCode
 
                     }
                 }
-                viewModel.taxList.forEach {
 
-                    if(it.id.toString() == taxcodeId) {
-                        binding.edtTaxcode.setText(it.tax_code)
-
-                    }
-                }
 
                 if(!binding.edtAutionValue.text.toString().isEmpty()){
                     binding.tvAuctionExpCode.text = expenseCode
@@ -808,13 +861,20 @@ class NewMileageClaimFragment() : Fragment() {
             false
         )
         binding.rvAttachments.layoutManager = linearLayoutManager
-        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"milage")
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"milage",this)
         binding.rvAttachments.adapter = attachmentsAdapter
     }
 
     private fun createNewClaim() {
 
         try {
+            var dateFormate = if(companyDateFormate=="USA") {
+                Constants.MMM_DD_YYYY_FORMAT
+            }else{
+                Constants.DD_MM_YYYY_FORMAT
+
+            }
+
             val claimRequest = viewModel.getNewMileageClaimRequest(
                 binding.edtTitle.text.toString().trim(),
                 if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyName.selectedItemPosition].id else "",
@@ -822,26 +882,27 @@ class NewMileageClaimFragment() : Fragment() {
                 if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
                 Utils.getDateInServerRequestFormat(
                     binding.tvDateOfSubmission.text.toString().trim(),
-                    Constants.DD_MMM_YYYY_FORMAT
+                    dateFormate
                 ),
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
                 binding.edtMerchantName.text.toString().trim(),
                 Utils.getDateInServerRequestFormat(
                     binding.tvDateOfTrip.text.toString().trim(),
-                    Constants.DD_MMM_YYYY_FORMAT
+                    dateFormate
                 ),
                 binding.tvTripFrom.text.toString().trim(),
                 binding.tvTripTo.text.toString().trim(),
-                "1",/*binding.spnDistance*/
+               // "1",/*binding.spnDistance*/
+                binding.edtClaimedMiles.text.toString(),
                 if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[binding.spnCarType.selectedItemPosition].id else "", //spnCurrency.selectedItemPosition,
-                binding.edtClaimedMiles.text.toString().trim(),
+                binding.edtClaimedMiles2.text.toString().trim(),
                 binding.switchRoundTrip.isChecked,
                 if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
-                binding.edtPetrolAmount.getNumericValue().toString().trim(),
-                binding.edtParkAmount.getNumericValue().toString().trim(),
-                binding.edtTotalAmount.getNumericValue().toString().trim(),
-                binding.edtTax.getNumericValue().toString().trim(),
-                binding.tvNetAmount.getNumericValue().toString().trim(),
+                binding.edtPetrolAmount.text.toString().trim(),
+                binding.edtParkAmount.text.toString().trim(),
+                binding.edtTotalAmount.text.toString().trim(),
+                binding.edtTax.text.toString().trim(),
+                binding.tvNetAmount.text.toString().trim(),
                 binding.edtDescription.text.toString().trim(),
                 if (!taxcodeId.isEmpty()) taxcodeId else "",
                 binding.edtAutionValue.text.toString().trim(),
@@ -857,8 +918,36 @@ class NewMileageClaimFragment() : Fragment() {
                 return
             }
 
-            binding.btnSubmit.visibility = View.GONE
-            setCreateClaimObserver(claimRequest)
+            if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
+                Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
+                onCreateClaimFailed()
+                return
+            }
+            if (binding.tvDateOfTrip.text.isNullOrEmpty()) {
+                Toast.makeText(contextActivity, "Please select Date Of Trip", Toast.LENGTH_LONG).show()
+                onCreateClaimFailed()
+                return
+            }
+            if (binding.edtTotalAmount.text.isNullOrEmpty()) {
+                Toast.makeText(contextActivity, "Please Enter Amount", Toast.LENGTH_LONG).show()
+
+                onCreateClaimFailed()
+                return
+            }
+            if (binding.edtTax.text.isNullOrEmpty()) {
+                Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
+
+                onCreateClaimFailed()
+                return
+            }
+            if(viewModel.attachmentsList.size > 0){
+                binding.btnSubmit.visibility = View.GONE
+                uploadAttachement(claimRequest)
+            } else{
+                Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
+                return
+            }
+
         }
         catch (error: Exception){
             Log.e(TAG, "createNewClaim: ${error.message}")
@@ -881,25 +970,21 @@ class NewMileageClaimFragment() : Fragment() {
                                 }
                             if(countryName=="United States"){
                                 binding.spnMileageType.setSelection(0)
-                                binding.txtMilesKm.text = "Claimed KM*"
-                                binding.edtClaimedMiles.hint = "KM"
                                 if (distance != null) {
                                     distanceKmMiles = distance
                                 }
                             }else{
                                 binding.spnMileageType.setSelection(1)
-                                binding.txtMilesKm.text = "Claimed Miles*"
-                                binding.edtClaimedMiles.hint = "Miles"
                                 if (distance != null) {
                                     distanceKmMiles = distance/1.609
                                 }
                             }
-                            val fare= distanceKmMiles.times(milageRate)
-                            val decimal = fare.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN) }
+
+
+
                             val decimalmiles = distanceKmMiles.let { it1 -> BigDecimal(it1).setScale(1, RoundingMode.HALF_EVEN) }
                             binding.edtClaimedMiles.setText(decimalmiles.toString())
-                            println("total amount :"+decimal)
-                            binding.edtTotalAmount.setText(decimal.toString())
+                            binding.edtClaimedMiles2.setText(decimalmiles.toString())
                         }
                     }
                     Status.ERROR -> {
@@ -946,7 +1031,12 @@ class NewMileageClaimFragment() : Fragment() {
         }else {
             viewModel.companyList = dropdownResponse.companyList
             viewModel.departmentListCompany = dropdownResponse.departmentList
-            viewModel.expenseGroupList = dropdownResponse.expenseGroup
+            ( dropdownResponse.expenseGroup as MutableList<ExpenseGroup>).forEachIndexed { index, expenseGroup ->
+
+                if(expenseGroup.name.contains("Mileage")){
+                    viewModel.expenseGroupList.add(expenseGroup)
+                }
+            }
             viewModel.expenseCode = dropdownResponse.expenseCode as MutableList<ExpenseCode>
             viewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType as MutableList<ExpenseType>
             viewModel.distanceList = dropdownResponse.expenseGroup
@@ -961,7 +1051,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
     }
 
-    private fun updateNetAmount(total: Double, tax: Double,petrolAmount: Double){
+    private fun updateNetAmount(total: Double, tax: Double){
         try {
             val totalAmount = total
             val taxAmount =tax
@@ -969,11 +1059,31 @@ class NewMileageClaimFragment() : Fragment() {
 
 
             val netAmount = totalAmount - taxAmount
-            binding.tvNetAmount.setText(netAmount.toString())
+            if(netAmount<0){
+                Toast.makeText(contextActivity, "Net amount should be greater than 0", Toast.LENGTH_SHORT).show()
+                binding.tvNetAmount.setText("")
+
+            }else{
+                binding.tvNetAmount.setText(String.format("%.2f", netAmount))
+
+               // binding.tvNetAmount.setText(netAmount.toString())
+
+            }
             //binding.tvNetAmount.text = "$netAmount"
         }
         catch (error: Exception){
             Log.e(TAG, "updateNetAmount: ${error.message}")
+        }
+    }
+    private fun updateTotalAmount(Distance: Double, mileageRate: Double){
+        try {
+            val fare= Distance.times(mileageRate)
+            val decimal = fare.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN) }
+            binding.edtTotalAmount.setText(decimal.toString())
+
+        }
+        catch (error: Exception){
+            Log.e(TAG, "totalAmount: ${error.message}")
         }
     }
 
@@ -1002,6 +1112,53 @@ class NewMileageClaimFragment() : Fragment() {
         val alert = dialogBuilder.create()
         alert.setTitle("Mileage Rate")
         alert.show()
+    }
+
+    private fun uploadAttachement(mileageClaimRequest: NewMileageClaimRequest){
+        val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("claim_type", "M")
+
+        for (photoPath in viewModel.attachmentsList) {
+            if (photoPath != null) {
+                val images = File(photoPath)
+                if (images.exists()) {
+                    builder.addFormDataPart("claimImage", images.name, RequestBody.create(
+                        MultipartBody.FORM, images))
+                }
+            }
+        }
+
+        val mrequestBody: RequestBody = builder.build()
+
+        println("request dat:$mrequestBody")
+        viewModel.uploadClaimAttachement(mrequestBody).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                mileageClaimRequest.attachments=response.images
+                                setCreateClaimObserver(mileageClaimRequest)
+
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.btnSubmit.visibility = View.VISIBLE
+                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
+
     }
 
     private fun setCreateClaimObserver(mileageClaimRequest: NewMileageClaimRequest) {
@@ -1084,7 +1241,7 @@ class NewMileageClaimFragment() : Fragment() {
             .build()
         activity?.supportFragmentManager?.let { picker.show(it, picker.toString()) }
         picker.addOnPositiveButtonClickListener {
-            val date = Utils.getDateInDisplayFormat(it)
+            val date = Utils.getDateInDisplayFormatWithCountry(it,companyDateFormate)
             Log.d("DatePicker Activity", "Date String = ${date}:: Date epoch value = ${it}")
             if(isDateOfSubmission)
                 binding.tvDateOfSubmission.text = date
@@ -1134,8 +1291,8 @@ class NewMileageClaimFragment() : Fragment() {
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
                 .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(100) // Restrict by minimum file size
-                .setMaxFileSize(1024) //  Restrict by maximum file size
+                .setMinFileSize(50) // Restrict by minimum file size
+                .setMaxFileSize(100) //  Restrict by maximum file size
                 .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
@@ -1156,8 +1313,8 @@ class NewMileageClaimFragment() : Fragment() {
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
                 .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(100) // Restrict by minimum file size
-                .setMaxFileSize(1024) //  Restrict by maximum file size
+                .setMinFileSize(50) // Restrict by minimum file size
+                .setMaxFileSize(100) //  Restrict by maximum file size
                 .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
@@ -1170,7 +1327,7 @@ class NewMileageClaimFragment() : Fragment() {
         }
     }
     private fun meterToMiles(meter:Int):Double{
-       val CONVERSION_UNIT = 0.00062137119;
+       val CONVERSION_UNIT = 0.00062137119
         return meter * CONVERSION_UNIT
     }
     private fun meterToKiloMeter(meter:Int):Double{
@@ -1225,4 +1382,40 @@ class NewMileageClaimFragment() : Fragment() {
             refreshPageListener.refreshPage()
         }
     }
+    private fun showImagePopup(imageUrl:String) {
+        val dialog = Dialog(requireContext())
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.image_popup_dialog)
+
+        val image = dialog.findViewById(R.id.itemImage) as ImageView
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .apply(
+                RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+            )
+            .placeholder(R.drawable.mountains)
+            .error(R.drawable.mountains)
+            .into(image)
+
+
+        dialog.show()
+        val noBtn = dialog.findViewById(R.id.lnClose) as LinearLayout
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+    override fun callback(action: String, data: Any, postion: Int) {
+        if (action == "show") {
+            showImagePopup(data as String)
+        }
+    }
+
+
 }

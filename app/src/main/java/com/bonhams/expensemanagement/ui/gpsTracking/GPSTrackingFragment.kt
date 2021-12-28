@@ -95,7 +95,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         }
 
         startStop?.setOnClickListener {
-            if(startStop.text.toString().equals("Start")){
+            if(startStop.text.toString() == "Start"){
 
                 println("current date :"+getCurrentDate())
                 getLocation()
@@ -178,7 +178,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
     }*/
 
 
-    fun getCurrentDate():String{
+    private fun getCurrentDate():String{
         val sdf = SimpleDateFormat("dd MMM yy")
         //val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
         return sdf.format(Date())
@@ -329,7 +329,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
             if (addresses != null) {
                 val returnedAddress: Address = addresses[0]
                 val strReturnedAddress = StringBuilder("")
-                for (i in 0..returnedAddress.getMaxAddressLineIndex()) {
+                for (i in 0..returnedAddress.maxAddressLineIndex) {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n")
                 }
                 strAdd = strReturnedAddress.toString()
@@ -354,8 +354,8 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
             .setCancelable(false)
-            .setPositiveButton("Yes",
-                DialogInterface.OnClickListener { dialog, id -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) })
+            .setPositiveButton("Yes"
+            ) { dialog, id -> startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
             .setNegativeButton("No",
                 DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
         val alert: AlertDialog = builder.create()

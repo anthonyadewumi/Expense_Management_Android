@@ -15,8 +15,12 @@ import com.bonhams.expensemanagement.databinding.ItemExpenceDetailsRowBinding
 import com.bonhams.expensemanagement.databinding.ItemExpenceItemRowBinding
 import com.bonhams.expensemanagement.ui.rmExpence.ExpenceToBeAccepted
 import com.bonhams.expensemanagement.ui.rmExpence.ReportingMangerExpenceDetails
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bonhams.expensemanagement.utils.RefreshPageListener
+import com.bonhams.expensemanagement.utils.Utils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,13 +53,23 @@ class ExpencesDetailsListAdapter(
     class ViewHolder(itemBinding: ItemExpenceDetailsRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         private val binding: ItemExpenceDetailsRowBinding = itemBinding
         fun bindItems(item: ExpenceDetailsData,context:Context,recylerCallback: RecylerCallback,postion:Int) {
-            binding.tvGroupName.text = item.expenseGroupName
-            binding.tvExpenseType.text = item.claimType
-            binding.tvDesc.text = item.description
-           binding.tvNetAmount.text = "$ "+item.netAmount
-           binding.tvTax.text = "$ "+item.tax
-           binding.tvTotalAmount.text = "$ "+item.totalAmount
+            binding.tvClaimId.text = item.requestId.toString()
+           binding.tvClaimAmount.text = item.currency_type+" "+item.totalAmount
            binding.tvMerchant.text =item.claimTitle
+            binding.tvMerchant.text= Utils.getFormattedDate( item.submittedOn.toString(), Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
+
+
+            val attachment= item.attachments.split(",")
+            Glide.with(context)
+                .load(attachment[0])
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.mountains)
+                        .error(R.drawable.mountains)
+                )
+                .placeholder(R.drawable.mountains)
+                .error(R.drawable.mountains)
+                .into(binding.ivClaimImage)
 
             binding.chkRequest.setOnClickListener {
                 if( binding.chkRequest.isChecked){
@@ -79,7 +93,7 @@ class ExpencesDetailsListAdapter(
         ): String? {
             val inputFormat = SimpleDateFormat(inputFormat)
             val outputFormat = SimpleDateFormat(outputFormat)
-            var date: Date? = null
+            var date: Date?
             var str: String? = null
             try {
                 date = inputFormat.parse(dateToFormat)

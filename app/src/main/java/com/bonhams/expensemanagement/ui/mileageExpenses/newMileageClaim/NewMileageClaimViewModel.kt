@@ -8,12 +8,14 @@ import com.bonhams.expensemanagement.data.model.Currency
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import okhttp3.RequestBody
 import java.util.*
 
 
 class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageClaimRepository) : ViewModel() {
 
-    lateinit var expenseGroupList: List<ExpenseGroup>
+    var expenseGroupList: MutableList<ExpenseGroup> = mutableListOf<ExpenseGroup>()
+
     var expenseTypeList: MutableList<ExpenseType> = mutableListOf<ExpenseType>()
     lateinit var expenseTypeListExpenseGroup: List<ExpenseType>
     lateinit var departmentListCompany: List<Department>
@@ -41,7 +43,14 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
-
+    fun uploadClaimAttachement(newClaimRequest: RequestBody) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mileageClaimRepository.uploadImage(newClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
     fun getDropDownData() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -88,15 +97,39 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         newClaimRequest.claimedMiles = claimedMiles
         newClaimRequest.roundTrip = if(roundTrip) "1" else "0"
         newClaimRequest.currency = currency
-        newClaimRequest.petrolAmount = petrolAmount
-        newClaimRequest.parkAmount = parkAmount
+        if(petrolAmount.isEmpty()){
+            newClaimRequest.petrolAmount = "0.0"
+
+        }else{
+            newClaimRequest.petrolAmount = petrolAmount
+
+        }
+        if(parkAmount.isEmpty()){
+            newClaimRequest.parkAmount = "0.0"
+
+        }else{
+            newClaimRequest.parkAmount = parkAmount
+
+        }
         newClaimRequest.totalAmount = totalAmount
         newClaimRequest.tax = tax
         newClaimRequest.netAmount = netAmount
         newClaimRequest.description = description
         newClaimRequest.taxCode = taxcode
-        newClaimRequest.auction = auction
-        newClaimRequest.expenseCode = expencecode
+        if(auction.isEmpty()){
+            newClaimRequest.auction = "0"
+
+        }else{
+            newClaimRequest.auction = auction
+
+        }
+        if(expencecode.isEmpty()){
+            newClaimRequest.expenseCode = null
+
+        }else{
+            newClaimRequest.expenseCode = expencecode
+
+        }
         newClaimRequest.attachments = attachments
         newClaimRequest.expenseGroup = expenseGroup
 

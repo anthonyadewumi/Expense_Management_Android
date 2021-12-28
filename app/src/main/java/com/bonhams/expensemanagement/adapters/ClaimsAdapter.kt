@@ -12,6 +12,8 @@ import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>(CLAIM_COMPARATOR) {
 
@@ -36,8 +38,23 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
 
         fun bind(item: ClaimDetail, position: Int, claimListener: OnClaimClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
-            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
+            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
             binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
+
+            val attachment=item.attachments.split(",")
+            if(attachment.isNotEmpty()){
+                Glide.with(itemView.context)
+                    .load(attachment[0])
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.mountains)
+                            .error(R.drawable.mountains)
+                    )
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+                    .into(binding.ivClaimImage);
+            }
+
             if(!item.status.isNullOrEmpty()) {
                 binding.tvStatus.text =
                     item.status.replaceFirstChar(Char::uppercase)

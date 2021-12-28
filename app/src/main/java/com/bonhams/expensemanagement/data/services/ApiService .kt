@@ -5,17 +5,19 @@ import com.bonhams.expensemanagement.data.services.requests.*
 import com.bonhams.expensemanagement.data.services.responses.*
 import com.bonhams.expensemanagement.utils.RetrofitHeaderInterceptor
 import com.google.gson.JsonObject
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
+import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 object RetrofitBuilder {
     private const val API_BASE_URL = "https://maps.googleapis.com/"
+
+
 
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(
         HttpLoggingInterceptor().apply {
@@ -25,7 +27,13 @@ object RetrofitBuilder {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
+        .connectionSpecs(Collections.singletonList(ConnectionSpec.MODERN_TLS))
+
         .build()
+
+
+
+
 
     private fun getRetrofit(): Retrofit {
         return Retrofit.Builder()
@@ -74,9 +82,23 @@ interface ApiService {
     @POST("send-reminder")
     suspend fun sendReminder(@Body claimId: JsonObject): CommonResponse
 
+    @POST("claim-detail")
+    suspend fun getDetails(@Body claimId: JsonObject): ClaimDetailsResponse
+
+    @POST("edit-split")
+    suspend fun updateSplit(@Body claimId: JsonObject): ClaimDetailsResponse
+
+
+    @POST("upload-claim-attachment")
+    suspend fun uploadImage(@Body newClaimRequest: RequestBody): ClaimImageUploadResponse
+
+    @Multipart
+    @POST("uploadProfileImage")
+    suspend fun uploadProfileImage(@Part  claimImage :List<MultipartBody.Part>): ProfilePicUploadResponse
+
     @Multipart
     @POST("upload-claim-attachment")
-    suspend fun uploadImage(@Part  claimImage :List<MultipartBody.Part>): CommonResponse
+    suspend fun uploadClaim(@Part  claimImage :List<MultipartBody.Part>): ProfilePicUploadResponse
 
     @POST("mileage_list")
     suspend fun mileageList(@Body mileageExpenseRequest: MileageExpenseRequest) : MileageListResponse
@@ -89,6 +111,9 @@ interface ApiService {
 
     @GET("dropdown")
     suspend fun dropdownData(): DropdownResponse
+
+    @POST("claimed-total")
+    suspend fun getClaimedTotal(@Body requestObject: JsonObject): TotailClaimedResponse
 
     @POST("request_list")
     suspend fun getRequestExpences(@Body mileageExpenseRequest: JsonObject): AcceptRequestResponse

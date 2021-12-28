@@ -13,6 +13,8 @@ import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.databinding.ItemClaimsAndMileageBinding
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.Utils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
 
 class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHolder>(MILEAGE_COMPARATOR) {
@@ -38,10 +40,24 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
 
         fun bind(item: MileageDetail, position: Int, mileageListener: OnMileageExpenseClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
-            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT)
+            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
             binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
             binding.tvStatus.text = item.status.replaceFirstChar(Char::uppercase)
           //  binding.tvStatus.text = item.reportingMStatus.replaceFirstChar(Char::uppercase)
+
+            val attachment=item.attachments.split(",")
+            if(attachment.isNotEmpty()){
+                Glide.with(itemView.context)
+                    .load(attachment[0])
+                    .apply(
+                        RequestOptions()
+                            .placeholder(R.drawable.mountains)
+                            .error(R.drawable.mountains)
+                    )
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+                    .into(binding.ivClaimImage);
+            }
 
             when {
                 item.status.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))

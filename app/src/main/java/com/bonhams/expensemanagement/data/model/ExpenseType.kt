@@ -13,6 +13,8 @@ data class ExpenseType (
     val expenseGroupID: String = "",
     @SerializedName("tax_code_id")
     val taxCodeID: String = "",
+    @SerializedName("tax_code_value")
+    val taxcodeValue: String = "",
     @SerializedName("default_unit_price")
     val defaultUnitPrice: String = "",
     @SerializedName("expense_code_id")

@@ -24,6 +24,7 @@ import com.bonhams.expensemanagement.ui.myProfile.editProfile.EditProfileFragmen
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 
 class MyProfileFragment() : Fragment() {
@@ -77,7 +78,6 @@ class MyProfileFragment() : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        println("on resimed call")
         setupView()
     }
     private fun setupView(){
@@ -85,6 +85,8 @@ class MyProfileFragment() : Fragment() {
             .load(AppPreferences.profilePic)
             .apply(
                 RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .placeholder(R.drawable.ic_default_user_theme)
                     .error(R.drawable.ic_default_user_theme)
             )
@@ -98,13 +100,16 @@ class MyProfileFragment() : Fragment() {
         binding.tvLastName.isEnabled=false
         binding.tvEmail.isEnabled=false
         binding.tvPhoneNumber.isEnabled=false
+        binding.tvLedgerID.isEnabled=false
 
 
         binding.tvEmpId.text = AppPreferences.employeeId
         binding.tvFirstName.setText(AppPreferences.firstName)
+        binding.tvCompanyName.setText(AppPreferences.company)
+        binding.tvCarType.setText(AppPreferences.carType)
         binding.tvLastName.setText(AppPreferences.lastName)
         binding.tvEmail.setText(AppPreferences.email)
-        binding.tvPhoneNumber.setText(AppPreferences.phoneNumber)
+        binding.tvLedgerID.setText(AppPreferences.ledgerId)
 
 
 

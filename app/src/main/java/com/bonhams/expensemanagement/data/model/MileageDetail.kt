@@ -28,6 +28,8 @@ data class MileageDetail (
     val currency: String = "",
     @SerializedName("currency_symbol")
     val currencySymbol: String = "",
+    @SerializedName("cost_code")
+    val cost_code: String = "",
     @SerializedName("currency_type_name")
     val currencyTypeNamename: String = "",
     @SerializedName("tax")
@@ -46,6 +48,7 @@ data class MileageDetail (
     @SerializedName("user_id")
     val userID: String = "",
     val createdBy: String = "",
+    @SerializedName("attachments")
     val attachments: String = "",
     @SerializedName("tax_code")
     val tax_code: String = "",

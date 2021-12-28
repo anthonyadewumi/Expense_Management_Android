@@ -5,15 +5,16 @@ plugins {
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-
 android {
-    compileSdk 31
+    compileSdk 30
     buildToolsVersion "30.0.3"
-
+    configurations.all {
+        resolutionStrategy { force 'androidx.core:core-ktx:1.6.0' }
+    }
     defaultConfig {
         applicationId "com.bonhams.expensemanagement"
         minSdk 21
-        targetSdk 31
+        targetSdk 30
         versionCode 1
         versionName "1.0.5"
 
@@ -140,6 +141,9 @@ dependencies {
 
     //Expandable Layout
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
+
+    // Image Chooser
+    implementation 'com.github.dhaval2404:imagepicker:1.7.5'
 
     //No Internet connection check
     implementation 'org.imaginativeworld.oopsnointernet:oopsnointernet:2.0.0'

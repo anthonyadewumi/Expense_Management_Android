@@ -39,8 +39,6 @@ class HomeFragment : Fragment() {
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var viewModel: HomeViewModel
     private var adapter: HomeViewPagerAdapter? = null
-
-
     private val tabsArray = arrayOf(
         "Claims",
         "Mileage Expenses",
@@ -55,7 +53,6 @@ class HomeFragment : Fragment() {
         val view = binding.root
         binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
-
         setupViewModel()
         setupViewPager()
         setClickListeners()

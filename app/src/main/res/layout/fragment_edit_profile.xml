@@ -179,13 +179,13 @@
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
+                android:enabled="false"
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_gray_white_bg"
                 android:minHeight="@dimen/_28sdp"
                 android:textSize="@dimen/_10sdp"
                 android:padding="@dimen/_5sdp"
-                android:drawableEnd="@drawable/ic_baseline_edit_24"
                 android:gravity="center|start"
                 android:layout_gravity="center_vertical"
                 />
@@ -239,10 +239,27 @@
                 android:textColor="@color/colorTextBlack"
              />
 
-            <TextView
+     <Spinner
+         android:id="@+id/spnCompanyNumber"
+         style="@style/outlineBoxExposedDropdown"
+         android:layout_width="0dp"
+         android:layout_height="@dimen/_28sdp"
+         android:layout_gravity="center_vertical"
+         android:layout_weight="1.5"
+
+         android:background="@drawable/spinner_bg"
+         android:gravity="center|start"
+         android:hint="@string/company_name"
+         android:padding="@dimen/_5sdp"
+         android:textColor="@color/colorTextBlack"
+         android:textSize="@dimen/_10sdp" />
+
+
+     <TextView
                 android:id="@+id/tvCompanyName"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
+                 android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:hint="@string/company_name"
                 style="@style/TextRegular12"
@@ -303,11 +320,26 @@
                 style="@style/TextRegular12"
                 android:textColor="@color/colorTextBlack"
                />
+                 <Spinner
+                     android:id="@+id/spnCarType"
+                     style="@style/outlineBoxExposedDropdown"
+                     android:layout_width="0dp"
+                     android:layout_height="@dimen/_28sdp"
+                     android:layout_gravity="center_vertical"
+                     android:layout_weight="1.5"
+
+                     android:background="@drawable/spinner_bg"
+                     android:gravity="center|start"
+                     android:hint="@string/car_type"
+                     android:padding="@dimen/_5sdp"
+                     android:textColor="@color/colorTextBlack"
+                     android:textSize="@dimen/_10sdp" />
 
             <TextView
                 android:id="@+id/tvCarType"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
+                android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:hint="@string/car_type"
                 style="@style/TextRegular12"

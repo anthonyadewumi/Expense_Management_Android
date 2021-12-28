@@ -1,11 +1,7 @@
 package com.bonhams.expensemanagement.ui.claims.newClaim
 
 import android.app.Activity
-import android.app.Dialog
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,8 +9,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,30 +32,23 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.gson.Gson
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
 
 
-class NewClaimFragment() : Fragment() ,RecylerCallback{
+class NewClaimFragment2() : Fragment() ,RecylerCallback{
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -77,7 +67,6 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     private var currencySymbol: String = ""
     private var companyDateFormate: String = ""
     private var companyLocation: String = ""
-    private var isCreateCopy: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,7 +80,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
 
         setupViewModel()
         setClickListeners()
-        setupAttachmentRecyclerView()
+        setupAttachmentRecyclerView();
         setDropdownDataObserver()
         setupView()
         setupTextWatcher()
@@ -109,10 +98,8 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun setupView(){
-
         try {
             if (this::claimDetail.isInitialized) {
-                isCreateCopy=true
                 println("isCopyClaim total amount :"+claimDetail.totalAmount)
 
                 /*  binding.edtTitle.setText(
@@ -125,27 +112,17 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 binding.tvDateOfSubmission.text = if (!claimDetail.createdOn.trim().isNullOrEmpty())
                     Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
                     ) else ""
-               // binding.edtTotalAmount.setText(claimDetail.totalAmount)
-               // binding.edtTax.setText(claimDetail.tax)
+                binding.edtTotalAmount.setText(claimDetail.totalAmount)
+                binding.edtTax.setText(claimDetail.tax)
                 // binding.tvNetAmount.text = claimDetail.netAmount
-              //  binding.tvNetAmount.setText(claimDetail.netAmount)
-
+                binding.tvNetAmount.setText(claimDetail.netAmount)
                 binding.edtDescription.setText(claimDetail.description)
                 if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
                         .isNotEmpty()
                 ) {
-                    val attachment=claimDetail.attachments.split(",")
-                    viewModel.attachmentsList.clear()
-                    attachment.forEach {
-                        viewModel.attachmentsList.add(it)
-                    }
-
-                   // viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
+                    viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
                 }
 
-            }else{
-                binding.edtMerchantName.setText(AppPreferences.ledgerId)
-                viewModel.attachmentsList.clear()
             }
             refreshAttachments()
         }
@@ -161,13 +138,6 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun setClickListeners(){
-        binding.edtGroupValue.setOnClickListener {
-            binding.spnExpenseGroup.performClick()
-        }
-        binding.edtExpenceTypeValue.setOnClickListener {
-            binding.spnExpenseType.performClick()
-        }
-
         binding.tvUploadPic.setOnClickListener(View.OnClickListener {
             showBottomSheet()
         })
@@ -207,8 +177,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-       /* // Expense Group Adapter
-       // viewModel.expenseGroupList.add(ExpenseGroup("0","N/A","0","active"))
+        // Expense Group Adapter
         val expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
@@ -221,31 +190,20 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                    val groupid =viewModel.expenseGroupList[position].id
                 println("selected group ID :$groupid")
                 viewModel.expenseTypeList.clear()
-
                 viewModel.expenseTypeListExpenseGroup.forEach {
                   //  println("selected group ID :$groupid")
                    // println("selected expenseGroupID  :"+it.expenseGroupID )
                   //  println("selected companyID  :"+it.companyID )
                    // println("selected compnyId  :"+compnyId )
 
-                   *//* if(it.expenseGroupID == groupid&&(it.companyID==compnyId.toString()||it.companyID==null)){
+                    if(it.expenseGroupID == groupid&&(it.companyID==compnyId.toString()||it.companyID==null)){
                         viewModel.expenseTypeList.add(it)
                        // println("selected expenseTypeList Added :" )
 
                     }else if(it.companyID.isNullOrEmpty()){
                         //viewModel.expenseTypeList.add(it)
 
-                    }*//*
-
-                    if(it.expenseGroupID == groupid&&(it.companyID==compnyId.toString()||it.companyID==null)){
-                        viewModel.expenseTypeList.add(it)
-                        // println("selected expenseTypeList Added :" )
-
-                    }else if(it.companyID.isNullOrEmpty()){
-                        //viewModel.expenseTypeList.add(it)
-
                     }
-
                 }
                 setupExpenceType()
             }
@@ -254,14 +212,19 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
 
             }
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }*/
+        }
+
+
+
+
+
         // Company List Adapter
         val companyAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_spinner, viewModel.companyList)
         binding.spnCompanyNumber.adapter = companyAdapter
         var compnypostion=0
         viewModel.companyList.forEachIndexed { index, element ->
 
-            if(AppPreferences.company == element.name){
+            if(AppPreferences.company.equals(element.name)){
                 compnypostion=index
                 return@forEachIndexed
             }
@@ -274,27 +237,6 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 compnyId=viewModel.companyList[position].id.toInt()
                 companyDateFormate=viewModel.companyList[position].dateFormat
                 companyLocation=viewModel.companyList[position].location
-                binding.spnExpenseGroup.adapter=null
-                setupExpenceGroupType(true)
-
-                if(isCreateCopy){
-
-                    binding.edtTotalAmount.setText(claimDetail.totalAmount)
-                    binding.edtTax.setText(claimDetail.tax)
-                    binding.tvNetAmount.setText(claimDetail.netAmount)
-                    binding.tvDateOfSubmission.setText("")
-                    binding.edtGroupValue.setText(claimDetail.expenseGroupName)
-                    binding.edtExpenceTypeValue.setText(claimDetail.expenseTypeName)
-
-                }else {
-                    binding.edtTotalAmount.setText("")
-                    binding.edtTax.setText("0")
-                    binding.tvNetAmount.setText("")
-                    binding.tvDateOfSubmission.setText("")
-                    binding.edtGroupValue.setText("")
-
-                }
-
 
                 println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
                 println("selected company date format:"+ viewModel.companyList[position].dateFormat)
@@ -320,17 +262,14 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                         // binding.edtTotalAmount.clearFocus()
                         //binding.edtTax.clearFocus()
                         // binding.tvNetAmount.clearFocus()
-                        binding.tvTotalAmountCurrency.text = symbol
-                        binding.tvTaxAmountCurrency.text = symbol
-                        binding.tvNetAmountCurrency.text = symbol
 
-                       // binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                      //  binding.edtTotalAmount.setLocale(code)
+                        //binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                        //binding.edtTotalAmount.setLocale(code)
 
                        // binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                      //  binding.edtTax.setLocale(code)
+                       // binding.edtTax.setLocale(code)
 
-                      //  binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                       // binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                        // binding.tvNetAmount.setLocale(code)
                         val currency: Currency? =
                             viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
@@ -348,6 +287,58 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             }
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+
+
+       /* binding.spnCompanyNumber.addOnLayoutChangeListener(View.OnLayoutChangeListener { view, i, i1, i2, i3, i4, i5, i6, i7 ->
+            val position=binding.spnCompanyNumber.selectedItemPosition
+            compnyId=viewModel.companyList[position].id.toInt()
+
+            println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
+            viewModel.departmentList.clear()
+            viewModel.departmentListCompany.forEach {
+                println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
+
+                if(it.company_id == compnyId.toString()){
+                    viewModel.departmentList.add(it)
+                }
+            }
+            setupDeparmentType()
+            viewModel.currencyList.forEach {
+                if(it.id.toInt()==viewModel.companyList[position].currency_type_id){
+                    val symbol=it.symbol
+                    val code=it.code
+                    currencyCode=code
+                    currencySymbol=symbol
+                   // binding.edtTotalAmount.text = null
+                   // binding.edtTax.text = null
+                   // binding.tvNetAmount.text = null
+                   // binding.edtTotalAmount.clearFocus()
+                    //binding.edtTax.clearFocus()
+                   // binding.tvNetAmount.clearFocus()
+
+                    binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                    binding.edtTotalAmount.setLocale(code)
+
+                    binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                    binding.edtTax.setLocale(code)
+
+                    binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                    binding.tvNetAmount.setLocale(code)
+                    val currency: Currency? =
+                        viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                    val currencyPos = viewModel.currencyList.indexOf(currency)
+                    if (currencyPos >= 0) {
+                        binding.spnCurrency.setSelection(currencyPos)
+                    }
+                }
+            }
+            binding.edtTitle.setText(viewModel.companyList[position].code)
+        })*/
+       /* binding.spnCompanyNumber.addOnLayoutChangeListener(View.OnLayoutChangeListener { view, i, i1, i2, i3, i4, i5, i6, i7 ->
+           val position=binding.spnExpenseGroup.selectedItemPosition
+
+        })*/
 
 
 
@@ -379,20 +370,15 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                // binding.edtTotalAmount.clearFocus()
                // binding.edtTax.clearFocus()
               //  binding.tvNetAmount.clearFocus()
-                binding.tvTotalAmountCurrency.text = symbol
-                binding.tvTaxAmountCurrency.text = symbol
-                binding.tvNetAmountCurrency.text = symbol
 
-              //  binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+               // binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                // binding.edtTotalAmount.setLocale(code)
 
               //  binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.edtTax.setLocale(code)
+              //  binding.edtTax.setLocale(code)
 
                // binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                // binding.tvNetAmount.setLocale(code)
-
-
             }
             override fun onNothingSelected(parent: AdapterView<*>) {
                 Toast.makeText(requireContext(), "Nothing selected", Toast.LENGTH_SHORT).show();
@@ -400,6 +386,9 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             }
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+
+
 
         if(this::claimDetail.isInitialized){
             try {
@@ -409,7 +398,6 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 if (expenseGroupPos >= 0) {
                     binding.spnExpenseGroup.setSelection(expenseGroupPos)
                 }
-                binding.edtGroupValue.setText(expenseGroup?.name)
 
                 val expenseType: ExpenseType? =
                     viewModel.expenseTypeList.find { it.id == claimDetail.expenseTypeID }
@@ -417,7 +405,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 if (expenseTypePos >= 0) {
                     binding.spnExpenseType.setSelection(expenseTypePos)
                 }
-                binding.edtExpenceTypeValue.setText(expenseType?.name)
+
                 val company: Company? =
                     viewModel.companyList.find { it.name == claimDetail.companyName }
                 val companyPos = viewModel.companyList.indexOf(company)
@@ -438,117 +426,35 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 if (currencyPos >= 0) {
                     binding.spnCurrency.setSelection(currencyPos)
                 }
-
-                binding.edtTotalAmount.setText(claimDetail.totalAmount)
-                binding.edtTax.setText(claimDetail.tax)
-                binding.tvNetAmount.setText(claimDetail.netAmount)
-                binding.edtAutionValue.setText(claimDetail.auction)
-                binding.tvAuctionExpCode.setText(claimDetail.expenseCode)
-
             }
             catch (e: Exception){
                 Log.e(TAG, "setupSpinners: ${e.message}")
             }
         }
     }
-
-    private fun setupExpenceGroupType(isShowDefault:Boolean){
-        var isDefaultshow=isShowDefault
-        // Expense Group Adapter
-        // viewModel.expenseGroupList.add(ExpenseGroup("0","N/A","0","active"))
-        val expenseGroupAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            viewModel.expenseGroupList
-        )
-        binding.spnExpenseGroup.adapter = expenseGroupAdapter
-        binding.spnExpenseGroup.isSelected=false
-        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                if(!isDefaultshow) {
-                    binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
-                    val groupid = viewModel.expenseGroupList[position].id
-                    println("selected group ID :$groupid")
-                    viewModel.expenseTypeList.clear()
-                    binding.edtExpenceTypeValue.setText(" ")
-                    viewModel.expenseTypeList.add(ExpenseType("0","Select Expense Type",""))
-                    viewModel.expenseTypeListExpenseGroup.forEach {
-                       // if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
-
-
-                            if (it.expenseGroupID == groupid) {
-                            viewModel.expenseTypeList.add(it)
-                            // println("selected expenseTypeList Added :" )
-
-                        } else if (it.companyID.isNullOrEmpty()) {
-                            //viewModel.expenseTypeList.add(it)
-
-                        }
-
-                    }
-                    setupExpenceType(true)
-                }else{
-                    isDefaultshow=false
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                Toast.makeText(requireContext(), "Nothing selected", Toast.LENGTH_SHORT).show();
-
-            }
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-    }
-
-
-
-
-    private fun setupExpenceType(isShowDefault:Boolean){
-        var isDefaultShow=isShowDefault
+    private fun setupExpenceType(){
         // Expense Type Adapter
         println("call expence type method ")
-
-        val expenseTypeAdapter = CustomSpinnerAdapter(
+            val expenseTypeAdapter = CustomSpinnerAdapter(
                 requireContext(),
                 R.layout.item_spinner,
                 viewModel.expenseTypeList
             )
             binding.spnExpenseType.adapter = expenseTypeAdapter
-        binding.spnExpenseType.isSelected=false
-
-        if(isCreateCopy){
-             var expenseTypePos = 0
-            viewModel.expenseTypeList.forEachIndexed { index, expenseType ->
-
-                if(expenseType.name==claimDetail.expenseTypeName){
-                    expenseTypePos=index
-                }
-                }
-                if (expenseTypePos >= 0) {
-                    binding.spnExpenseType.setSelection(expenseTypePos)
-                }
-             }
-
-
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                if(!isDefaultShow) {
-                    binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList.get(position).name)
+                expenseCode=viewModel.expenseTypeList.get(position).activityCode
+                mtaxcodeId= viewModel.expenseTypeList[position].taxCodeID
 
-                    expenseCode = viewModel.expenseTypeList.get(position).activityCode
-                    mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
+                setupTax()
+                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                    binding.tvAuctionExpCode.text = expenseCode
 
-                    setupTax()
-                    if (!binding.edtAutionValue.text.toString().isEmpty()) {
-                        binding.tvAuctionExpCode.text = expenseCode
-
-                    } else {
-                        binding.tvAuctionExpCode.text = ""
-                    }
                 }else{
-                    isDefaultShow=false
+                    binding.tvAuctionExpCode.text = ""
                 }
+
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -626,8 +532,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(binding.edtTotalAmount.text.isNotEmpty()&&binding.edtTax.text.isNotEmpty())
-                    updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+                  //  updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.getNumericValue().toString())
 
             }
         })
@@ -638,8 +543,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(binding.edtTotalAmount.text.isNotEmpty()&&binding.edtTax.text.isNotEmpty())
-                updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+                   //updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.getNumericValue().toString())
             }
         })
         binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
@@ -696,21 +600,12 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             if(taxAmount>totalAmount){
                 Toast.makeText(contextActivity, "The tax amount must not be greater than the total amount", Toast.LENGTH_SHORT).show()
 
-                binding.tvNetAmount.setText("")
+                binding.tvNetAmount.setText("0.0")
 
             }else {
                 val netAmount = totalAmount - taxAmount
-
-                if(netAmount<0){
-                    Toast.makeText(contextActivity, "Net amount should be greater than 0", Toast.LENGTH_SHORT).show()
-                    binding.tvNetAmount.setText("")
-
-                }else{
-                    binding.tvNetAmount.setText(String.format("%.2f", netAmount))
-
-                }
-
                 // binding.tvNetAmount.text = "$netAmount"
+                binding.tvNetAmount.setText(String.format("%.2f", netAmount))
                 //binding.tvNetAmount.text =
             }
         }
@@ -746,17 +641,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
-       // viewModel.expenseGroupList = dropdownResponse.expenseGroup as MutableList<ExpenseGroup>
-        viewModel.expenseGroupList.clear()
-       viewModel.expenseGroupList.add(ExpenseGroup("0","Select Expense Group","0","active"))
-
-        ( dropdownResponse.expenseGroup as MutableList<ExpenseGroup>).forEachIndexed { index, expenseGroup ->
-
-            if(!expenseGroup.name.contains("Mileage")){
-                viewModel.expenseGroupList.add(expenseGroup)
-            }
-        }
-
+        viewModel.expenseGroupList = dropdownResponse.expenseGroup as MutableList<ExpenseGroup>
        // viewModel.expenseTypeList = dropdownResponse.expenseType
         viewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType
         viewModel.departmentListCompany = dropdownResponse.departmentList
@@ -772,82 +657,21 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun setCreateClaimObserver(newClaimRequest: NewClaimRequest) {
 
-        val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart("claim_type", "E")
-
-        for (photoPath in viewModel.attachmentsList) {
-            if (photoPath != null) {
-                val images = File(photoPath)
-                if (images.exists()) {
-                    builder.addFormDataPart("claimImage", images.name, RequestBody.create(MultipartBody.FORM, images))
-                }
-            }
-        }
-        val mrequestBody: RequestBody = builder.build()
-
-        viewModel.uploadClaimAttachement(mrequestBody).observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                newClaimRequest.attachments=response.images
-                                callApiCreateClaim(newClaimRequest)
-
-
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        binding.mProgressBars.visibility = View.GONE
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                    }
-                    Status.LOADING -> {
-                        binding.mProgressBars.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })
-
-        /*val mapRequestBody = LinkedHashMap<String, RequestBody>()
-
-        val requestBody: RequestBody
+       /* val requestBody: RequestBody
         val body: MultipartBody.Part
+        val mapRequestBody = LinkedHashMap<String, RequestBody>()
         val arrBody: MutableList<MultipartBody.Part> = ArrayList()
-        val file= File( viewModel.attachmentsList.get(0))
+        val file=File( viewModel.attachmentsList.get(0))
         requestBody = RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file)
-
-
-
         mapRequestBody["file\"; filename=\"" + file] = requestBody
-        mapRequestBody["title"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.title.toString())
-        mapRequestBody["merchantName"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.merchantName.toString())
-        mapRequestBody["expenseGroup"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.expenseGroup.toString())
-        mapRequestBody["expenseType"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.expenseType.toString())
-
-        mapRequestBody["companyNumber"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.companyNumber.toString())
-        mapRequestBody["department"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.department.toString())
-        mapRequestBody["dateSubmitted"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.dateSubmitted.toString())
-        mapRequestBody["currency"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.currency.toString())
-
-        mapRequestBody["totalAmount"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.totalAmount.toString())
-        mapRequestBody["tax"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.tax.toString())
-        mapRequestBody["netAmount"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.netAmount.toString())
-        mapRequestBody["description"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.description.toString())
-        mapRequestBody["taxCode"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.taxCode.toString())
-        mapRequestBody["auction"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.auction.toString())
-        mapRequestBody["expenseCode"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.expenseCode.toString())
-        mapRequestBody["claim_type"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), "E")
+        mapRequestBody["test"] =
+            RequestBody.create(okhttp3.MediaType.parse("text/plain"), "gogogogogogogog")
 
 
-        mapRequestBody["split[]"] = RequestBody.create(okhttp3.MediaType.parse("application/json"), Gson().toJson(SplitClaimDetail("12")))
-        body = MultipartBody.Part.createFormData("attachments", file.name, requestBody)
+        body = MultipartBody.Part.createFormData("claimImage", file.getName(), requestBody)
         arrBody.add(body)
-        viewModel.uploadClaim(arrBody).observe(viewLifecycleOwner, Observer {
+
+        viewModel.uploadClaimAttachement(arrBody).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -872,37 +696,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             }
         })
 */
-       /*viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
-                                //Toast.makeText(contextActivity, "Claim added successfully/submitted successfully", Toast.LENGTH_SHORT).show()
-
-                                setResponse(response)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        binding.mProgressBars.visibility = View.GONE
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                    }
-                    Status.LOADING -> {
-                        binding.mProgressBars.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })*/
-    }
-
-    private fun callApiCreateClaim(newClaimRequest: NewClaimRequest){
-        viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
+       viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
@@ -939,32 +733,9 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
-                onCreateClaimFailed()
-                return
-            }
-            if (binding.edtTotalAmount.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please Enter Amount", Toast.LENGTH_LONG).show()
 
-                onCreateClaimFailed()
-                return
-            }
-            if (binding.edtTax.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
-
-                onCreateClaimFailed()
-                return
-            }
-            if(viewModel.attachmentsList.size > 0){
-                binding.btnSubmit.visibility = View.GONE
-                setCreateClaimObserver(newClaimRequest)
-            } else{
-                Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
-                return
-            }
-
-
+            binding.btnSubmit.visibility = View.GONE
+            setCreateClaimObserver(newClaimRequest)
         }
         catch (e: Exception){
             Log.e(TAG, "createNewClaim: ${e.message}")
@@ -980,33 +751,11 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
-                onCreateClaimFailed()
-                return
-            }
-            if (binding.edtTotalAmount.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please Enter Amount", Toast.LENGTH_LONG).show()
 
-                onCreateClaimFailed()
-                return
-            }
-            if (binding.edtTax.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
-
-                onCreateClaimFailed()
-                return
-            }
-            if(viewModel.attachmentsList.size > 0){
-                val fragment = SplitClaimFragment()
-                fragment.setClaimRequestDetail(newClaimRequest)
-                fragment.setCurrency(currencyCode,currencySymbol)
-                (contextActivity as? MainActivity)?.addFragment(fragment)
-            } else{
-                Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
-                return
-            }
-
+            val fragment = SplitClaimFragment()
+            fragment.setClaimRequestDetail(newClaimRequest)
+            fragment.setCurrency(currencyCode,currencySymbol)
+            (contextActivity as? MainActivity)?.addFragment(fragment)
         }
         catch (e: Exception){
             Log.e(TAG, "createNewClaim: ${e.message}")
@@ -1014,7 +763,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun getClaimRequest() : NewClaimRequest{
-//     attachments = viewModel.attachmentsList.joinToString { it }
+//      attachments = viewModel.attachmentsList.joinToString { it }
 
 
         var dateFormate = if(companyDateFormate=="USA") {
@@ -1026,20 +775,8 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
         return viewModel.getNewClaimRequest(
             binding.edtTitle.text.toString().trim(),
             binding.edtMerchantName.text.toString().trim(),
-            if(binding.edtGroupValue.text.isEmpty())
-            {
-                ""
-            }else{
-                if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else ""
-
-            },
-            if(binding.edtExpenceTypeValue.text.isEmpty())
-            {
-                ""
-            }else{
-                if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else ""
-
-            },
+            if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "",
+            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
             if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "",
 //            binding.edtCompanyNumber.text.toString().trim(),
             if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
@@ -1049,8 +786,8 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             ),
             if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
             binding.edtTotalAmount.text.toString(),
-            binding.edtTax.text.toString(),
-            binding.tvNetAmount.text.toString(),
+            binding.edtTax.text.toString().trim(),
+            binding.tvNetAmount.text.toString().trim(),
             binding.edtDescription.text.toString().trim(),
             if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
             binding.edtAutionValue.text.toString().trim(),
@@ -1156,9 +893,9 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
                 .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
-               // .setMinFileSize(50) // Restrict by minimum file size
-               // .setMaxFileSize(100) //  Restrict by maximum file size
-                //.disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+                .setMinFileSize(50) // Restrict by minimum file size
+                .setMaxFileSize(100) //  Restrict by maximum file size
+                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
                 .setProgressBarColor(R.color.secondary)
@@ -1200,11 +937,6 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                     val selectedMedia = data.getSerializableExtra(KeyUtils.SELECTED_MEDIA) as ArrayList<MiMedia>
                     Log.d(TAG, "onActivityResult: ${selectedMedia.size}")
                     if(selectedMedia.size > 0) {
-                        val file= File( selectedMedia[0].path!!)
-                        val filePath: String = file.path
-                        val bitmap = BitmapFactory.decodeFile(filePath)
-                        viewModel.claimImageList.add(bitmap)
-
                         viewModel.attachmentsList.add(selectedMedia[0].path!!)
                         refreshAttachments()
                         Log.d(TAG, "onActivityResult:  attachmentsList: ${viewModel.attachmentsList.size}")
@@ -1214,10 +946,6 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                     val selectedMedia = data.getSerializableExtra(KeyUtils.SELECTED_MEDIA) as ArrayList<MiMedia>
                     Log.d(TAG, "onActivityResult: ${selectedMedia.size}")
                     if(selectedMedia.size > 0) {
-                        val file= File( selectedMedia[0].path!!)
-                        val filePath: String = file.path
-                        val bitmap = BitmapFactory.decodeFile(filePath)
-                        viewModel.claimImageList.add(bitmap)
                         viewModel.attachmentsList.add(selectedMedia[0].path!!)
 
                         refreshAttachments()
@@ -1245,44 +973,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             refreshPageListener.refreshPage()
         }
     }
-    private fun showImagePopup(imageUrl:String) {
-        val dialog = Dialog(requireContext())
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.image_popup_dialog)
 
-        val image = dialog.findViewById(R.id.itemImage) as ImageView
-        Glide.with(requireContext())
-            .load(imageUrl)
-            .apply(
-                RequestOptions()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .placeholder(R.drawable.mountains)
-                    .error(R.drawable.mountains)
-            )
-            .placeholder(R.drawable.mountains)
-            .error(R.drawable.mountains)
-            .into(image)
-
-
-        dialog.show()
-        val noBtn = dialog.findViewById(R.id.lnClose) as LinearLayout
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-    }
     override fun callback(action: String, data: Any, postion: Int) {
-        if (action == "show") {
-            showImagePopup(data as String)
-        }
-        if (action == "remove") {
-           val size =data as Int
-            if(size<=0){
-                refreshAttachments()
-            }
-        }
     }
 }

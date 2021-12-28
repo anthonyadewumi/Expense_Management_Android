@@ -1,6 +1,7 @@
 package com.bonhams.expensemanagement.ui.claims.claimDetail
 
 import android.app.Dialog
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -13,26 +14,35 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
 import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
+import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsResponse
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.databinding.FragmentClaimDetailBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
-import com.bonhams.expensemanagement.utils.Constants
-import com.bonhams.expensemanagement.utils.Status
-import com.bonhams.expensemanagement.utils.Utils
+import com.bonhams.expensemanagement.utils.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.net.URL
 
 
-class ClaimDetailFragment() : Fragment() {
+class ClaimDetailFragment() : Fragment(), RecylerCallback {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -41,6 +51,7 @@ class ClaimDetailFragment() : Fragment() {
     private lateinit var binding: FragmentClaimDetailBinding
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private val mainViewModel: MainViewModel by activityViewModels()
+    private lateinit var splitedClaimDetails: ClaimDetailsResponse
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,13 +67,28 @@ class ClaimDetailFragment() : Fragment() {
         setupAttachmentRecyclerView()
         setupView()
         setClickListner()
+        setObserver()
+        getDetails()
+
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+
+    }
     fun setClaimDetails(detail: ClaimDetail?){
         detail?.let {
             claimDetail = it
         }
+    }
+    fun setObserver(){
+        mainViewModel.isRefresh?.observe(viewLifecycleOwner, {
+           if(it){
+               getDetails()
+               mainViewModel.isRefresh?.value=false
+           }
+        })
     }
 
     private fun setupView(){
@@ -77,7 +103,7 @@ class ClaimDetailFragment() : Fragment() {
                 binding.tvDepartment.text = claimDetail.department
                 binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                     claimDetail.createdOn,
-                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                 )
                 binding.tvCurrency.text = claimDetail.currencyTypeName
                 binding.tvTotalAmount.setText(claimDetail.currencySymbol+" "+claimDetail.totalAmount)
@@ -90,14 +116,14 @@ class ClaimDetailFragment() : Fragment() {
                     Constants.STATUS_PENDING -> {
                         binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorTextDarkGray))
 
-                      binding.lnRMReminder.visibility=View.VISIBLE
+                      binding.ivRMReminder.visibility=View.VISIBLE
                     }
                     Constants.STATUS_APPROVED -> {
                         binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorGreen))
                         binding.tvRMStatusDate.visibility=View.VISIBLE
                         binding.tvRMStatusDate.text = Utils.getFormattedDate(
                             claimDetail.rm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
 
                     }
@@ -106,7 +132,7 @@ class ClaimDetailFragment() : Fragment() {
                         binding.tvRMStatusDate.visibility=View.VISIBLE
                         binding.tvRMStatusDate.text = Utils.getFormattedDate(
                             claimDetail.rm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
 
                     }
@@ -114,7 +140,7 @@ class ClaimDetailFragment() : Fragment() {
                 when (claimDetail.financeMStatus) {
                     Constants.STATUS_PENDING -> {
                         binding.tvFMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorTextDarkGray))
-                        binding.lnFMReminder.visibility=View.VISIBLE
+                        binding.ivFMReminder.visibility=View.VISIBLE
 
 
                     }
@@ -124,7 +150,7 @@ class ClaimDetailFragment() : Fragment() {
 
                         binding.tvFMStatusDate.text = Utils.getFormattedDate(
                             claimDetail.fm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
 
                     }
@@ -133,7 +159,7 @@ class ClaimDetailFragment() : Fragment() {
                         binding.tvFMStatusDate.visibility=View.VISIBLE
                         binding.tvFMStatusDate.text = Utils.getFormattedDate(
                             claimDetail.fm_updation_date,
-                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                         )
                     }
                 }
@@ -142,10 +168,13 @@ class ClaimDetailFragment() : Fragment() {
                 binding.tvFMStatus.text = claimDetail.financeMStatus
                 binding.tvDescription.text = claimDetail.description
 
-                if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
-                        .isNotEmpty()
-                ) {
-                    viewModel.attachmentsList.add(claimDetail.attachments)
+                if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim().isNotEmpty()) {
+
+                    val attachment=claimDetail.attachments.split(",")
+                    attachment.forEach {
+                        viewModel.attachmentsList.add(it)
+                    }
+
                 }
             }
             refreshAttachments()
@@ -165,12 +194,19 @@ class ClaimDetailFragment() : Fragment() {
         })
     }
     private fun setClickListner() {
-        binding.tvRMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Reporting Manager for approval.","RM")
+        binding.ivRMReminder.setOnClickListener {
+            showReminderAlert("Are you sure you want to send reminder to the Reporting  Manager?","RM")
 
         }
-        binding.tvFMReminder.setOnClickListener {
-            showReminderAlert("We have sent a reminder to Finance Manager for approval.","FD")
+        binding.ivFMReminder.setOnClickListener {
+            showReminderAlert("Are you sure you want to send reminder to the Finance Manager?","FD")
+
+
+        }
+        binding.btnSplit.setOnClickListener {
+            val fragment = SplitClaimDetailsFragment()
+            fragment.setClaimRequestDetail(splitedClaimDetails)
+            (contextActivity as? MainActivity)?.addFragment(fragment)
 
         }
     }
@@ -182,7 +218,7 @@ class ClaimDetailFragment() : Fragment() {
             false
         )
         binding.rvAttachments.layoutManager = linearLayoutManager
-        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"detalis")
+        attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"detalis",this)
         binding.rvAttachments.adapter = attachmentsAdapter
     }
 
@@ -197,7 +233,61 @@ class ClaimDetailFragment() : Fragment() {
             binding.tvAttachments.visibility = View.INVISIBLE
         }
     }
+    private fun getDetails() {
+        val jsonObject = JsonObject().also {
+            it.addProperty("claim_id", claimDetail.id.toInt())
+        }
+        viewModel.getDetails(jsonObject,claimDetail.id).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                splitedClaimDetails=response
+                                if(splitedClaimDetails.splitedClaim?.isEmpty() == true){
+                                    binding.btnSplit.visibility=View.GONE
+                                }else{
+                                    binding.lnSplitAmount.visibility=View.GONE
+                                    var splittotalamount: Double = 0.0
+                                    splitedClaimDetails.splitedClaim?.forEach {
+                                        splittotalamount +=it.totalAmount.toDouble()
 
+                                    }
+                                  /*  try {
+                                        binding.tvSplitAmount.setText(claimDetail.currencySymbol+" "+splittotalamount)
+                                    } catch (e: Exception) {
+                                        binding.tvSplitAmount.setText(splittotalamount.toString())
+
+                                    }*/
+
+
+                                }
+                                try {
+                                    binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+splitedClaimDetails.main_claim?.netAmount)
+
+                                } catch (e: Exception) {
+                                    binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount.toString())
+
+
+                                }
+
+                                //setResponse(response)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        Log.e(TAG, "deleteClaim: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+
+                    }
+                }
+            }
+        })
+    }
     private fun deleteClaim(){
         viewModel.deleteClaim(viewModel.getDeleteClaimRequest(claimDetail)).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
@@ -330,8 +420,8 @@ class ClaimDetailFragment() : Fragment() {
             input.visibility = View.GONE
             title.text = resources.getString(R.string.reminder_claim)
             body.text = message
-            yesBtn.text = "OK"
-            //noBtn.text = resources.getString(R.string.cancel)
+            yesBtn.text = "Yes"
+           // noBtn.text = resources.getString(R.string.cancel)
 
             yesBtn.setOnClickListener {
                 dialog.dismiss()
@@ -340,8 +430,42 @@ class ClaimDetailFragment() : Fragment() {
                 else
                     Toast.makeText(activity, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
             }
-          //  noBtn.setOnClickListener { dialog.dismiss() }
+            noBtn.setOnClickListener { dialog.dismiss() }
             dialog.show()
+        }
+    }
+    private fun showImagePopup(imageUrl:String) {
+        val dialog = Dialog(requireContext())
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.image_popup_dialog)
+
+        val image = dialog.findViewById(R.id.itemImage) as ImageView
+        Glide.with(requireContext())
+            .load(imageUrl)
+            .apply(
+                RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+            )
+            .placeholder(R.drawable.mountains)
+            .error(R.drawable.mountains)
+            .into(image)
+
+
+        dialog.show()
+        val noBtn = dialog.findViewById(R.id.lnClose) as LinearLayout
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+    override fun callback(action: String, data: Any, postion: Int) {
+        if (action == "show") {
+            showImagePopup(data as String)
         }
     }
 

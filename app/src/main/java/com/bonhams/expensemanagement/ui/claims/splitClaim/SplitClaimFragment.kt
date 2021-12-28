@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -33,7 +34,11 @@ import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bonhams.expensemanagement.utils.Status
+import com.google.gson.Gson
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.io.File
 
 
 class SplitClaimFragment() : Fragment() , RecylerCallback {
@@ -51,6 +56,8 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     companion object {
        public var splitItmlist: MutableList<SplitClaimItem> = mutableListOf()
        public var totalAmount: Double=0.0
+       public var netAmount: Double=0.0
+       public var remaningAmount: Double=0.0
 
     }
     override fun onCreateView(
@@ -74,16 +81,37 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
 
     override fun onResume() {
         super.onResume()
-        println("call fregment")
-            viewModel.splitList.add("add more ")
-
-        binding.tvTotalAmount.setText(totalAmount.toString())
+        viewModel.splitList.add("add more ")
         splitAdapter.notifyDataSetChanged()
+        if(splitItmlist.isNotEmpty()) {
+            var splittotalamount: Double = 0.0
+
+            splitItmlist.forEachIndexed { index, splitClaimItem ->
+                println("totalAmount: ${splitClaimItem.totalAmount}")
+
+                splittotalamount += splitClaimItem.totalAmount.toDouble()
+
+            }
+            if (totalAmount < splittotalamount) {
+                Toast.makeText(requireContext(), "Net amount should be equal to Splits amount ", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                val totalCalculateamount = totalAmount - splittotalamount
+                remaningAmount=totalCalculateamount
+                binding.tvTotalAmount.setText(totalCalculateamount.toString())
+            }
+
+            viewModel.splitList.add("add more ")
+            splitAdapter.notifyDataSetChanged()
+        }
+       // binding.tvTotalAmount.setText(totalAmount.toString())
 
     }
     fun setClaimRequestDetail(request: NewClaimRequest){
         claimRequest = request
-        System.out.println("claimRequest: ${claimRequest.totalAmount}")
+        System.out.println("claimRequest totalAmount : ${claimRequest.totalAmount}")
+        System.out.println("claimRequest netAmount : ${claimRequest.netAmount}")
+
 
     }
     fun setCurrency(code: String,symbol:String){
@@ -97,16 +125,34 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
             val intent = Intent(requireActivity(), SplitClaimActivity::class.java)
             intent.putExtra("currencyCode", currencyCode)
             intent.putExtra("currencySymbol", currencySymbol)
+            intent.putExtra("groupId", claimRequest.expenseGroup)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
            // createNewSplitLayout()
         })
 
+        binding.tvTotalAmount.doAfterTextChanged {
+            if(binding.tvTotalAmount.text.isNotEmpty()){
+                if(binding.tvTotalAmount.text.toString()=="0.0"){
+                    binding.layoutAddSplit.visibility=View.GONE
+                }else{
+                    binding.layoutAddSplit.visibility=View.VISIBLE
+
+                }
+            }
+        }
+
         binding.btnSubmit.setOnClickListener(View.OnClickListener {
             contextActivity?.let {
                 if (NoInternetUtils.isConnectedToInternet(it))
-                    createNewClaim()
+                    if(binding.tvTotalAmount.text.toString().toDouble()>0){
+                        Toast.makeText(it, "Net amount should be equal to Splits amount", Toast.LENGTH_LONG).show()
+                      return@OnClickListener
+                    }else{
+                        createNewClaim()
+
+                    }
                 else
                     Toast.makeText(it, getString(R.string.check_internet_msg), Toast.LENGTH_SHORT).show()
             }
@@ -116,13 +162,19 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     private fun setupView(){
 //        binding.tvMerchantName.text = claimRequest.expenseCode
      //   binding.tvDate.text = claimRequest.dateSubmitted
-     //   binding.tvUserName.text = AppPreferences.fullName
+       binding.layoutTotalSplit.visibility=View.GONE
 
-        binding.tvTotalAmount.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
-        binding.tvTotalAmount.setLocale(currencyCode)
-        totalAmount=claimRequest.netAmount.toString().toDouble()
+        binding.tvTotalAmountCurrency.setText(currencySymbol)
+       // binding.tvTotalAmount.setLocale(currencyCode)
+        netAmount=claimRequest.netAmount.toString().toDouble()
+        remaningAmount=netAmount
+        //totalAmount=claimRequest.totalAmount.toString().toDouble()
+        val  totalAmountWithTax=claimRequest?.totalAmount.toString().toDouble()
+        val  taxAmount=claimRequest?.tax.toString().toDouble()
+        totalAmount =totalAmountWithTax-taxAmount
+
         //binding.tvTotalAmount.text = "$ "+totalAmount
-        binding.tvTotalAmount.setText(totalAmount.toString())
+        binding.tvTotalAmount.setText(netAmount.toString())
 
     }
 
@@ -324,18 +376,62 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
 
         }
         println("chk split item claimRequest :"+claimRequest.split.size)
+       // claimRequest.netAmount= remaningAmount.toString()
 
 
-      /*  if(!validateAllSplitDetails()){
-            onCreateClaimFailed()
-            return
+        val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("claim_type", "E")
+        for (photoPath in claimRequest.attachments) {
+            if (photoPath != null) {
+                val images = File(photoPath)
+                if (images.exists()) {
+                    builder.addFormDataPart("claimImage", images.name, RequestBody.create(MultipartBody.FORM, images))
+                }
+            }
         }
+        val mrequestBody: RequestBody = builder.build()
 
-        binding.btnSubmit.visibility = View.GONE
-*/
+        println("request dat:$mrequestBody")
+        viewModel.uploadClaimAttachement(mrequestBody).observe(viewLifecycleOwner, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                claimRequest.attachments=response.images
+                                setCreateClaimObserver(claimRequest)
 
-        claimRequest.netAmount= totalAmount.toString()
-        setCreateClaimObserver(claimRequest)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.btnSubmit.visibility = View.VISIBLE
+                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
+
+
+
+
+
+        /*  if(!validateAllSplitDetails()){
+              onCreateClaimFailed()
+              return
+          }
+
+          binding.btnSubmit.visibility = View.GONE
+  */
+
+       // setCreateClaimObserver(claimRequest)
     }
 
     private fun validateAllSplitDetails(): Boolean{
@@ -465,10 +561,36 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     }
 
     override fun callback(action: String, data: Any, postion: Int) {
-        val amount=data as Double
-        totalAmount += amount
-       // binding.tvTotalAmount.text = "$ "+totalAmount
-        binding.tvTotalAmount.setText(totalAmount.toString())
 
+        if(action=="remove") {
+            if (splitItmlist.isNotEmpty()) {
+                var splittotalamount: Double = 0.0
+
+                splitItmlist.forEachIndexed { index, splitClaimItem ->
+                    println("totalAmount: ${splitClaimItem.totalAmount}")
+
+                    splittotalamount += splitClaimItem.totalAmount.toDouble()
+
+                }
+                if (totalAmount < splittotalamount) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Split amount should not be greater to The net amount below ",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                } else {
+                    val totalCalculateamount = totalAmount - splittotalamount
+                    remaningAmount = totalCalculateamount
+                    binding.tvTotalAmount.setText(totalCalculateamount.toString())
+                }
+
+                viewModel.splitList.add("add more ")
+                splitAdapter.notifyDataSetChanged()
+            }else{
+                binding.tvTotalAmount.setText(netAmount.toString())
+                remaningAmount= netAmount
+            }
+        }
     }
 }

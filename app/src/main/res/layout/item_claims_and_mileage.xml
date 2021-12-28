@@ -27,9 +27,11 @@
                 android:layout_weight=".3"
                 android:layout_height="match_parent">
                 <ImageView
+                    android:id="@+id/ivClaimImage"
                     android:layout_width="match_parent"
-                    android:background="@drawable/ic_baseline_receipt_24"
-                    android:layout_height="match_parent"/>
+                    android:scaleType="fitXY"
+                    android:background="@drawable/mountains"
+                    android:layout_height="@dimen/_110sdp"/>
 
             </LinearLayout>
 

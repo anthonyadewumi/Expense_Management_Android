@@ -9,7 +9,7 @@ class Constants {
         const val YYYY_MM_DD_SERVER_REQUEST_FORMAT = "yyyy/MM/dd"
         const val YYYY_MM_DD_SERVER_RESPONSE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
         const val DD_MMM_YYYY_FORMAT = "dd MMM yyyy"
-
+        const val MMM_DD_YYYY_FORMAT = "MMM dd yyyy"
         const val NETWORK_PAGE_SIZE = 10
 
         const val STATUS_APPROVED = "Approved"

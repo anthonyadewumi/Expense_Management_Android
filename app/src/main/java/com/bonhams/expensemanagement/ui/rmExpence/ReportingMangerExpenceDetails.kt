@@ -42,6 +42,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
     private var taxcodeId: String = ""
     private var requestid: String = "0"
     private var empname: String = ""
+    private var currency_type: String = ""
     private lateinit var expencesListAdapter: ExpencesDetailsListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,13 +52,20 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
         val bundle: Bundle? = intent.extras
         requestid = intent.getStringExtra("employeeId").toString()
         empname = intent.getStringExtra("employeeName").toString()
+        currency_type = intent.getStringExtra("currency_type").toString()
+
+
         setupViewModel()
         setClickListeners()
-        setDropdownDataObserver("")
         setupView()
         initSearch()
     }
 
+    override fun onResume() {
+        super.onResume()
+        setDropdownDataObserver("")
+
+    }
     private fun setupView(){
         binding.chkAll.text = empname
     }
@@ -121,6 +129,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
     private fun setDropdownDataObserver(serchkey:String) {
        val data= JsonObject()
         data.addProperty("requestId",requestid.toInt())
+        data.addProperty("currency_type",currency_type)
         viewModel.getRequestExpencesDetails(data).observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
@@ -219,13 +228,14 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
 
     override fun callback(action: String, data: Any, postion: Int) {
         try {
-
             if(action == "checked"){
                 idList.add((data as ExpenceDetailsData).requestId)
                 showStatusFilterBottomSheet()
             }else if(action == "details") {
 
                 val fp = Intent(this, RequestClaimDetails::class.java)
+                fp.putExtra("Details",(data as ExpenceDetailsData))
+                fp.putExtra("employeeId",requestid)
                 startActivity(fp)
             }else{
                 idList.remove((data as ExpenceDetailsData).requestId)

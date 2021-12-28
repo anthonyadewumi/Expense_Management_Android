@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.databinding.MaterialPageBinding
 import com.bonhams.expensemanagement.utils.RecylerCallback
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 
-class ImagePager2Adapter(var context: Context,var recylerCallback: RecylerCallback
+class ImagePager2Adapter(var context: Context,var recylerCallback: RecylerCallback,var attachmentList: ArrayList<String>
 ) : RecyclerView.Adapter<ImagePager2Adapter.ViewHolder>() {
 
 
@@ -28,13 +30,22 @@ class ImagePager2Adapter(var context: Context,var recylerCallback: RecylerCallba
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.itemImage.setOnClickListener {
-            recylerCallback.callback("show","Image",position)
+            recylerCallback.callback("show",attachmentList[position],position)
 
         }
-
+        Glide.with(context)
+            .load(attachmentList[position])
+            .apply(
+                RequestOptions()
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+            )
+            .placeholder(R.drawable.mountains)
+            .error(R.drawable.mountains)
+            .into(holder.binding.itemImage)
     }
 
-    override fun getItemCount() = 3
+    override fun getItemCount() = attachmentList.size
 
 
     inner class ViewHolder(val binding: MaterialPageBinding) :

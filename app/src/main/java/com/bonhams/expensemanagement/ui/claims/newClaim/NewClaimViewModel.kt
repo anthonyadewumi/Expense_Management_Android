@@ -1,5 +1,6 @@
 package com.bonhams.expensemanagement.ui.claims.newClaim
 
+import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -9,10 +10,12 @@ import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 
 class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : ViewModel() {
 
-    lateinit var expenseGroupList: List<ExpenseGroup>
+    var expenseGroupList: MutableList<ExpenseGroup> = mutableListOf<ExpenseGroup>()
     var expenseTypeList: MutableList<ExpenseType> = mutableListOf<ExpenseType>()
     lateinit var expenseTypeListExpenseGroup: List<ExpenseType>
     lateinit var departmentListCompany: List<Department>
@@ -28,7 +31,7 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
 
     //var attachmentsList: List<String> = mutableListOf()
     var attachmentsList: MutableList<String?> = mutableListOf<String?>()
-    var claimImageList: MutableList<String?> = mutableListOf<String?>()
+    var claimImageList: MutableList<Bitmap> = mutableListOf<Bitmap>()
     fun createNewClaim(newClaimRequest: NewClaimRequest) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -37,10 +40,18 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
-    fun uploadClaimAttachement(claimImage :List<MultipartBody.Part>) = liveData(Dispatchers.IO) {
+    fun uploadClaimAttachement(newClaimRequest: RequestBody) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
-            emit(Resource.success(data = newClaimRepository.uploadImage(claimImage)))
+            emit(Resource.success(data = newClaimRepository.uploadImage(newClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun uploadClaim(claimImage :List<MultipartBody.Part>) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = newClaimRepository.uploadClaim(claimImage)))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
@@ -83,7 +94,7 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
         }
 
         newClaimRequest.attachments = attachments
-      //  newClaimRequest.claimImage = claimImage
+      // newClaimRequest.claimImage = claimImage
         return newClaimRequest
     }
 
@@ -92,10 +103,6 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
 
         if(newClaimRequest.title.isNullOrEmpty())
             isValid = Pair(false, R.string.please_enter_company_numer)
-        else if(newClaimRequest.expenseGroup.isNullOrEmpty())
-            isValid = Pair(false, R.string.please_select_expense_group)
-        else if(newClaimRequest.expenseType.isNullOrEmpty())
-            isValid = Pair(false, R.string.please_select_expense_type)
         else if(newClaimRequest.department.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_department)
         else if(newClaimRequest.currency.isNullOrEmpty())

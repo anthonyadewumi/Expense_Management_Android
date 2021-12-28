@@ -5,7 +5,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.bonhams.expensemanagement.data.services.requests.ClaimsRequest
+import com.bonhams.expensemanagement.data.services.responses.TotalClaimedData
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.Resource
+import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -17,6 +21,7 @@ class ClaimsViewModel(private val claimsByPageRepository: ClaimsByPageRepository
 
     private val datePicker = MutableLiveData<Any?>()
     private val statusPicker = MutableLiveData<Any?>()
+    lateinit var totalClaimedList: List<TotalClaimedData>
 
     companion object {
         const val KEY_CLAIMS = "claims_list"
@@ -84,4 +89,14 @@ class ClaimsViewModel(private val claimsByPageRepository: ClaimsByPageRepository
         claimListRequest.toDate  = (datePicker.value as Pair<*, *>?)?.second as String?
         return claimListRequest
     }
+
+    fun getClaimedTotal(requestObject: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = claimsByPageRepository.getClaimedTotal(requestObject)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
 }

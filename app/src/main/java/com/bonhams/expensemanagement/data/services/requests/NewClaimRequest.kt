@@ -1,6 +1,8 @@
 package com.bonhams.expensemanagement.data.services.requests
 
+import android.graphics.Bitmap
 import com.bonhams.expensemanagement.data.model.SplitClaimDetail
+import java.io.File
 
 class NewClaimRequest {
     var title: String? = ""

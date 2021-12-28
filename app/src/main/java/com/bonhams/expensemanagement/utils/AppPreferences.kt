@@ -21,13 +21,19 @@ object AppPreferences {
     private val LAST_NAME = Pair("last_name", "")
     private val EMAIL = Pair("email", "")
     private val DEPARTMENT = Pair("departmentName", "")
+    private val DEPARTMENTID = Pair("departmentId", "")
     private val COMPANY = Pair("companyName", "")
+    private val COMPANYID = Pair("companyId", "")
+    private val CARID = Pair("carId", "")
+    private val CARTYPE = Pair("carType", "")
     private val USERTYPE = Pair("userType", "")
     private val PHONE_NUMBER = Pair("phone_number", "")
     private val PROFILE_PIC = Pair("profile_pic", "")
     private val GPS_START_DATE = Pair("gps_start_date", "")
     private val GPS_START_LOCATION = Pair("gps_start_location", "")
     private val GPS_START = Pair("gps_start", "start")
+    private val LEDGER_ID = Pair("ledger_id", "")
+    private val CLAIMED_MILES = Pair("claimed_mils", " ")
 
     fun init(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -113,6 +119,16 @@ object AppPreferences {
         set(value) = prefs.edit {
             it.putString(LAST_NAME.first, value)
         }
+    var ledgerId: String
+        get() = prefs.getString(LEDGER_ID.first, LEDGER_ID.second)!!
+        set(value) = prefs.edit {
+            it.putString(LEDGER_ID.first, value)
+        }
+    var claimedMils: String
+        get() = prefs.getString(CLAIMED_MILES.first, CLAIMED_MILES.second)!!
+        set(value) = prefs.edit {
+            it.putString(CLAIMED_MILES.first, value)
+        }
 
     var email: String
         get() = prefs.getString(EMAIL.first, EMAIL.second)!!
@@ -124,6 +140,21 @@ object AppPreferences {
         set(value) = prefs.edit {
             it.putString(COMPANY.first, value)
         }
+    var carId: String
+        get() = prefs.getString(CARID.first, CARID.second)!!
+        set(value) = prefs.edit {
+            it.putString(CARID.first, value)
+        }
+    var carType: String
+        get() = prefs.getString(CARTYPE.first, CARTYPE.second)!!
+        set(value) = prefs.edit {
+            it.putString(CARTYPE.first, value)
+        }
+    var companyId: String
+        get() = prefs.getString(COMPANYID.first, COMPANYID.second)!!
+        set(value) = prefs.edit {
+            it.putString(COMPANYID.first, value)
+        }
     var userType: String
         get() = prefs.getString(USERTYPE.first, USERTYPE.second)!!
         set(value) = prefs.edit {
@@ -133,6 +164,11 @@ object AppPreferences {
         get() = prefs.getString(DEPARTMENT.first, DEPARTMENT.second)!!
         set(value) = prefs.edit {
             it.putString(DEPARTMENT.first, value)
+        }
+    var departmentID: String
+        get() = prefs.getString(DEPARTMENTID.first, DEPARTMENTID.second)!!
+        set(value) = prefs.edit {
+            it.putString(DEPARTMENTID.first, value)
         }
 
     var phoneNumber: String
@@ -181,6 +217,7 @@ var gpsStartLocation: String
                 it.remove(GPS_START_LOCATION.first)
                 it.remove(GPS_START.first)
                 it.remove(GPS_START_DATE.first)
+                it.remove(LEDGER_ID.first)
             }
         }
         else { // User did not select remember me. Clear all details

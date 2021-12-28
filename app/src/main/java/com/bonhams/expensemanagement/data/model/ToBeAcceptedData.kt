@@ -16,6 +16,8 @@ data class ToBeAcceptedData(
     val totalAmount: Double = 0.0,
     @SerializedName("totalClaims")
     val totalClaims: Int = 0,
+    @SerializedName("currency_type")
+    val currency_type: String = "",
     @SerializedName("lastestSubmissionDate")
     val lastestSubmissionDate: String = "",
 

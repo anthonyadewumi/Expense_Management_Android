@@ -5,6 +5,7 @@ import com.bonhams.expensemanagement.data.services.requests.MileageExpenseReques
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.google.gson.JsonObject
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 
 class ExpenceRepository(private val apiHelper: ApiHelper) {
@@ -14,5 +15,5 @@ class ExpenceRepository(private val apiHelper: ApiHelper) {
     suspend fun getRequestExpencesDetails(mileageExpenseRequest: JsonObject) = apiHelper.getRequestExpencesDetails(mileageExpenseRequest)
     suspend fun acceptReject(data: JsonObject) = apiHelper.acceptReject(data)
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiHelper.createNewClaim(newClaimRequest)
-    suspend fun uploadImage(claimImage :List<MultipartBody.Part>) = apiHelper.uploadImage(claimImage)
+    suspend fun uploadImage(newClaimRequest: RequestBody) = apiHelper.uploadImage(newClaimRequest)
 }

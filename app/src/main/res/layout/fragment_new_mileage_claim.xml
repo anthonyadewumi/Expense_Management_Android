@@ -86,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="@string/company_name"
+                android:text="@string/company_number"
                 style="@style/TextRegular11"
                 android:textColor="@color/colorTextBlack"
                />
@@ -110,6 +110,7 @@
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_weight="2"
+            android:visibility="gone"
             android:gravity="center"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_height="wrap_content">
@@ -316,7 +317,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="@string/merchant_name_star"
+                android:text="@string/ledger_id_star"
                 style="@style/TextRegular11"
                 android:textColor="@color/colorTextBlack"
                 />
@@ -327,9 +328,10 @@
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_28sdp"
-                android:hint="@string/merchant_name"
+                android:hint="@string/ledger_id"
                 android:imeOptions="actionNext"
                 android:inputType="text"
+                android:enabled="false"
                 style="@style/TextRegular11"
                 android:textColor="@color/colorTextBlack"
                 android:background="@drawable/round_border_app_light_bg"
@@ -487,6 +489,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
+                 android:visibility="gone"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_height="wrap_content">
 
@@ -561,7 +564,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="@string/claimed_miles_star"
+                android:text="@string/calculated_miles_star"
                 style="@style/TextRegular11"
                 android:textColor="@color/colorTextBlack"
                />
@@ -572,7 +575,7 @@
                 android:layout_weight="1.5"
                 android:layout_height="@dimen/_28sdp"
                 android:minHeight="@dimen/_28sdp"
-                android:hint="@string/claimed_miles"
+                android:hint="@string/claculated_miles"
                 android:imeOptions="actionNext"
                 android:inputType="number"
                 android:editable="false"
@@ -581,13 +584,107 @@
                 android:gravity="center|start"
 
                 android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
+                android:background="@drawable/round_border_app_light_bg"
                 android:textSize="@dimen/_10sdp"
                 android:padding="@dimen/_5sdp"
                 android:layout_gravity="center_vertical"
                 />
             </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_weight="2"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TextRegular11"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/total_claimed_mileage"
+                        android:textColor="@color/colorTextBlack" />
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/round_border_gray_white_bg">
+
+                        <TextView
+                            android:id="@+id/tvCTotalClaimedMiles"
+                            style="@style/TextRegular11"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center|start"
+                            android:minHeight="@dimen/_28sdp"
+                            android:padding="@dimen/_5sdp"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="@dimen/_10sdp" />
+                        <TextView
+                            android:id="@+id/tvotalClaimedDate"
+                            style="@style/TextRegular11"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentEnd="true"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center|start"
+                            android:hint="@string/date"
+                            android:minHeight="@dimen/_28sdp"
+                            android:padding="@dimen/_5sdp"
+                            android:textColor="@color/colorTextBlack"
+                            android:textSize="@dimen/_10sdp"
+                           />
+
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/txtMilesKmManuaaly"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/claimed_miles_star"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        />
+
+                    <EditText
+                        android:id="@+id/edtClaimedMiles2"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.5"
+                        android:layout_height="@dimen/_28sdp"
+                        android:minHeight="@dimen/_28sdp"
+                        android:hint="@string/claimed_miles"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:editable="true"
+                        android:enabled="true"
+                        style="@style/TextRegular11"
+                        android:gravity="center|start"
+
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/round_border_gray_white_bg"
+                        android:textSize="@dimen/_10sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_gravity="center_vertical"
+                        />
+                </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -705,9 +802,44 @@
                 android:textColor="@color/colorTextBlack"
                 />
 
+     <LinearLayout
+         android:layout_width="0dp"
+         android:layout_weight="1.5"
+         android:weightSum="1"
+         android:background="@drawable/round_border_app_light_bg"
+         android:layout_height="@dimen/_28sdp"
+         android:minHeight="@dimen/_28sdp">
+         <TextView
+             android:id="@+id/tvPetrolAmountCurrency"
+             android:layout_width="wrap_content"
+             android:gravity="center"
+             android:layout_height="match_parent"
+             android:text="$"
+             android:layout_marginLeft="@dimen/_4sdp"
+             style="@style/TextRegular11"
+             android:textColor="@color/colorTextBlack"
+             />
+         <EditText
+             android:id="@+id/edtPetrolAmount"
+             android:layout_width="0dp"
+             android:layout_weight=".8"
+             android:layout_marginLeft="@dimen/_4sdp"
+             android:gravity="center|start"
+             android:hint="0.0"
+             android:inputType="numberDecimal"
+             android:layout_height="match_parent"
+             android:background="@color/colorTransparent"
+             style="@style/TextRegular11"
+             android:textColor="@color/colorTextBlack"
+             />
+
+     </LinearLayout>
+
+
      <com.cottacush.android.currencyedittext.CurrencyEditText
-                android:id="@+id/edtPetrolAmount"
+                android:id="@+id/edtPetrolAmounts"
                 android:layout_width="0dp"
+                android:visibility="gone"
                 android:layout_weight="1.5"
                 android:layout_height="@dimen/_28sdp"
                 android:minHeight="@dimen/_28sdp"
@@ -719,9 +851,9 @@
                 android:textSize="@dimen/_10sdp"
                 android:padding="@dimen/_5sdp"
                 android:gravity="center|start"
-         android:digits="0123456789"
-         app:currencySymbol="$"
-         android:inputType="number"
+                android:digits="0123456789"
+                app:currencySymbol="$"
+                android:inputType="number"
                 android:layout_gravity="center_vertical"
                 android:autofillHints="" />
  </LinearLayout>
@@ -733,6 +865,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_height="wrap_content">
             <TextView
+                android:id="@+id/txtPetrolAmountCurrency"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -740,10 +873,43 @@
                 style="@style/TextRegular11"
                 android:textColor="@color/colorTextBlack"
                 />
+     <LinearLayout
+         android:layout_width="0dp"
+         android:layout_weight="1.5"
+         android:weightSum="1"
+         android:background="@drawable/round_border_app_light_bg"
+         android:layout_height="@dimen/_28sdp"
+         android:minHeight="@dimen/_28sdp">
+         <TextView
+             android:id="@+id/tvParkAmountCurrency"
+             android:layout_width="wrap_content"
+             android:gravity="center"
+             android:layout_height="match_parent"
+             android:text="$"
+             android:layout_marginLeft="@dimen/_4sdp"
+             style="@style/TextRegular11"
+             android:textColor="@color/colorTextBlack"
+             />
+         <EditText
+             android:id="@+id/edtParkAmount"
+             android:layout_width="0dp"
+             android:layout_weight=".8"
+             android:layout_marginLeft="@dimen/_4sdp"
+             android:gravity="center|start"
+             android:hint="0.0"
+             android:inputType="numberDecimal"
+             android:layout_height="match_parent"
+             android:background="@color/colorTransparent"
+             style="@style/TextRegular11"
+             android:textColor="@color/colorTextBlack"
+             />
+
+     </LinearLayout>
 
      <com.cottacush.android.currencyedittext.CurrencyEditText
-                android:id="@+id/edtParkAmount"
+                android:id="@+id/edtParkAmounts"
                 android:layout_width="0dp"
+         android:visibility="gone"
                 android:layout_weight="1.5"
                 android:layout_height="@dimen/_28sdp"
                 android:minHeight="@dimen/_28sdp"
@@ -755,9 +921,9 @@
                 android:textSize="@dimen/_10sdp"
                 android:padding="@dimen/_5sdp"
                 android:gravity="center|start"
-         android:digits="0123456789"
-         app:currencySymbol="$"
-         android:inputType="number"
+                android:digits="0123456789"
+                app:currencySymbol="$"
+                android:inputType="number"
                 android:layout_gravity="center_vertical"
                 />
  </LinearLayout>
@@ -777,10 +943,46 @@
                 android:textColor="@color/colorTextBlack"
                 />
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:weightSum="1"
+        android:background="@drawable/round_border_app_light_bg"
+        android:layout_height="@dimen/_28sdp"
+        android:minHeight="@dimen/_28sdp">
+        <TextView
+            android:id="@+id/tvTotalAmountCurrency"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:text="$"
+            android:layout_marginLeft="@dimen/_4sdp"
+            style="@style/TextRegular11"
+            android:textColor="@color/colorTextBlack"
+            />
+        <EditText
+            android:id="@+id/edtTotalAmount"
+            android:layout_width="0dp"
+            android:layout_weight=".8"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:gravity="center|start"
+            android:hint="0.0"
+            android:enabled="false"
+            android:inputType="none"
+            android:layout_height="match_parent"
+            android:background="@color/colorTransparent"
+            style="@style/TextRegular11"
+            android:textColor="@color/colorTextBlack"
+            />
+
+    </LinearLayout>
+
+
     <com.cottacush.android.currencyedittext.CurrencyEditText
-                android:id="@+id/edtTotalAmount"
+                android:id="@+id/edtTotalAmounts"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
+                 android:visibility="gone"
                 android:layout_height="@dimen/_28sdp"
                 android:minHeight="@dimen/_28sdp"
                 android:hint="@string/total_amount"
@@ -817,6 +1019,21 @@
                         style="@style/TextRegular11"
                         android:textColor="@color/colorTextBlack"
                         />
+                <Spinner
+                    android:id="@+id/spntaxcode"
+                    android:layout_width="0dp"
+                    android:layout_weight="1.5"
+                    android:layout_height="@dimen/_28sdp"
+                    android:hint="@string/tax_code"
+                    style="@style/outlineBoxExposedDropdown"
+                    android:textColor="@color/colorTextBlack"
+                    android:background="@drawable/spinner_purple_bg"
+                    android:textSize="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:gravity="center|start"
+
+                    android:layout_gravity="center_vertical"
+                    />
 
                     <EditText
                         android:id="@+id/edtTaxcode"
@@ -829,6 +1046,7 @@
                         android:inputType="numberDecimal"
                         style="@style/TextRegular11"
                         android:enabled="false"
+                        android:visibility="gone"
                         android:textColor="@color/colorTextBlack"
                         android:background="@drawable/round_border_gray_white_bg"
                         android:textSize="@dimen/_10sdp"
@@ -856,11 +1074,44 @@
                         style="@style/TextRegular11"
                         android:textColor="@color/colorTextBlack"
                         />
-
-                <com.cottacush.android.currencyedittext.CurrencyEditText
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1.5"
+                    android:weightSum="1"
+                    android:background="@drawable/round_border_app_light_bg"
+                    android:layout_height="@dimen/_28sdp"
+                    android:minHeight="@dimen/_28sdp">
+                    <TextView
+                        android:id="@+id/tvTaxCurrency"
+                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_height="match_parent"
+                        android:text="$"
+                        android:layout_marginLeft="@dimen/_4sdp"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        />
+                    <EditText
                         android:id="@+id/edtTax"
                         android:layout_width="0dp"
+                        android:layout_weight=".8"
+                        android:layout_marginLeft="@dimen/_4sdp"
+                        android:gravity="center|start"
+                        android:text="0"
+                        android:inputType="numberDecimal"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorTransparent"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        />
+
+                </LinearLayout>
+
+                <com.cottacush.android.currencyedittext.CurrencyEditText
+                        android:id="@+id/edtTaxs"
+                        android:layout_width="0dp"
                         android:layout_weight="1.5"
+                        android:visibility="gone"
                         android:layout_height="@dimen/_28sdp"
                         android:minHeight="@dimen/_28sdp"
                         android:hint="@string/tax"
@@ -870,9 +1121,9 @@
                         android:background="@drawable/round_border_app_light_bg"
                         android:textSize="@dimen/_10sdp"
                         android:gravity="center|start"
-                    android:digits="0123456789"
-                    app:currencySymbol="$"
-                    android:inputType="number"
+                        android:digits="0123456789"
+                        app:currencySymbol="$"
+                        android:inputType="number"
                         android:padding="@dimen/_5sdp"
                         android:layout_gravity="center_vertical"
                         />
@@ -898,10 +1149,44 @@
                 style="@style/TextRegular11"
                 android:textColor="@color/colorTextBlack"
                />
+                 <LinearLayout
+                     android:layout_width="0dp"
+                     android:layout_weight="1.5"
+                     android:weightSum="1"
+                     android:background="@drawable/round_border_app_light_bg"
+                     android:layout_height="@dimen/_28sdp"
+                     android:minHeight="@dimen/_28sdp">
+                     <TextView
+                         android:id="@+id/tvNetAmountCurrency"
+                         android:layout_width="wrap_content"
+                         android:gravity="center"
+                         android:layout_height="match_parent"
+                         android:text="$"
+                         android:layout_marginLeft="@dimen/_4sdp"
+                         style="@style/TextRegular11"
+                         android:textColor="@color/colorTextBlack"
+                         />
+                     <EditText
+                         android:id="@+id/tvNetAmount"
+                         android:layout_width="0dp"
+                         android:layout_weight=".8"
+                         android:layout_marginLeft="@dimen/_4sdp"
+                         android:gravity="center|start"
+                         android:hint="0.0"
+                         android:enabled="false"
+                         android:inputType="numberDecimal"
+                         android:layout_height="match_parent"
+                         android:background="@color/colorTransparent"
+                         style="@style/TextRegular11"
+                         android:textColor="@color/colorTextBlack"
+                         />
+
+                 </LinearLayout>
 
                  <com.cottacush.android.currencyedittext.CurrencyEditText
-                android:id="@+id/tvNetAmount"
+                android:id="@+id/tvNetAmounts"
                 android:layout_width="0dp"
+                     android:visibility="gone"
                 android:layout_weight="1.5"
                 android:layout_height="@dimen/_28sdp"
                 android:minHeight="@dimen/_28sdp"
@@ -912,7 +1197,6 @@
                 android:textSize="@dimen/_10sdp"
                 android:gravity="center|start"
                      android:digits="0123456789"
-                     app:currencySymbol="$"
                      android:inputType="number"
                 android:padding="@dimen/_5sdp"
                 android:layout_gravity="center_vertical"
@@ -1008,9 +1292,9 @@
          android:layout_weight="1.5"
          android:layout_height="wrap_content"
          android:minHeight="@dimen/_58sdp"
-         android:hint="@string/aution_value"
+         android:hint="@string/description"
          android:imeOptions="actionNext"
-         android:inputType="numberDecimal"
+         android:inputType="textMultiLine"
          style="@style/TextRegular11"
          android:textColor="@color/colorTextBlack"
          android:background="@drawable/round_border_gray_white_bg"

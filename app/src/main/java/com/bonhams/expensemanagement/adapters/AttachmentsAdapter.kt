@@ -8,13 +8,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.databinding.ItemAttachmentBinding
+import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 
 class AttachmentsAdapter(
     var listAttachments: MutableList<String?>,
-    var callby:String
+    var callby:String,var recylerCallback: RecylerCallback
 ) : RecyclerView.Adapter<AttachmentsAdapter.ViewHolder>() {
 
     init {
@@ -28,7 +29,8 @@ class AttachmentsAdapter(
         val attachmentItem = listAttachments?.get(position)
         attachmentItem?.let { holder.bindItems(it) }
 
-            holder.removeItems(listAttachments, position,callby)
+            holder.removeItems(listAttachments, position,callby,recylerCallback)
+            holder.showItems(listAttachments, position,callby,recylerCallback)
 
     }
     override fun getItemCount(): Int {
@@ -50,18 +52,21 @@ class AttachmentsAdapter(
                 )
                 .placeholder(R.drawable.ic_default_media)
                 .error(R.drawable.ic_default_media)
-                .into(binding.ivAttachment);
+                .into(binding.ivAttachment)
         }
-        fun removeItems(listAttachments: MutableList<String?>?,postion:Int,callby:String) {
+        fun removeItems(listAttachments: MutableList<String?>?,postion:Int,callby:String,recylerCallback: RecylerCallback) {
 
             if(!callby.equals("detalis")) {
                 binding.ivDeleteCross.visibility=View.VISIBLE
 
                 binding.ivDeleteCross.setOnClickListener {
-                    System.out.println("remove at :$postion")
-                    System.out.println("remove listAttachments size :${listAttachments?.size}")
-
                     listAttachments?.removeAt(postion)
+                    listAttachments?.size?.let { it1 ->
+                        recylerCallback.callback("remove",
+                            it1,postion)
+                    }
+
+
                     System.out.println("remove listAttachments size :${listAttachments?.size}")
 
                     bindingAdapter?.notifyDataSetChanged()
@@ -69,6 +74,18 @@ class AttachmentsAdapter(
                 }else{
                     binding.ivDeleteCross.visibility=View.GONE
                 }
+            }
+                fun showItems(listAttachments: MutableList<String?>?,postion:Int,callby:String,recylerCallback: RecylerCallback) {
+
+
+                    binding.ivAttachment.setOnClickListener {
+                        listAttachments?.get(postion)?.let { it1 ->
+                            recylerCallback.callback("show",
+                                it1,position)
+                        }
+
+                    }
+
             }
 
 

@@ -174,9 +174,45 @@
                 android:textColor="@color/colorTextBlack"
                 />
 
+                 <LinearLayout
+                     android:layout_width="0dp"
+                     android:layout_weight="1.5"
+                     android:weightSum="1"
+                     android:background="@drawable/round_border_gray_white_bg"
+                     android:layout_height="@dimen/_28sdp"
+                     android:minHeight="@dimen/_28sdp">
+                     <TextView
+                         android:id="@+id/tvTotalAmountCurrency"
+                         android:layout_width="wrap_content"
+                         android:gravity="center"
+                         android:layout_height="match_parent"
+                         android:text="$"
+                         android:layout_marginLeft="@dimen/_4sdp"
+                         style="@style/TextRegular11"
+                         android:textColor="@color/colorTextBlack"
+                         />
+                     <EditText
+                         android:id="@+id/tvTotalAmount"
+                         android:layout_width="0dp"
+                         android:layout_weight=".8"
+                         android:layout_marginLeft="@dimen/_4sdp"
+                         android:gravity="center|start"
+                         android:hint="0.0"
+                         android:enabled="false"
+                         android:inputType="numberDecimal"
+                         android:layout_height="match_parent"
+                         android:background="@color/colorTransparent"
+                         style="@style/TextRegular11"
+                         android:textColor="@color/colorTextBlack"
+                         />
+
+                 </LinearLayout>
+
+
                  <com.cottacush.android.currencyedittext.CurrencyEditText
-                android:id="@+id/tvTotalAmount"
+                android:id="@+id/tvTotalAmounts"
                 android:layout_width="0dp"
+                     android:visibility="gone"
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/_28sdp"
@@ -407,9 +443,45 @@
                 android:id="@+id/rvsplit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:listitem="@layout/item_split_row"
+                tools:listitem="@layout/item_split_detalis_row"
                 android:layout_marginTop="@dimen/_5sdp"
                 />
+
+            <RelativeLayout
+                android:id="@+id/layoutTotalSplit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_alignParentEnd="true"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_amount"
+                    style="@style/TextMedium12"
+                    android:padding="@dimen/_5sdp"
+                    android:textColor="@color/secondary"
+                    />
+                <TextView
+                    android:id="@+id/totalSplitAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="500"
+                    android:layout_marginStart="@dimen/_7sdp"
+                    style="@style/TextMedium12"
+                    android:padding="@dimen/_5sdp"
+                    android:textColor="@color/secondary"
+                    android:drawablePadding="@dimen/_7sdp"/>
+                </LinearLayout>
+
+            </RelativeLayout>
+
 
             <RelativeLayout
                 android:id="@+id/layoutAddSplit"
@@ -468,7 +540,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_corner_theme"
-                    android:text="@string/submit"
+                    android:text="@string/done"
                     android:textAllCaps="false"
                     style="@style/TextRegular12"
                     android:textColor="@color/white"

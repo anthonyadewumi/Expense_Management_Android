@@ -95,7 +95,7 @@
                             android:background="@android:color/transparent"
                             style="@style/TextMedium12"
                             android:textColor="@color/white"
-                            android:text="Hello Wade!"/>
+                            android:text=""/>
 
                         <TextView
                             android:layout_width="wrap_content"

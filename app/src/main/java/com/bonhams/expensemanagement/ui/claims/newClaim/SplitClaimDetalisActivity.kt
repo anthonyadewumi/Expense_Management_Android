@@ -21,7 +21,6 @@ import com.bonhams.expensemanagement.databinding.ActivityLoginBinding
 import com.bonhams.expensemanagement.databinding.ActivitySplitClaimBinding
 import com.bonhams.expensemanagement.databinding.ActivitySplitClaimDetailsBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
-import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.splitItmlist
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.totalAmount
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
@@ -53,7 +52,7 @@ class SplitClaimDetalisActivity : BaseActivity() {
         binding.editDepartName.setText(item?.departmentName)
         binding.editExpenceType.setText(item?.expenceTypeName)
         binding.edtTotalAmount.setText(currencySymbol+" "+item?.totalAmount)
-        binding.edtTaxCode.setText(item?.taxcode)
+        binding.edtTaxCode.setText(""+item?.taxCodeValue)
         binding.edtTax.setText(currencySymbol+" "+item?.tax.toString())
         binding.edtAutionSales.setText(item?.auctionSales)
         binding.editExpenceCode.setText(item?.expenceCode)
@@ -68,9 +67,6 @@ class SplitClaimDetalisActivity : BaseActivity() {
         binding.lnCancel.setOnClickListener { finish() }
 
     }
-
-
-
 
 
 }

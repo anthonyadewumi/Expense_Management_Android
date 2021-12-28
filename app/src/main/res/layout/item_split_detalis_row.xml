@@ -19,6 +19,7 @@
                 android:layout_height="@dimen/_25sdp"
                 app:tint="@color/colorRed"
                 android:layout_gravity="center"
+                android:visibility="invisible"
                 android:src="@drawable/ic_baseline_remove_circle_24"
                 android:padding="@dimen/_5sdp"
                 android:layout_alignParentEnd="true"
@@ -90,21 +91,37 @@
                 android:orientation="vertical"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content">
-                <com.cottacush.android.currencyedittext.CurrencyEditText
-                    android:id="@+id/tvamount"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="@dimen/_5sdp"
-                    style="@style/TextRegular12"
-                    android:text="@string/amount"
-                    android:inputType="number"
-                    android:enabled="false"
-                    app:currencySymbol="$"
-                    android:padding="@dimen/_5sdp"
-                    android:textColor="@color/secondary"
-                    android:gravity="center|start"
-                    android:maxLines="2"
-                    android:ellipsize="end"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvCurrencySymbol"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="false"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        style="@style/TextMedium12"
+                        android:textColor="@color/secondary" />
+
+
+                    <com.cottacush.android.currencyedittext.CurrencyEditText
+                        android:id="@+id/tvamount"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        style="@style/TextRegular12"
+                        android:text="@string/amount"
+                        android:inputType="number"
+                        android:padding="@dimen/_5sdp"
+                        android:textColor="@color/secondary"
+                        android:gravity="center|start"
+                        android:ellipsize="end"/>
+
+
+                </LinearLayout>
 
             </LinearLayout>
 

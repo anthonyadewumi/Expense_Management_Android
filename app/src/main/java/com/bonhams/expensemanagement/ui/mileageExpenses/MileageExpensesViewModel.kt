@@ -5,7 +5,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.bonhams.expensemanagement.data.model.MileageDetail
 import com.bonhams.expensemanagement.data.services.requests.MileageExpenseRequest
+import com.bonhams.expensemanagement.data.services.responses.TotalClaimedData
 import com.bonhams.expensemanagement.utils.Constants
+import com.bonhams.expensemanagement.utils.Resource
+import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -16,6 +20,7 @@ class MileageExpensesViewModel(private val mileageExpensesByPageRepository: Mile
 
     private val datePicker = MutableLiveData<Any?>()
     private val statusPicker = MutableLiveData<Any?>()
+    lateinit var totalClaimedList: List<TotalClaimedData>
 
     companion object {
         const val KEY_CLAIMS = "expenses_list"
@@ -71,7 +76,14 @@ class MileageExpensesViewModel(private val mileageExpensesByPageRepository: Mile
         savedStateHandle.set(KEY_CLAIMS, "")
     }
 
-
+    fun getClaimedTotal(requestObject: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mileageExpensesByPageRepository.getClaimedTotal(requestObject)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
     fun getMileageListRequest(search: String): MileageExpenseRequest {
         val expenseRequest = MileageExpenseRequest()
         expenseRequest.searchKey = search

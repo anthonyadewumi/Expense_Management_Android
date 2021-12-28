@@ -29,12 +29,19 @@ class Utils {
             return str
         }
 
-        fun getFormattedDate(dateStr: String, inputFormat: String): String {
+        fun getFormattedDate(dateStr: String, inputFormat: String,countryFormat:String): String {
             val inputFormatter = SimpleDateFormat(inputFormat)
             if (dateStr.trim().isNotEmpty()) {
                 val date = inputFormatter.parse(dateStr)
                 date?.let {
-                    val formatter = SimpleDateFormat(Constants.DD_MMM_YYYY_FORMAT)
+                    var dateFomate=""
+                    dateFomate = if(countryFormat=="USA") {
+                        Constants.DD_MMM_YYYY_FORMAT
+                    }else{
+                        Constants.MMM_DD_YYYY_FORMAT
+
+                    }
+                    val formatter = SimpleDateFormat(dateFomate)
                     return formatter.format(date)
                 }
             }
@@ -56,6 +63,18 @@ class Utils {
         fun getDateInDisplayFormat(epoch: Long): String {
             val date = Date(epoch)
             val formatter = SimpleDateFormat(Constants.DD_MMM_YYYY_FORMAT)
+            return formatter.format(date)
+        }
+        fun getDateInDisplayFormatWithCountry(epoch: Long,countryFormat:String): String {
+            val date = Date(epoch)
+            var dateFomate=""
+            dateFomate = if(countryFormat=="USA") {
+                Constants.MMM_DD_YYYY_FORMAT
+            }else{
+                Constants.DD_MM_YYYY_FORMAT
+
+            }
+            val formatter = SimpleDateFormat(dateFomate)
             return formatter.format(date)
         }
 

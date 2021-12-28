@@ -39,6 +39,7 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.BlankFragment
 import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
@@ -52,6 +53,7 @@ import com.bonhams.expensemanagement.ui.notification.NotificationFragment
 import com.bonhams.expensemanagement.ui.rmExpence.ExpenceToBeAccepted
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -179,6 +181,20 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        println("profile img ${AppPreferences.profilePic}")
+        Glide.with(this)
+            .load(AppPreferences.profilePic)
+            .apply(
+                RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.ic_default_user)
+                    .error(R.drawable.ic_default_user)
+            )
+            .placeholder(R.drawable.ic_default_user)
+            .error(R.drawable.ic_default_user)
+            .circleCrop()
+            .into(binding.navDrawerProfilePic)
         myProfile()
 
     }
@@ -341,18 +357,20 @@ class MainActivity : BaseActivity() {
         binding.navDrawerTitle.text = AppPreferences.fullName
         binding.navDrawerDescription.text = AppPreferences.email
         binding.tvNavDrawerAppVersion.text = "Version: ${BuildConfig.VERSION_NAME}(${BuildConfig.VERSION_CODE})"
-
+      /*println("profile img ${AppPreferences.profilePic}")
         Glide.with(this)
             .load(AppPreferences.profilePic)
             .apply(
                 RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
                     .placeholder(R.drawable.ic_default_user)
                     .error(R.drawable.ic_default_user)
             )
             .placeholder(R.drawable.ic_default_user)
             .error(R.drawable.ic_default_user)
             .circleCrop()
-            .into(binding.navDrawerProfilePic)
+            .into(binding.navDrawerProfilePic)*/
 
         // Setup Recyclerview's Layout
         binding.navDrawerRv.layoutManager = LinearLayoutManager(this)
@@ -361,7 +379,19 @@ class MainActivity : BaseActivity() {
         // Add Item Touch Listener
         binding.navDrawerRv.addOnItemTouchListener(RecyclerTouchListener(this, object : ClickListener {
             override fun onClick(view: View, position: Int) {
-
+            /*    Glide.with(this@MainActivity)
+                    .load(AppPreferences.profilePic)
+                    .apply(
+                        RequestOptions()
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .placeholder(R.drawable.ic_default_user)
+                            .error(R.drawable.ic_default_user)
+                    )
+                    .placeholder(R.drawable.ic_default_user)
+                    .error(R.drawable.ic_default_user)
+                    .circleCrop()
+                    .into(binding.navDrawerProfilePic)*/
                 /*when (navDrawerItems[position].title) {
                     "Expense"->{
 
@@ -546,6 +576,21 @@ class MainActivity : BaseActivity() {
         finish()
     }
     private fun myProfile(){
+
+        println("profile img ${AppPreferences.profilePic}")
+        Glide.with(this)
+            .load(AppPreferences.profilePic)
+            .apply(
+                RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.ic_default_user)
+                    .error(R.drawable.ic_default_user)
+            )
+            .placeholder(R.drawable.ic_default_user)
+            .error(R.drawable.ic_default_user)
+            .circleCrop()
+            .into(binding.navDrawerProfilePic)
         viewModel.myprofile().observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
@@ -554,6 +599,9 @@ class MainActivity : BaseActivity() {
                             if(response.message.equals("invalid signature")||response.message.equals("Invalid token")){
                                 showforceLogoutAlert()
 
+                            }else{
+                                println("total claimed miles :"+response.profileDetail?.distance_covered)
+                                AppPreferences.claimedMils = response.profileDetail?.distance_covered ?: "0"
                             }
                         }
                     }
@@ -759,6 +807,11 @@ class MainActivity : BaseActivity() {
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
                 }
+                else if(fragName.equals(SplitClaimDetailsFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.split_expenses_details))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
                 else if(fragName.equals(ClaimDetailFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.claim_details))
                     showAppbarBackButton(true)
@@ -794,7 +847,6 @@ class MainActivity : BaseActivity() {
                 }
                 else if(fragName.equals(MyProfileFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.profile))
-
                     hideAppbarBackAndMenu(true)
                     showAppbarEdit(true)
                     showBottomNavbar(true)

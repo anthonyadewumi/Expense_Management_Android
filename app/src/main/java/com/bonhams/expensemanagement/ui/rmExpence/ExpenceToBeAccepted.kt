@@ -20,6 +20,7 @@ import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
 import com.bonhams.expensemanagement.databinding.ActivityExpenceAcceptedBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils
 import com.google.android.material.datepicker.CalendarConstraints
@@ -117,6 +118,8 @@ class ExpenceToBeAccepted : BaseActivity() {
     }
     private fun setClickListeners(){
       //  binding.appbarGreeting.text="rtio"
+        binding.appbarGreeting.text = "Hello ${AppPreferences.firstName}!"
+
         binding.layoutAppBarSearch.setOnClickListener {
             if(binding.tilSearchClaim.isVisible){
                 binding.tilSearchClaim.visibility=View.GONE

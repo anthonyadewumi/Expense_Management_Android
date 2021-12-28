@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
     var responseLogout: MutableLiveData<LogoutResponse>? = null
     var appbarSearchClick: MutableLiveData<Boolean>? = MutableLiveData(false)
+    var isRefresh: MutableLiveData<Boolean>? = MutableLiveData(false)
     var appbarMenuClick: MutableLiveData<View>? = MutableLiveData()
     var appbarEditClick: MutableLiveData<View>? = MutableLiveData()
     var appbarSaveClick: MutableLiveData<View>? = MutableLiveData()

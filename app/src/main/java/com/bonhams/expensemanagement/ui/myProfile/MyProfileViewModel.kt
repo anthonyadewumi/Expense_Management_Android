@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.responses.EditProfileResponse
 import com.bonhams.expensemanagement.data.services.responses.LogoutResponse
 import com.bonhams.expensemanagement.data.services.responses.MyProfileResponse
@@ -11,11 +12,18 @@ import com.bonhams.expensemanagement.utils.AppPreferences
 import com.bonhams.expensemanagement.utils.Resource
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
+import okhttp3.MultipartBody
 
 class MyProfileViewModel(private val myProfileRepository: MyProfileRepository) : ViewModel() {
     var responseLogout: MutableLiveData<LogoutResponse>? = MutableLiveData()
 
-
+    var attachmentsList: MutableList<String?> = mutableListOf<String?>()
+    var currencyList: MutableList<Currency> = mutableListOf<Currency>()
+    lateinit var companyList: List<Company>
+    lateinit var carTypeList: List<CarType>
+    lateinit var mileageTypeList: List<MileageType>
+    lateinit var statusTypeList: List<StatusType>
+    lateinit var taxList: List<Tax>
     fun profileDetail() = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -32,6 +40,23 @@ class MyProfileViewModel(private val myProfileRepository: MyProfileRepository) :
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+    fun getDropDownData() = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = myProfileRepository.dropdownData()))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun imageProfile(image :List<MultipartBody.Part>) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = myProfileRepository.uploadImage(image)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+
 
     fun setResponse(response: MyProfileResponse) {
         if(response.success) {

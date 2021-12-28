@@ -21,6 +21,9 @@
     <string name="approved">Approved</string>
     <string name="status_colon">Status :</string>
     <string name="total_amount_colon">Total Amount :</string>
+    <string name="total_amount_claimed">Total Amount Claimed</string>
+    <string name="total_mileage_claimed">Total Mileage Claimed</string>
+    <string name="net_amount_colon">Net Amount :</string>
     <string name="claims">Claims</string>
     <string name="mileage_expenses">Mileage Expenses</string>
     <string name="please_enter_reson">Please enter reason</string>
@@ -57,9 +60,11 @@
     <string name="confirm_your_password">Confirm your password</string>
     <string name="reset">Reset</string>
     <string name="merchant_name">Merchant Name</string>
+    <string name="ledger_id">Ledger ID</string>
     <string name="milses_km">Mils/KM</string>
     <string name="expence_code">Expense Code</string>
     <string name="merchant_name_star">Merchant Name*</string>
+    <string name="ledger_id_star">Ledger ID*</string>
     <string name="expense_group">Expense Group</string>
     <string name="expense_group_star">Expense Group*</string>
     <string name="expense_type">Expense Type</string>
@@ -75,8 +80,11 @@
     <string name="total_amount">Total Amount</string>
     <string name="last_submit">Last Submitted On</string>
     <string name="group_name">Group Name</string>
+    <string name="claim_amount">Claim Amount : </string>
+    <string name="claim_id">Claim ID : </string>
     <string name="expence_type">Expense  Type</string>
     <string name="merchant">Merchant</string>
+    <string name="date_of_claim">Date of Claim : </string>
     <string name="amount">Amount</string>
     <string name="aution_value">Auction No</string>
     <string name="total_amount_star">Total Amount*</string>
@@ -85,11 +93,13 @@
     <string name="tax_star">Applicable Tax*</string>
     <string name="tax_applicable">Applicable Tax</string>
     <string name="net_amount">Net Amount</string>
+    <string name="split_amount">Split Amount</string>
     <string name="exp_code">Expense Code</string>
     <string name="auction_sales">Auction/Sales</string>
     <string name="auction_sales_exp">Auction/Sales Expense Code</string>
     <string name="reporting_manager_status">Reporting Manager Approval Status</string>
     <string name="rm_status">RM Approval Status</string>
+    <string name="total_claimed_mileage">Total Claimed Mileage</string>
     <string name="finance_manager_status">Finance Manager Approval Status</string>
     <string name="f_manager_status">FM Approval Status</string>
     <string name="description">Description</string>
@@ -99,6 +109,7 @@
     <string name="good_to_see_you">Good to see you</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="no">No</string>
     <string name="type_here">Type here... </string>
     <string name="start">Start</string>
     <string name="profile">Profile</string>
@@ -115,6 +126,7 @@
     <string name="password_reset">Password Reset</string>
     <string name="please_enter_your_new_password">Please enter your new password.</string>
     <string name="split">Split</string>
+    <string name="view_split_details">View Split Details</string>
     <string name="splits">Splits:</string>
     <string name="upload_a_pic_underline"><u>Upload a picture</u></string>
     <string name="no_files_selected">No Files Selected</string>
@@ -139,10 +151,15 @@
     <string name="enter_end_location">Enter End Location</string>
     <string name="enter_starting_location">Enter Starting Location</string>
     <string name="distance">Distance</string>
+    <string name="calculated_distance">Calculated Miles/KM</string>
     <string name="distance_star">Distance*</string>
     <string name="select_distance">Select Distance</string>
     <string name="claimed_miles">Claimed Miles</string>
+    <string name="claculated_miles">Calculated Miles</string>
     <string name="claimed_miles_star">Claimed Miles*</string>
+    <string name="miles_star">Miles*</string>
+    <string name="calculated_miles_star">Calculated Miles*</string>
+    <string name="claimed_miles_star2">Claimed Miles 2*</string>
     <string name="petrol_amount">Petrol Amount</string>
     <string name="park_amount">Parking Amount</string>
     <string name="date">Date</string>
@@ -164,6 +181,7 @@
     <string name="submitted_on">Submitted On</string>
     <string name="no_result_found">No Data Available</string>
     <string name="split_expenses">Split Expenses</string>
+    <string name="split_expenses_details">Split Expense Details</string>
     <string name="original_expense">Original Expense</string>
     <string name="retry">Retry</string>
     <string name="please_select_expense_group">Please select expense group</string>
@@ -183,7 +201,7 @@
     <string name="delete">Delete</string>
     <string name="delete_claim">Delete Claim</string>
     <string name="accept_claim">Accept Claim</string>
-    <string name="reminder_claim">Reminder  Send</string>
+    <string name="reminder_claim">Send Reminder </string>
     <string name="are_you_sure_you_want_to_delete_claim">Are you sure you want to delete this claim?</string>
     <string name="are_you_sure_you_want_to_accept_claim">Are you sure you want to accept this claim?</string>
     <string name="title_star">Title*</string>

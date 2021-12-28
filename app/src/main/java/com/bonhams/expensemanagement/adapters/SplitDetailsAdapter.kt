@@ -10,14 +10,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.SplitClaimItem
+import com.bonhams.expensemanagement.databinding.ItemSplitDetalisRowBinding
 import com.bonhams.expensemanagement.databinding.ItemSplitRowBinding
 import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimDetalisActivity
 import com.bonhams.expensemanagement.utils.RecylerCallback
 
 
-class SplitAdapter(
+class SplitDetailsAdapter(
    var currencyCode :String ,var currencySymbol: String ,var splitList: MutableList<SplitClaimItem?>,var mcontext:Context,var recylerCallback: RecylerCallback
-) : RecyclerView.Adapter<SplitAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<SplitDetailsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.create(parent)
@@ -37,18 +38,15 @@ class SplitAdapter(
         }
     }
 
-    class ViewHolder(itemBinding: ItemSplitRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-        private val binding: ItemSplitRowBinding = itemBinding
+    class ViewHolder(itemBinding: ItemSplitDetalisRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+        private val binding: ItemSplitDetalisRowBinding = itemBinding
         fun bindItems(postion:Int,item: SplitClaimItem, currencyCode :String , currencySymbol: String ,recylerCallback: RecylerCallback) {
             binding.tvTitles.text = item.compnyName
-           // binding.tvamount.setCurrencySymbol(currencySymbol)
+            binding.tvCurrencySymbol.text = currencySymbol
            // binding.tvamount.setLocale(currencyCode)
-            try {
-                binding.tvamount.setText(currencySymbol+" "+item.totalAmount)
-            } catch (e: Exception) {
-                binding.tvamount.setText(item.totalAmount)
 
-            }
+                binding.tvamount.setText(item.totalAmount.toString())
+
 
             binding.tvTitle.text = item.expenceTypeName
 
@@ -108,7 +106,7 @@ class SplitAdapter(
                 return ViewHolder(
                     DataBindingUtil.inflate(
                         LayoutInflater.from(parent.context),
-                        R.layout.item_split_row, parent, false
+                        R.layout.item_split_detalis_row, parent, false
                     )
                 )
             }

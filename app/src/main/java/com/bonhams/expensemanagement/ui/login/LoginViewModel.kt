@@ -99,10 +99,14 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
             AppPreferences.lastName = response.userDetails?.lname ?: ""
             AppPreferences.email = response.userDetails?.email ?: ""
             AppPreferences.company = response.userDetails?.companyName ?: ""
+            AppPreferences.carId = response.userDetails?.carType_id ?: ""
+            AppPreferences.carType = response.userDetails?.carType ?: ""
             AppPreferences.userType = response.userDetails?.userType ?: ""
             AppPreferences.department = response.userDetails?.departmentName ?: ""
+            AppPreferences.departmentID = response.userDetails?.departmentId ?: ""
             AppPreferences.profilePic = response.userDetails?.profileImage ?: ""
             AppPreferences.phoneNumber = response.userDetails?.contactNo ?: ""
+            AppPreferences.ledgerId = response.userDetails?.ledger_id ?: ""
 
             Log.d("LoginActivity", "setResponse: ${AppPreferences.userId}  Name: ${AppPreferences.firstName} ${AppPreferences.lastName}")
         }

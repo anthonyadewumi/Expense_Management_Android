@@ -9,4 +9,5 @@ class ClaimDetailRepository(private val apiHelper: ApiHelper) {
 
     suspend fun deleteClaim(deleteClaimRequest: DeleteClaimRequest) = apiHelper.deleteClaim(deleteClaimRequest)
     suspend fun sendReminder(claimId: JsonObject) = apiHelper.sendReminder(claimId)
+    suspend fun getDetails(claimId: JsonObject,mclaimId: String) = apiHelper.getDetails(claimId,mclaimId)
 }

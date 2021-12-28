@@ -381,7 +381,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/merchant_name"
+                        android:text="@string/ledger_id"
                         android:textColor="@color/colorTextBlack" />
 
                     <TextView
@@ -393,7 +393,7 @@
                         android:layout_weight="1.5"
                         android:background="@drawable/round_border_gray_white_bg"
                         android:gravity="center|start"
-                        android:hint="@string/merchant_name"
+                        android:hint="@string/ledger_id"
                         android:minHeight="@dimen/_28sdp"
                         android:padding="@dimen/_5sdp"
                         android:textColor="@color/colorTextBlack"
@@ -551,7 +551,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/distance"
+                            android:text="@string/calculated_distance"
                             android:textColor="@color/colorTextBlack" />
 
                         <TextView
@@ -965,6 +965,15 @@
                                 android:padding="@dimen/_5sdp"
                                 android:textColor="@color/colorTextBlack"
                                 android:textSize="@dimen/_10sdp" />
+                            <ImageView
+                                android:visibility="gone"
+                                android:id="@+id/ivRMReminder"
+                                android:layout_alignParentEnd="true"
+                                android:layout_width="wrap_content"
+                                android:gravity="center"
+                                android:padding="@dimen/_2sdp"
+                                android:src="@drawable/ic_notification"
+                                android:layout_height="match_parent"/>
 
                             <TextView
                                 android:id="@+id/tvRMStatusDate"
@@ -1053,6 +1062,15 @@
                                 android:padding="@dimen/_5sdp"
                                 android:textColor="@color/colorTextBlack"
                                 android:textSize="@dimen/_10sdp" />
+                            <ImageView
+                                android:visibility="gone"
+                                android:id="@+id/ivFMReminder"
+                                android:layout_alignParentEnd="true"
+                                android:layout_width="wrap_content"
+                                android:gravity="center"
+                                android:padding="@dimen/_2sdp"
+                                android:src="@drawable/ic_notification"
+                                android:layout_height="match_parent"/>
 
                             <TextView
                                 android:id="@+id/tvFMStatusDate"

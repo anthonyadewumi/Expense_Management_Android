@@ -22,6 +22,8 @@ import com.bonhams.expensemanagement.data.services.responses.LoginResponse
 import com.bonhams.expensemanagement.databinding.ActivityLoginBinding
 import com.bonhams.expensemanagement.databinding.ActivitySplitClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.remaningAmount
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.splitItmlist
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.totalAmount
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
@@ -38,9 +40,11 @@ class SplitClaimActivity : BaseActivity() {
     private lateinit var binding: ActivitySplitClaimBinding
     private lateinit var viewModel: NewClaimViewModel
     private var expenseCode: String = ""
+    private var mtaxcodeId: String = ""
     private var taxcodeId: String = ""
+    private var taxcodeValue: String = ""
     private var compnyId: Int = 0
-
+    private var groupId: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_split_claim)
@@ -57,6 +61,17 @@ class SplitClaimActivity : BaseActivity() {
         ).get(NewClaimViewModel::class.java)
     }
     private fun setClickListeners(){
+        binding.edtGroupValue.setOnClickListener {
+
+            binding.spnExpenseGroup.performClick()
+
+        }
+        binding.edtExpenceTypeValue.setOnClickListener {
+
+            binding.spnExpense.performClick()
+
+        }
+
         binding.btnSubmit.setOnClickListener {
             if(validatesplitClaim()) {
 
@@ -64,7 +79,7 @@ class SplitClaimActivity : BaseActivity() {
                     val companyOne = binding.spnCompany.selectedItem as Company?
                     val departmentOne = binding.spnDepartment.selectedItem as Department?
                     val expenseTypeOne = binding.spnExpense.selectedItem as ExpenseType?
-                    val totalAmountOne = binding.edtTotalAmount.getNumericValue()
+                    val totalAmountOne = binding.edtTotalAmount.text
                     val taxCodeOne = binding.edtTaxCode.text
                     val mtax = binding.edtTax.getNumericValue()
                     println("companynumber :" + companyOne?.id)
@@ -72,6 +87,7 @@ class SplitClaimActivity : BaseActivity() {
                     println("departmentOne :" + departmentOne?.id)
                     println("expenseTypeOne :" + expenseTypeOne?.id)
                     println("taxcode id :" + expenseTypeOne?.taxCodeID)
+                    println("taxcode taxcodeValue :$taxcodeValue")
                     println("expence codeid id :" + expenseTypeOne?.expenseCodeID)
                     val splitOne = SplitClaimItem(
                         companyOne?.id?:"0",
@@ -79,8 +95,9 @@ class SplitClaimActivity : BaseActivity() {
                         totalAmountOne.toString(),
                         expenseTypeOne.taxCodeID, mtax,companyOne?.name?:"",departmentOne?.name?:"",
                         expenseTypeOne.name,binding.edtAutionValue.text.toString(),binding.tvAuctionExpCode.text.toString(),
-                        expenseTypeOne.expenseCodeID
+                        expenseTypeOne.expenseCodeID,taxcodeValue
                     )
+                    println("item :$splitOne")
 
                     splitItmlist.add(splitOne)
                     finish()
@@ -107,6 +124,41 @@ class SplitClaimActivity : BaseActivity() {
             }
         })
     }
+    private fun setupTax(){
+        val taxAdapter = CustomSpinnerAdapter(
+            this,
+            R.layout.item_spinner,
+            viewModel.taxList
+        )
+        binding.spntaxcode.adapter = taxAdapter
+
+        var postion=0
+        viewModel.taxList.forEachIndexed { index, element ->
+
+            if(element.id.toString() == mtaxcodeId) {
+
+                postion=index
+                return@forEachIndexed
+                //  binding.edtTaxcode.setText(it.tax_code)
+
+            }
+        }
+        binding.spntaxcode.setSelection(postion)
+
+        binding.spntaxcode.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+
+                taxcodeId= viewModel.taxList[position].id.toString()
+                taxcodeValue= viewModel.taxList[position].tax_code
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+
+
     private fun validatesplitClaim(): Boolean {
 
         if(binding.edtTotalAmount.text.isNullOrEmpty()){
@@ -116,12 +168,11 @@ class SplitClaimActivity : BaseActivity() {
             Toast.makeText(this, "Please Enter Applicable Tax ", Toast.LENGTH_SHORT).show()
            return false
         }
-        val amount=binding.edtTotalAmount.getNumericValue()
-        return if(amount<totalAmount){
-            totalAmount -= amount
+        val amount=binding.edtTotalAmount.text.toString().toDouble()
+        return if(amount<= remaningAmount){
             true
         }else {
-            Toast.makeText(this, "Please Enter The Amount below $totalAmount", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Please Enter The Amount below ${remaningAmount}", Toast.LENGTH_SHORT)
                 .show()
             false
 
@@ -132,13 +183,14 @@ class SplitClaimActivity : BaseActivity() {
 
         val currancyCode = intent.getSerializableExtra("currencyCode") as String?
         val currencySymbol = intent.getSerializableExtra("currencySymbol") as String?
+         groupId = (intent.getSerializableExtra("groupId") as String?).toString()
         if (currencySymbol != null) {
-            binding.edtTotalAmount.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
-            binding.edtTax.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
+            binding.tvTotalAmountCurrency.text = currencySymbol
+           // binding.edtTax.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
         }
         if (currancyCode != null) {
-            binding.edtTotalAmount.setLocale(currancyCode)
-            binding.edtTax.setLocale(currancyCode)
+           // binding.edtTotalAmount.setLocale(currancyCode)
+           // binding.edtTax.setLocale(currancyCode)
         }
 
         viewModel.getDropDownData().observe(this, Observer {
@@ -165,7 +217,15 @@ class SplitClaimActivity : BaseActivity() {
     }
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
-        viewModel.expenseGroupList = dropdownResponse.expenseGroup
+       // viewModel.expenseGroupList = dropdownResponse.expenseGroup as MutableList<ExpenseGroup>
+        viewModel.expenseGroupList.clear()
+
+        ( dropdownResponse.expenseGroup as MutableList<ExpenseGroup>).forEachIndexed { index, expenseGroup ->
+
+            if(!expenseGroup.name.contains("Mileage")){
+                viewModel.expenseGroupList.add(expenseGroup)
+            }
+        }
         viewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType.toMutableList()
         viewModel.departmentListCompany = dropdownResponse.departmentList as MutableList<Department>
         viewModel.currencyList  = dropdownResponse.currencyType as MutableList<Currency>
@@ -179,68 +239,6 @@ class SplitClaimActivity : BaseActivity() {
     }
     private fun setupSpinners(){
 
-
-        // Expense Group Adapter
-        val expenseGroupAdapter = CustomSpinnerAdapter(
-            this,
-            R.layout.item_spinner,
-            viewModel.expenseGroupList
-        )
-        binding.spnExpenseGroup.adapter = expenseGroupAdapter
-        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val groupid =viewModel.expenseGroupList[position].id
-                println("selected group ID :$groupid")
-                viewModel.expenseTypeList.clear()
-                viewModel.expenseTypeListExpenseGroup.forEach {
-                    if(it.expenseGroupID == groupid&&it.companyID==compnyId.toString()){
-                        viewModel.expenseTypeList.add(it)
-                        // println("selected expenseTypeList Added :" )
-
-                    }else if(it.companyID.isNullOrEmpty()){
-                        viewModel.expenseTypeList.add(it)
-
-                    }
-                }
-                setupExpenceType()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-
-
-       /* // Expense Type Adapter
-        val expenseTypeAdapter = CustomSpinnerAdapter(
-            this,
-            R.layout.item_spinner,
-            viewModel.expenseTypeList
-        )
-        binding.spnExpense.adapter = expenseTypeAdapter
-        binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                expenseCode=viewModel.expenseTypeList.get(position).activityCode
-                taxcodeId=viewModel.expenseTypeList.get(position).taxCodeID
-                viewModel.taxList.forEach {
-                    if(it.id.toString().equals(taxcodeId)) {
-                        binding.edtTaxCode.setText(it.tax_code)
-
-                    }
-                }
-
-                if(!binding.edtAutionValue.text.toString().isEmpty()){
-                    binding.tvAuctionExpCode.text = expenseCode
-
-                }else{
-                    binding.tvAuctionExpCode.text = ""
-                }
-
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-*/
         // Company List Adapter
         val companyAdapter = CustomSpinnerAdapter(
             this,
@@ -248,20 +246,25 @@ class SplitClaimActivity : BaseActivity() {
             viewModel.companyList
         )
         binding.spnCompany.adapter = companyAdapter
-      /*  viewModel.companyList.forEachIndexed { index, element ->
+        var compnypostion=0
 
+        viewModel.companyList.forEachIndexed { index, element ->
             if(AppPreferences.company.equals(element.name)){
                 compnypostion=index
                 return@forEachIndexed
             }
         }
-        binding.spnCompany.setSelection(compnypostion)*/
+        binding.spnCompany.setSelection(compnypostion)
 
         binding.spnCompany.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 compnyId=viewModel.companyList[position].id.toInt()
                 viewModel.departmentList.clear()
+
+                binding.spnExpenseGroup.adapter=null
+                binding.edtGroupValue.setText(" ")
+                setupExpenceGroupType(true)
                 viewModel.departmentListCompany.forEach {
                     println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
 
@@ -279,11 +282,74 @@ class SplitClaimActivity : BaseActivity() {
         }
 
 
-
+        setupExpenceTypeData(groupId)
 
     }
-    private fun setupExpenceType(){
+    private fun setupExpenceTypeData(groupid:String){
+        viewModel.expenseTypeList.clear()
+        binding.edtExpenceTypeValue.setText(" ")
+        viewModel.expenseTypeListExpenseGroup.forEach {
+
+            if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
+                viewModel.expenseTypeList.add(it)
+                // println("selected expenseTypeList Added :" )
+
+            } else if (it.companyID.isNullOrEmpty()) {
+                //viewModel.expenseTypeList.add(it)
+
+            }
+
+        }
+        setupExpenceType(false)
+    }
+    private fun setupExpenceGroupType(isShowDefault:Boolean){
+        var isDefaultshow=isShowDefault
+        // Expense Group Adapter
+        // viewModel.expenseGroupList.add(ExpenseGroup("0","N/A","0","active"))
+        val expenseGroupAdapter = CustomSpinnerAdapter(
+            this,
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        binding.spnExpenseGroup.adapter = expenseGroupAdapter
+        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                if(!isDefaultshow) {
+                    binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
+                    val groupid = viewModel.expenseGroupList[position].id
+                    println("selected group ID :$groupid")
+                    viewModel.expenseTypeList.clear()
+                    binding.edtExpenceTypeValue.setText(" ")
+                    viewModel.expenseTypeListExpenseGroup.forEach {
+
+                        if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
+                            viewModel.expenseTypeList.add(it)
+                            // println("selected expenseTypeList Added :" )
+
+                        } else if (it.companyID.isNullOrEmpty()) {
+                            //viewModel.expenseTypeList.add(it)
+
+                        }
+
+                    }
+                    setupExpenceType(true)
+                }else{
+                    isDefaultshow=false
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Toast.makeText(this@SplitClaimActivity, "Nothing selected", Toast.LENGTH_SHORT).show();
+
+            }
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
+
+    private fun setupExpenceType(isShowDefault:Boolean){
+        var isDefaultShow=isShowDefault
         // Expense Type Adapter
+
         val expenseTypeAdapter = CustomSpinnerAdapter(
             this,
             R.layout.item_spinner,
@@ -293,23 +359,23 @@ class SplitClaimActivity : BaseActivity() {
         binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                expenseCode=viewModel.expenseTypeList.get(position).activityCode
-                taxcodeId= viewModel.expenseTypeList[position].taxCodeID
-                viewModel.taxList.forEach {
 
-                    if(it.id.toString() == taxcodeId) {
-                        binding.edtTaxCode.setText(it.tax_code)
+                if(!isDefaultShow) {
+                    binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList.get(position).name)
+                    expenseCode = viewModel.expenseTypeList.get(position).activityCode
+                    mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
+                    setupTax()
 
+
+                    if (!binding.edtAutionValue.text.toString().isEmpty()) {
+                        binding.tvAuctionExpCode.text = expenseCode
+
+                    } else {
+                        binding.tvAuctionExpCode.text = ""
                     }
-                }
-
-                if(!binding.edtAutionValue.text.toString().isEmpty()){
-                    binding.tvAuctionExpCode.text = expenseCode
-
                 }else{
-                    binding.tvAuctionExpCode.text = ""
+                    isDefaultShow=false
                 }
-
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -323,15 +389,15 @@ class SplitClaimActivity : BaseActivity() {
             viewModel.departmentList
         )
         binding.spnDepartment.adapter = departmentAdapter
-        /* var postion=0
+        var postion=0
         viewModel.departmentList.forEachIndexed { index, element ->
 
-            if(AppPreferences.department.equals(element.name)){
+            if(AppPreferences.department == element.name){
                 postion=index
                 return@forEachIndexed
             }
         }
-        binding.spnDepartment.setSelection(postion)*/
+        binding.spnDepartment.setSelection(postion)
         binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(

@@ -47,7 +47,7 @@ class ExpencesListAdapter(
         fun bindItems(item: ToBeAcceptedData,context:Context,expncelist: List<ToBeAcceptedData>) {
             binding.tvName.text = item.employeeName
             binding.tvDeparment.text = item.userType
-            binding.tvAmount.text = "$ "+item.totalAmount
+            binding.tvAmount.text = item.currency_type.toString()+" "+item.totalAmount
             binding.tvtotalClaims.text = item.totalClaims.toString()
             binding.tvemId.text = "Employee ID: "+item.employeeId
             //val sdf = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ")
@@ -58,6 +58,7 @@ class ExpencesListAdapter(
                 val fp = Intent(context, ReportingMangerExpenceDetails::class.java)
                 fp.putExtra("employeeId",expncelist[adapterPosition].employeeId.toString())
                 fp.putExtra("employeeName",expncelist[adapterPosition].employeeName)
+                fp.putExtra("currency_type",expncelist[adapterPosition].currency_type)
 
                 context.startActivity(fp)
             }
