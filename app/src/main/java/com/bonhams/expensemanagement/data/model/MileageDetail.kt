@@ -33,7 +33,7 @@ data class MileageDetail (
     @SerializedName("currency_type_name")
     val currencyTypeNamename: String = "",
     @SerializedName("tax")
-    val mtax: Int = 0,
+    val mtax: Double = 0.0,
     val netAmount: String = "",
     val merchant: String = "",
     val tripDate: String = "",

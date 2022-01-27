@@ -58,6 +58,12 @@ class MyProfileFragment() : Fragment() {
             val fragment = ChangePasswordFragment()
             (contextActivity as? MainActivity)?.addFragment(fragment)
         })
+
+        viewModel.isProfileRefresh?.observe(viewLifecycleOwner, Observer {
+            if(it){
+                setMyProfileObserver()
+            }
+        })
     }
 
     private fun setupViewModel(){

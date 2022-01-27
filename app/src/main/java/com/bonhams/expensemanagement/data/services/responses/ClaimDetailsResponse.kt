@@ -107,6 +107,8 @@ class SplitedClaim (
     val auction: Int = 0,
     @SerializedName("expenseCode")
     val expenseCode: String = "",
+    @SerializedName("companyNumber")
+    val companyNumber: String = "",
     val tax: String = "",
     val netAmount: String = "",
     val merchant: String = "",

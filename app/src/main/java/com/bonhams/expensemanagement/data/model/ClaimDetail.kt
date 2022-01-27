@@ -20,6 +20,10 @@ data class ClaimDetail(
     val totalAmount: String = "",
     @SerializedName("created_on")
     val createdOn: String = "",
+    @SerializedName("submittedOn")
+    val submittedOn: String = "",
+    @SerializedName("date_of_receipt")
+    val date_of_receipt: String = "",
     val reportingMStatus: String = "",
     val financeMStatus: String = "",
     @SerializedName("status")

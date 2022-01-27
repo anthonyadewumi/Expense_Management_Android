@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 //    id 'kotlin-android-extensions'
 }
 apply plugin: 'kotlin-android'

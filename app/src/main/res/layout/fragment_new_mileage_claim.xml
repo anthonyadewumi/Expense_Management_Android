@@ -112,7 +112,7 @@
             android:layout_weight="2"
             android:visibility="gone"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -142,12 +142,54 @@
                 android:layout_gravity="center_vertical"
                 />
         </LinearLayout>
-        <LinearLayout
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/txtMileageRate"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/mileage_rate_star"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        />
+
+                    <EditText
+                        android:id="@+id/edtMileageRate"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.5"
+                        android:layout_height="@dimen/_28sdp"
+                        android:minHeight="@dimen/_28sdp"
+                        android:hint="@string/mileage_rate"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal"
+                        style="@style/TextRegular11"
+                        android:gravity="center|start"
+
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/round_border_app_light_bg"
+                        android:textSize="@dimen/_10sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_gravity="center_vertical"
+                        />
+                </LinearLayout>
+
+
+
+
+
+                <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -179,7 +221,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -211,7 +253,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -245,7 +287,43 @@
                     android:orientation="horizontal"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="@string/date_of_trip"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        />
+
+                    <TextView
+                        android:id="@+id/tvDateOfTrip"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.5"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/_28sdp"
+                        android:hint="@string/date_of_trip_date_formate"
+                        style="@style/TextRegular11"
+                        android:textColor="@color/colorTextBlack"
+                        android:background="@drawable/round_border_gray_white_bg"
+                        app:drawableRightCompat="@drawable/ic_calendar_input_drawable"
+                        android:textSize="@dimen/_10sdp"
+                        android:padding="@dimen/_5sdp"
+                        android:gravity="center|start"
+                        android:enabled="false"
+                        android:layout_gravity="center_vertical"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:layout_height="wrap_content">
                     <TextView
                         android:layout_width="0dp"
@@ -279,7 +357,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -311,7 +389,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -379,40 +457,6 @@
                 android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-            <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/date_of_trip"
-                style="@style/TextRegular11"
-                android:textColor="@color/colorTextBlack"
-                />
-
-            <TextView
-                android:id="@+id/tvDateOfTrip"
-                android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/_28sdp"
-                android:hint="@string/date_of_trip_date_formate"
-                style="@style/TextRegular11"
-                android:textColor="@color/colorTextBlack"
-                android:background="@drawable/round_border_gray_white_bg"
-                app:drawableRightCompat="@drawable/ic_calendar_input_drawable"
-                android:textSize="@dimen/_10sdp"
-                android:padding="@dimen/_5sdp"
-                android:gravity="center|start"
-                android:layout_gravity="center_vertical"
-                />
-            </LinearLayout>
 
              <LinearLayout
             android:layout_width="match_parent"
@@ -453,7 +497,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
 
             <TextView
@@ -490,7 +534,7 @@
             android:layout_weight="2"
             android:gravity="center"
                  android:visibility="gone"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
 
             <TextView
@@ -524,7 +568,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -557,7 +601,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/txtMilesKm"
@@ -577,7 +621,7 @@
                 android:minHeight="@dimen/_28sdp"
                 android:hint="@string/claculated_miles"
                 android:imeOptions="actionNext"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:editable="false"
                 android:enabled="false"
                 style="@style/TextRegular11"
@@ -594,7 +638,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:layout_weight="2"
                     android:visibility="gone"
                     android:gravity="center"
@@ -652,7 +696,7 @@
                     android:orientation="horizontal"
                     android:layout_weight="2"
                     android:gravity="center"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_3sdp"
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/txtMilesKmManuaaly"
@@ -672,7 +716,7 @@
                         android:minHeight="@dimen/_28sdp"
                         android:hint="@string/claimed_miles"
                         android:imeOptions="actionNext"
-                        android:inputType="number"
+                        android:inputType="numberDecimal"
                         android:editable="true"
                         android:enabled="true"
                         style="@style/TextRegular11"
@@ -757,7 +801,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
 
             <TextView
@@ -791,7 +835,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -826,6 +870,7 @@
              android:layout_marginLeft="@dimen/_4sdp"
              android:gravity="center|start"
              android:hint="0.0"
+             android:maxLength="6"
              android:inputType="numberDecimal"
              android:layout_height="match_parent"
              android:background="@color/colorTransparent"
@@ -862,7 +907,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:id="@+id/txtPetrolAmountCurrency"
@@ -896,7 +941,8 @@
              android:layout_weight=".8"
              android:layout_marginLeft="@dimen/_4sdp"
              android:gravity="center|start"
-             android:hint="0.0"
+             android:hint="0.00"
+             android:maxLength="6"
              android:inputType="numberDecimal"
              android:layout_height="match_parent"
              android:background="@color/colorTransparent"
@@ -932,7 +978,7 @@
             android:orientation="horizontal"
             android:layout_weight="2"
             android:gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -966,7 +1012,7 @@
             android:layout_weight=".8"
             android:layout_marginLeft="@dimen/_4sdp"
             android:gravity="center|start"
-            android:hint="0.0"
+            android:hint="0.00"
             android:enabled="false"
             android:inputType="none"
             android:layout_height="match_parent"
@@ -1008,7 +1054,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_height="wrap_content">
 
                     <TextView
@@ -1063,7 +1109,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_height="wrap_content">
 
                     <TextView
@@ -1097,7 +1143,8 @@
                         android:layout_weight=".8"
                         android:layout_marginLeft="@dimen/_4sdp"
                         android:gravity="center|start"
-                        android:text="0"
+                        android:text="0.00"
+                        android:maxLength="6"
                         android:inputType="numberDecimal"
                         android:layout_height="match_parent"
                         android:background="@color/colorTransparent"
@@ -1137,7 +1184,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_height="wrap_content">
 
 
@@ -1172,7 +1219,7 @@
                          android:layout_weight=".8"
                          android:layout_marginLeft="@dimen/_4sdp"
                          android:gravity="center|start"
-                         android:hint="0.0"
+                         android:hint="0.00"
                          android:enabled="false"
                          android:inputType="numberDecimal"
                          android:layout_height="match_parent"
@@ -1207,7 +1254,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -1242,7 +1289,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -1275,7 +1322,7 @@
                 android:orientation="horizontal"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_3sdp"
                 android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
@@ -1295,12 +1342,13 @@
          android:hint="@string/description"
          android:imeOptions="actionNext"
          android:inputType="textMultiLine"
+         android:maxLines="4"
          style="@style/TextRegular11"
          android:textColor="@color/colorTextBlack"
          android:background="@drawable/round_border_gray_white_bg"
          android:textSize="@dimen/_10sdp"
-         android:gravity="top|start"
-         android:maxLength="500"
+         android:gravity="top|center"
+         android:maxLength="50"
 
          android:padding="@dimen/_5sdp"
          android:layout_gravity="center_vertical"

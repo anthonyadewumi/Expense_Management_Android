@@ -11,6 +11,7 @@ class Constants {
         const val DD_MMM_YYYY_FORMAT = "dd MMM yyyy"
         const val MMM_DD_YYYY_FORMAT = "MMM dd yyyy"
         const val NETWORK_PAGE_SIZE = 10
+        var batch_allotted  = "0"
 
         const val STATUS_APPROVED = "Approved"
         const val STATUS_PENDING = "Pending"

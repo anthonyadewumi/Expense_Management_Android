@@ -6,9 +6,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -61,14 +64,16 @@ import com.lassi.presentation.builder.Lassi
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
+class NewMileageClaimFragment : Fragment() ,RecylerCallback{
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -89,7 +94,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
     private var mtaxcodeId: String = ""
     private var taxcodeId: String = ""
     private var expenseCodeId: String = ""
-    private var milageRate:Double=0.0
+    private var milageRate:Double=0.00
     private var compnyId: Int = 0
     private var currencyCode: String = ""
     private var distanceType: String = ""
@@ -162,22 +167,22 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
                 binding.tvTripFrom.text = mileageDetail.fromLocation
                 binding.tvTripTo.text = mileageDetail.toLocation
                 binding.edtClaimedMiles.setText(mileageDetail.claimedMileage)
-                binding.edtPetrolAmount.setText(mileageDetail.petrolAmount)
-                binding.edtParkAmount.setText(mileageDetail.parking)
-                binding.edtTotalAmount.setText(mileageDetail.totalAmount)
-                binding.edtTax.setText(mileageDetail.mtax)
+                binding.edtPetrolAmount.setText(String.format("%.2f",mileageDetail.petrolAmount.toDouble()))
+                binding.edtParkAmount.setText(String.format("%.2f",mileageDetail.parking.toDouble()))
+                binding.edtTotalAmount.setText(String.format("%.2f",mileageDetail.totalAmount.toDouble()))
+                binding.edtTax.setText(mileageDetail.mtax.toString())
                 //binding.tvNetAmount.text = mileageDetail.netAmount
-                binding.tvNetAmount.setText(mileageDetail.netAmount.toString())
+                binding.tvNetAmount.setText(String.format("%.2f",mileageDetail.netAmount.toDouble()))
                 binding.edtDescription.setText(mileageDetail.description)
 
 
                 binding.switchRoundTrip.isChecked = mileageDetail.isRoundTrip == "1"
 
-                if (!mileageDetail.attachments.isNullOrEmpty() && mileageDetail.attachments.trim()
+               /* if (!mileageDetail.attachments.isNullOrEmpty() && mileageDetail.attachments.trim()
                         .isNotEmpty()
                 ) {
                     viewModel.attachmentsList = mutableListOf(mileageDetail.attachments)
-                }
+                }*/
             }
 
             refreshAttachments()
@@ -220,31 +225,31 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         binding.rlDefault.setOnClickListener {
             if(binding.lnDefaultContent.isVisible){
                 binding.lnDefaultContent.visibility=View.GONE
-                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_right);
+                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_right)
 
             }else{
                 binding.lnDefaultContent.visibility=View.VISIBLE
-                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_down);
+                binding.ivDefaultDropDown.setImageResource(R.drawable.drop_down)
             }
         }
         binding.rlDetails.setOnClickListener {
             if(binding.lnDetailsContant.isVisible){
                 binding.lnDetailsContant.visibility=View.GONE
-                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_right);
+                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_right)
 
             }else{
                 binding.lnDetailsContant.visibility=View.VISIBLE
-                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_down);
+                binding.ivDetailsDropDown.setImageResource(R.drawable.drop_down)
             }
         }
         binding.rlMilegae.setOnClickListener {
             if(binding.lnMileageContant.isVisible){
                 binding.lnMileageContant.visibility=View.GONE
-                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_right);
+                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_right)
 
             }else{
                 binding.lnMileageContant.visibility=View.VISIBLE
-                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_down);
+                binding.ivMeliageDropDown.setImageResource(R.drawable.drop_down)
             }
         }
     }
@@ -297,7 +302,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         if (this::mileageDetail.isInitialized) {
              viewModel.companyList.forEachIndexed { index, element ->
 
-            if(mileageDetail.companyName.equals(element.name)){
+            if(mileageDetail.companyName == element.name){
                 compnypostion=index
                 return@forEachIndexed
             }
@@ -306,7 +311,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         }else{
              viewModel.companyList.forEachIndexed { index, element ->
 
-            if(AppPreferences.company.equals(element.name)){
+            if(AppPreferences.company == element.name){
                 compnypostion=index
                 return@forEachIndexed
             }
@@ -319,12 +324,14 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 binding.edtTitle.setText(viewModel.companyList[position].code)
                 milageRate=  getMileageRate(viewModel.companyList[position].id.toInt())
-
                 if(milageRate>0)
                 {
+                    binding.edtMileageRate.setText(milageRate.toString())
 
                 }else{
-                    showAleartDialog("Mileage Rate is not available for Company "+viewModel.companyList[position].code)
+                    binding.edtMileageRate.setText("")
+
+                    showAleartDialog("Mileage Rate is not available for Company No "+viewModel.companyList[position].code)
 
                 }
 
@@ -370,7 +377,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
                         binding.edtParkAmount.addDecimalLimiter()
                         binding.tvNetAmount.addDecimalLimiter()
 
-                        binding.tvTaxCurrency.setText(symbol)
+                        binding.tvTaxCurrency.text = symbol
 
 
 
@@ -562,6 +569,8 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
             catch (e: Exception){
                 Log.e(TAG, "setupSpinners: ${e.message}")
             }
+            refreshAttachments()
+
         }else{
             binding.edtMerchantName.setText(AppPreferences.ledgerId)
 
@@ -610,8 +619,18 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(binding.edtClaimedMiles2.text.isNotEmpty())
-                updateTotalAmount(binding.edtClaimedMiles2.text.toString().toDouble(),milageRate)
+                if(binding.edtClaimedMiles2.text.isNotEmpty()&&binding.edtMileageRate.text.isNotEmpty())
+                updateTotalAmount(binding.edtClaimedMiles2.text.toString().toDouble(),binding.edtMileageRate.text.toString().toDouble())
+            }
+        })
+        binding.edtMileageRate.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(binding.edtClaimedMiles2.text.isNotEmpty()&&binding.edtMileageRate.text.isNotEmpty())
+                updateTotalAmount(binding.edtClaimedMiles2.text.toString().toDouble(),binding.edtMileageRate.text.toString().toDouble())
             }
         })
 
@@ -735,8 +754,6 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         viewModel.taxList.forEach {
 
             if(it.id.toString() == mtaxcodeId) {
-
-
                 binding.edtTaxcode.setText(it.tax_code)
 
             }
@@ -874,7 +891,11 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
                 Constants.DD_MM_YYYY_FORMAT
 
             }
-
+            if (binding.edtMileageRate.text.isNullOrEmpty()) {
+                Toast.makeText(contextActivity, "Please Enter Mileage Rate", Toast.LENGTH_LONG).show()
+                onCreateClaimFailed()
+                return
+            }
             val claimRequest = viewModel.getNewMileageClaimRequest(
                 binding.edtTitle.text.toString().trim(),
                 if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyName.selectedItemPosition].id else "",
@@ -907,7 +928,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
                 if (!taxcodeId.isEmpty()) taxcodeId else "",
                 binding.edtAutionValue.text.toString().trim(),
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "",
-
+                binding.edtMileageRate.text.toString().trim(),
                 viewModel.attachmentsList as List<String>,
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseGroupID else "",
 
@@ -917,6 +938,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
+
 
             if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
@@ -1079,7 +1101,7 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         try {
             val fare= Distance.times(mileageRate)
             val decimal = fare.let { it1 -> BigDecimal(it1).setScale(2, RoundingMode.HALF_EVEN) }
-            binding.edtTotalAmount.setText(decimal.toString())
+            binding.edtTotalAmount.setText(String.format("%.2f",decimal.toString().toDouble()))
 
         }
         catch (error: Exception){
@@ -1122,6 +1144,9 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
             if (photoPath != null) {
                 val images = File(photoPath)
                 if (images.exists()) {
+                   // val bitmap = BitmapFactory.decodeFile(photoPath)
+                   // val imgFile= bitmapToFile(bitmap,images.name)
+                   // builder.addFormDataPart("claimImage", images.name, RequestBody.create(MultipartBody.FORM,imgFile))
                     builder.addFormDataPart("claimImage", images.name, RequestBody.create(
                         MultipartBody.FORM, images))
                 }
@@ -1160,7 +1185,29 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         })
 
     }
+    fun bitmapToFile(bitmap: Bitmap, fileNameToSave: String): File? { // File name like "image.png"
+        //create a file to write bitmap data
+        var file: File? = null
+        return try {
+            file = File(Environment.getExternalStorageDirectory().toString() + File.separator + fileNameToSave)
+            file.createNewFile()
 
+            //Convert bitmap to byte array
+            val bos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos) // YOU can also save it in JPEG
+            val bitmapdata = bos.toByteArray()
+
+            //write the bytes in file
+            val fos = FileOutputStream(file)
+            fos.write(bitmapdata)
+            fos.flush()
+            fos.close()
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            file // it will return null
+        }
+    }
     private fun setCreateClaimObserver(mileageClaimRequest: NewMileageClaimRequest) {
         viewModel.createNewMileageClaim(mileageClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
@@ -1226,13 +1273,11 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
 
         calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
 //        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
-
         val constraintsBuilder =
             CalendarConstraints.Builder()
                 .setStart(calendarStart.timeInMillis)
                 .setEnd(calendar.timeInMillis)
                 .setValidator(DateValidatorPointBackward.now())
-
 
         val picker = MaterialDatePicker.Builder.datePicker()
             .setTheme(R.style.Widget_AppTheme_MaterialDatePicker)
@@ -1243,10 +1288,14 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
         picker.addOnPositiveButtonClickListener {
             val date = Utils.getDateInDisplayFormatWithCountry(it,companyDateFormate)
             Log.d("DatePicker Activity", "Date String = ${date}:: Date epoch value = ${it}")
-            if(isDateOfSubmission)
+            if(isDateOfSubmission) {
                 binding.tvDateOfSubmission.text = date
-            else
                 binding.tvDateOfTrip.text = date
+            } else {
+                binding.tvDateOfSubmission.text = date
+                binding.tvDateOfTrip.text = date
+            }
+
         }
     }
 
@@ -1290,9 +1339,9 @@ class NewMileageClaimFragment() : Fragment() ,RecylerCallback{
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(50) // Restrict by minimum file size
-                .setMaxFileSize(100) //  Restrict by maximum file size
+                .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
+                //.setMinFileSize(50) // Restrict by minimum file size
+                //.setMaxFileSize(100) //  Restrict by maximum file size
                 .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)

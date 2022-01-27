@@ -15,4 +15,6 @@ class ClaimsRequest {
     var toDate: String? = null
     @SerializedName("statusFilter")
     var status: String? = null
+    @SerializedName("batch_allotted")
+    var batch_allotted: String? = ""
 }

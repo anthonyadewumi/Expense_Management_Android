@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+      />
+
+<RelativeLayout
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.MainActivity">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_alignParentBottom="true"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@color/colorTransparent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+
+            <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+                android:id="@+id/dotsIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:dotsCornerRadius="8dp"
+                app:dotsSize="@dimen/_12sdp"
+                app:dotsSpacing="4dp"
+                app:progressMode="false"
+                app:selectedDotColor="@color/secondary" />
+        </LinearLayout>
+
+
+
+
+
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:orientation="horizontal"
+        >
+        <TextView
+            style="@style/TextRegular14"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:layout_marginLeft="@dimen/_14sdp"
+            android:padding="@dimen/_5sdp"
+            android:text="@string/retake"
+            android:textColor="@color/white" />
+
+        <ImageView
+            android:id="@+id/ivAddImage"
+            style="@style/TextRegular11"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:src="@drawable/ic_plus_circle"
+            android:padding="@dimen/_5sdp"
+            android:textColor="@color/white" />
+
+        <TextView
+            style="@style/TextRegular14"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:padding="@dimen/_5sdp"
+            android:text="@string/finish"
+            android:textColor="@color/white" />
+
+
+
+
+    </LinearLayout>
+</LinearLayout>
+
+
+
+
+</RelativeLayout>
+</FrameLayout>

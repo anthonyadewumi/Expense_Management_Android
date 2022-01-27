@@ -380,6 +380,7 @@
                                     android:weightSum="2">
 
                                     <TextView
+                                        android:id="@+id/tvMilesKm"
                                         style="@style/TextRegular11"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
@@ -707,7 +708,7 @@
                                         style="@style/TextRegular11"
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
+                                        android:layout_gravity="center|top"
                                         android:layout_weight=".8"
                                         android:gravity="start"
                                         android:padding="@dimen/_5sdp"
@@ -722,6 +723,7 @@
                                         android:layout_gravity="center"
                                         android:layout_weight="1.2"
                                         android:gravity="start"
+                                        android:scrollbars="vertical"
                                         android:padding="@dimen/_5sdp"
                                         android:text="@string/n_a"
                                         android:textColor="@color/black" />

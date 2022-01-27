@@ -92,6 +92,13 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
             Log.d(TAG, "setupViewModel: statusPicker: $it")
             updatedClaimsFromStatus(it as String?, null)
         })
+        mainViewModel.isClaimListRefresh?.observe(viewLifecycleOwner, {
+            if(it) {
+                mainViewModel.isClaimListRefresh?.value=false
+                claimsAdapter.refresh()
+            }
+
+        })
 
 
         mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
@@ -106,7 +113,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
                 binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
         })
-        binding.txtTitle.text = "Total Amount Claimed"
+        binding.txtTitle.text = "Total Claimed"
 
         getClaimTotal()
 
@@ -157,7 +164,7 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                binding.txtTotalClaimed.text = viewModel.totalClaimedList[position].total_amount.toString()
+                binding.txtTotalClaimed.text = String.format("%.2f",viewModel.totalClaimedList[position].total_amount.toString().toDouble())
 
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}

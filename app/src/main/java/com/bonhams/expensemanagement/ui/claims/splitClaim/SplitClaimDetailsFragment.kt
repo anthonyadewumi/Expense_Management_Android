@@ -67,12 +67,13 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     private val mainViewModel: MainViewModel by activityViewModels()
     var splitedSplitAmount=0.0
     var remaningAmount=0.0
+    var isApproved=true
 
 
     companion object {
        public var splitItmlist: MutableList<SplitClaimItem> = mutableListOf()
-       public var totalAmount: Double=0.0
-       public var netAmount: Double=0.0
+       public var totalAmount: Double=0.00
+       public var netAmount: Double=0.00
 
     }
     override fun onCreateView(
@@ -111,6 +112,16 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
 
 
     }
+    fun setEditable(editable: Boolean){
+
+
+        try {
+            isApproved=editable
+        } catch (e: Exception) {
+        }
+
+
+    }
     fun setCurrency(code: String,symbol:String){
         currencyCode=code
         currencySymbol=symbol
@@ -131,7 +142,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
         binding.btnSubmit.setOnClickListener(View.OnClickListener {
             contextActivity?.let {
                // splitAdapter.notifyDataSetChanged()
-                var splittotalamount: Double = 0.0
+                var splittotalamount: Double = 0.00
                 splitItmlist.forEachIndexed { index, splitClaimItem ->
                     splittotalamount +=splitClaimItem.totalAmount.toDouble()
                     idOfSplitList.add(splitClaimItem.split_id)
@@ -189,7 +200,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                 it.id ?:"0",
                 "0", "0", it.expenseTypeID,
                 it.totalAmount,
-                it.tax_code, it.tax.toDouble(), it.companyName ?:"", it.department ?:"",
+                it.tax_code, it.tax.toDouble(), it.companyNumber ?:"", it.department ?:"",
                 it.expenseTypeName,auction,expenseCode,
                 expenseCode,it.tax_code,it.split_id
             )
@@ -198,12 +209,12 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             splitItmlist.add(splitOne)
         }
 
-        var totalSplitAmount=0.0
+        var totalSplitAmount=0.00
         splitItmlist.forEach {
             totalSplitAmount += it.totalAmount.toDouble()
         }
         splitedSplitAmount=totalSplitAmount
-        binding.totalSplitAmount.setText(currencySymbol+" "+totalSplitAmount)
+        binding.totalSplitAmount.text = currencySymbol+" "+String.format("%.2f",totalSplitAmount)
         remaningAmount=splitedSplitAmount-totalSplitAmount
         splitAdapter.notifyDataSetChanged()
 
@@ -211,7 +222,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
      //   binding.tvDate.text = claimRequest.dateSubmitted
      //   binding.tvUserName.text = AppPreferences.fullName
 
-       binding.tvTotalAmountCurrency.setText(currencySymbol)
+        binding.tvTotalAmountCurrency.text = currencySymbol
        // binding.tvTotalAmount.setLocale(currencyCode)
         netAmount=splitedClaimDetails.main_claim?.netAmount.toString().toDouble()
        val  totalAmountWithTax=splitedClaimDetails.main_claim?.totalAmount.toString().toDouble()
@@ -247,7 +258,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             false
         )
         binding.rvsplit.layoutManager = linearLayoutManager
-        splitAdapter = SplitDetailsAdapter(currencyCode,currencySymbol,splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
+        splitAdapter = SplitDetailsAdapter(isApproved,currencyCode,currencySymbol,splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
         binding.rvsplit.adapter = splitAdapter
     }
     private fun setupSpinners(){

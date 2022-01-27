@@ -17,7 +17,7 @@ import com.bonhams.expensemanagement.utils.RecylerCallback
 
 
 class SplitDetailsAdapter(
-   var currencyCode :String ,var currencySymbol: String ,var splitList: MutableList<SplitClaimItem?>,var mcontext:Context,var recylerCallback: RecylerCallback
+    var isEditable :Boolean, var currencyCode :String ,var currencySymbol: String ,var splitList: MutableList<SplitClaimItem?>,var mcontext:Context,var recylerCallback: RecylerCallback
 ) : RecyclerView.Adapter<SplitDetailsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +26,7 @@ class SplitDetailsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val attachmentItem = splitList.get(position)
-        attachmentItem?.let { holder.bindItems(position,it,currencyCode,currencySymbol,recylerCallback) }
+        attachmentItem?.let { holder.bindItems(isEditable,position,it,currencyCode,currencySymbol,recylerCallback) }
 
             holder.removeItems(splitList, position,recylerCallback)
             holder.details(splitList, position,mcontext,currencyCode,currencySymbol)
@@ -40,12 +40,14 @@ class SplitDetailsAdapter(
 
     class ViewHolder(itemBinding: ItemSplitDetalisRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         private val binding: ItemSplitDetalisRowBinding = itemBinding
-        fun bindItems(postion:Int,item: SplitClaimItem, currencyCode :String , currencySymbol: String ,recylerCallback: RecylerCallback) {
+        fun bindItems(isEditable :Boolean,postion:Int,item: SplitClaimItem, currencyCode :String , currencySymbol: String ,recylerCallback: RecylerCallback) {
             binding.tvTitles.text = item.compnyName
             binding.tvCurrencySymbol.text = currencySymbol
            // binding.tvamount.setLocale(currencyCode)
 
-                binding.tvamount.setText(item.totalAmount.toString())
+                   binding.tvamount.isEnabled=isEditable
+
+                binding.tvamount.setText(String.format("%.2f",item.totalAmount.toDouble()))
 
 
             binding.tvTitle.text = item.expenceTypeName
@@ -69,9 +71,6 @@ class SplitDetailsAdapter(
 
 
         }
-
-
-
 
 
         fun removeItems(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,recylerCallback: RecylerCallback) {

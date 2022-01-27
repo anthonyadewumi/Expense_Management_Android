@@ -13,11 +13,14 @@ class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
     var responseLogout: MutableLiveData<LogoutResponse>? = null
     var appbarSearchClick: MutableLiveData<Boolean>? = MutableLiveData(false)
     var isRefresh: MutableLiveData<Boolean>? = MutableLiveData(false)
+    var isClaimListRefresh: MutableLiveData<Boolean>? = MutableLiveData(false)
+    var isMileageListRefresh: MutableLiveData<Boolean>? = MutableLiveData(false)
     var appbarMenuClick: MutableLiveData<View>? = MutableLiveData()
     var appbarEditClick: MutableLiveData<View>? = MutableLiveData()
     var appbarSaveClick: MutableLiveData<View>? = MutableLiveData()
     var appbarbackClick: MutableLiveData<View>? = MutableLiveData()
     var validEmail = true
+    var isEdit = false
 
     init {
         responseLogout = MutableLiveData()

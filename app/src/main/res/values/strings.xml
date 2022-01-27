@@ -71,15 +71,20 @@
     <string name="expense_type_star">Expense Type*</string>
     <string name="send_reminder"><font color='#8A3CAC'><u>Tap here to Send Reminder</u></font></string>
     <string name="company_number">Company Number</string>
+    <string name="company_no">Company No :</string>
     <string name="department">Department</string>
     <string name="department_star">Department*</string>
     <string name="date_of_submission">Date of Submission</string>
     <string name="date_of_recipt">Date of Receipt</string>
     <string name="currency">Currency</string>
+    <string name="currency_">Currency :</string>
+    <string name="ledger_id_">Ledger ID :</string>
     <string name="currency_star">Currency*</string>
     <string name="total_amount">Total Amount</string>
     <string name="last_submit">Last Submitted On</string>
     <string name="group_name">Group Name</string>
+    <string name="retake">RETAKE</string>
+    <string name="finish">FINISH</string>
     <string name="claim_amount">Claim Amount : </string>
     <string name="claim_id">Claim ID : </string>
     <string name="expence_type">Expense  Type</string>
@@ -159,6 +164,8 @@
     <string name="claimed_miles_star">Claimed Miles*</string>
     <string name="miles_star">Miles*</string>
     <string name="calculated_miles_star">Calculated Miles*</string>
+    <string name="mileage_rate_star">Mileage Rate*</string>
+
     <string name="claimed_miles_star2">Claimed Miles 2*</string>
     <string name="petrol_amount">Petrol Amount</string>
     <string name="park_amount">Parking Amount</string>
@@ -178,6 +185,10 @@
     <string name="rejected">Rejected</string>
     <string name="rejecte">Reject</string>
     <string name="search">Search</string>
+    <string name="batch_edit">Batch Edit</string>
+    <string name="batch_delete">Batch Delete</string>
+    <string name="submit_batch">Submit Batch</string>
+
     <string name="submitted_on">Submitted On</string>
     <string name="no_result_found">No Data Available</string>
     <string name="split_expenses">Split Expenses</string>
@@ -190,6 +201,7 @@
     <string name="please_select_currency">Please select currency</string>
     <string name="please_enter_total_amount">Please enter total amount</string>
     <string name="please_enter_tax">Please enter tax</string>
+    <string name="tax_amount">Tax Amount</string>
     <string name="please_select_mileage_type">Please select mileage type</string>
     <string name="please_enter_merchant_name">Please enter merchant name</string>
     <string name="please_select_starting_location">Please select starting location</string>

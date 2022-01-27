@@ -3,10 +3,12 @@ package com.bonhams.expensemanagement.ui.claims.newClaim
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -42,7 +44,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.gson.Gson
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
@@ -51,10 +52,7 @@ import com.lassi.presentation.builder.Lassi
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.util.*
 
 
@@ -136,9 +134,9 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 ) {
                     val attachment=claimDetail.attachments.split(",")
                     viewModel.attachmentsList.clear()
-                    attachment.forEach {
+                    /*attachment.forEach {
                         viewModel.attachmentsList.add(it)
-                    }
+                    }*/
 
                    // viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
                 }
@@ -275,9 +273,9 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                 companyDateFormate=viewModel.companyList[position].dateFormat
                 companyLocation=viewModel.companyList[position].location
                 binding.spnExpenseGroup.adapter=null
-                setupExpenceGroupType(true)
 
                 if(isCreateCopy){
+                    setupExpenceGroupTypeCopy(claimDetail.expenseGroupID)
 
                     binding.edtTotalAmount.setText(claimDetail.totalAmount)
                     binding.edtTax.setText(claimDetail.tax)
@@ -287,10 +285,12 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                     binding.edtExpenceTypeValue.setText(claimDetail.expenseTypeName)
 
                 }else {
+                    setupExpenceGroupType(true)
+
                     binding.edtTotalAmount.setText("")
                     binding.edtTax.setText("0")
                     binding.tvNetAmount.setText("")
-                    binding.tvDateOfSubmission.setText("")
+                    binding.tvDateOfSubmission.text = ""
                     binding.edtGroupValue.setText("")
 
                 }
@@ -403,21 +403,21 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
 
         if(this::claimDetail.isInitialized){
             try {
-                val expenseGroup: ExpenseGroup? =
+                /*val expenseGroup: ExpenseGroup? =
                     viewModel.expenseGroupList.find { it.id == claimDetail.expenseGroupID }
                 val expenseGroupPos = viewModel.expenseGroupList.indexOf(expenseGroup)//(currencyAdapter).getPosition(expenseGroup)
                 if (expenseGroupPos >= 0) {
                     binding.spnExpenseGroup.setSelection(expenseGroupPos)
                 }
-                binding.edtGroupValue.setText(expenseGroup?.name)
+                binding.edtGroupValue.setText(expenseGroup?.name)*/
 
-                val expenseType: ExpenseType? =
+               /* val expenseType: ExpenseType? =
                     viewModel.expenseTypeList.find { it.id == claimDetail.expenseTypeID }
                 val expenseTypePos = viewModel.expenseTypeList.indexOf(expenseType)
                 if (expenseTypePos >= 0) {
                     binding.spnExpenseType.setSelection(expenseTypePos)
                 }
-                binding.edtExpenceTypeValue.setText(expenseType?.name)
+                binding.edtExpenceTypeValue.setText(expenseType?.name)*/
                 val company: Company? =
                     viewModel.companyList.find { it.name == claimDetail.companyName }
                 val companyPos = viewModel.companyList.indexOf(company)
@@ -439,11 +439,12 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                     binding.spnCurrency.setSelection(currencyPos)
                 }
 
-                binding.edtTotalAmount.setText(claimDetail.totalAmount)
-                binding.edtTax.setText(claimDetail.tax)
-                binding.tvNetAmount.setText(claimDetail.netAmount)
-                binding.edtAutionValue.setText(claimDetail.auction)
-                binding.tvAuctionExpCode.setText(claimDetail.expenseCode)
+                binding.edtTotalAmount.setText(String.format("%.2f", claimDetail.totalAmount.toDouble()))
+                binding.edtTax.setText(String.format("%.2f", claimDetail.tax.toDouble()))
+                binding.tvNetAmount.setText(String.format("%.2f", claimDetail.netAmount.toDouble()))
+                println("auction create copy "+claimDetail.auction)
+                binding.edtAutionValue.setText(claimDetail.auction.toString())
+                binding.tvAuctionExpCode.text = claimDetail.expenseCode
 
             }
             catch (e: Exception){
@@ -500,7 +501,54 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
         }
     }
 
+    private fun setupExpenceGroupTypeCopy(groupId:String){
+        // Expense Group Adapter
+        val expenseGroupAdapter = CustomSpinnerAdapter(
+            requireContext(),
+            R.layout.item_spinner,
+            viewModel.expenseGroupList
+        )
+        binding.spnExpenseGroup.adapter = expenseGroupAdapter
+        val expenseGroup: ExpenseGroup? =
+            viewModel.expenseGroupList.find { it.id == groupId }
+        val expenseGroupPos = viewModel.expenseGroupList.indexOf(expenseGroup)
+        if (expenseGroupPos >= 0) {
+            binding.spnExpenseGroup.setSelection(expenseGroupPos)
+        }
+        binding.spnExpenseGroup.isSelected=false
+        binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
+            View.OnFocusChangeListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                    binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
+                    val groupid = viewModel.expenseGroupList[position].id
+                    println("selected group ID :$groupid")
+                    viewModel.expenseTypeList.clear()
+                    binding.edtExpenceTypeValue.setText(" ")
+                    viewModel.expenseTypeList.add(ExpenseType("0","Select Expense Type",""))
+                    viewModel.expenseTypeListExpenseGroup.forEach {
+                        // if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
 
+
+                        if (it.expenseGroupID == groupid) {
+                            viewModel.expenseTypeList.add(it)
+                            // println("selected expenseTypeList Added :" )
+
+                        } else if (it.companyID.isNullOrEmpty()) {
+                            //viewModel.expenseTypeList.add(it)
+
+                        }
+
+                    }
+                    setupExpenceType(false)
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                Toast.makeText(requireContext(), "Nothing selected", Toast.LENGTH_SHORT).show();
+
+            }
+            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
+        }
+    }
 
 
     private fun setupExpenceType(isShowDefault:Boolean){
@@ -534,13 +582,13 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 if(!isDefaultShow) {
-                    binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList.get(position).name)
+                    binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList[position].name)
 
-                    expenseCode = viewModel.expenseTypeList.get(position).activityCode
+                    expenseCode = viewModel.expenseTypeList[position].activityCode
                     mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
 
                     setupTax()
-                    if (!binding.edtAutionValue.text.toString().isEmpty()) {
+                    if (binding.edtAutionValue.text.toString().isNotEmpty()) {
                         binding.tvAuctionExpCode.text = expenseCode
 
                     } else {
@@ -648,7 +696,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-              if(!binding.edtAutionValue.text.toString().isEmpty()){
+              if(binding.edtAutionValue.text.toString().isNotEmpty()){
                   binding.tvAuctionExpCode.text = expenseCode
 
               }else{
@@ -779,7 +827,10 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             if (photoPath != null) {
                 val images = File(photoPath)
                 if (images.exists()) {
-                    builder.addFormDataPart("claimImage", images.name, RequestBody.create(MultipartBody.FORM, images))
+                    //val bitmap = BitmapFactory.decodeFile(photoPath)
+                  // val imgFile= bitmapToFile(bitmap,images.name)
+                    //builder.addFormDataPart("claimImage", images.name, RequestBody.create(MultipartBody.FORM,imgFile))
+                   builder.addFormDataPart("claimImage", images.name, RequestBody.create(MultipartBody.FORM, images))
                 }
             }
         }
@@ -900,7 +951,29 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             }
         })*/
     }
+    fun bitmapToFile(bitmap: Bitmap, fileNameToSave: String): File? { // File name like "image.png"
+        //create a file to write bitmap data
+        var file: File? = null
+        return try {
+            file = File(Environment.getExternalStorageDirectory().toString() + File.separator + fileNameToSave)
+            file?.createNewFile()
 
+            //Convert bitmap to byte array
+            val bos = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos) // YOU can also save it in JPEG
+            val bitmapdata = bos.toByteArray()
+
+            //write the bytes in file
+            val fos = FileOutputStream(file)
+            fos.write(bitmapdata)
+            fos.flush()
+            fos.close()
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            file // it will return null
+        }
+    }
     private fun callApiCreateClaim(newClaimRequest: NewClaimRequest){
         viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->

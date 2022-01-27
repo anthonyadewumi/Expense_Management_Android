@@ -16,6 +16,7 @@ import okhttp3.MultipartBody
 
 class MyProfileViewModel(private val myProfileRepository: MyProfileRepository) : ViewModel() {
     var responseLogout: MutableLiveData<LogoutResponse>? = MutableLiveData()
+    var isProfileRefresh: MutableLiveData<Boolean>? = MutableLiveData(false)
 
     var attachmentsList: MutableList<String?> = mutableListOf<String?>()
     var currencyList: MutableList<Currency> = mutableListOf<Currency>()
@@ -62,7 +63,8 @@ class MyProfileViewModel(private val myProfileRepository: MyProfileRepository) :
         if(response.success) {
             AppPreferences.userId = response.profileDetail?.id ?: ""
             AppPreferences.employeeId = response.profileDetail?.employID ?: ""
-            AppPreferences.fullName = response.profileDetail?.name ?: ""
+           // AppPreferences.fullName = response.profileDetail?.name ?: ""
+            AppPreferences.fullName = response.profileDetail?.fname ?: ""+" "+response.profileDetail?.lname ?: ""
             AppPreferences.firstName = response.profileDetail?.fname ?: ""
             AppPreferences.lastName = response.profileDetail?.lname ?: ""
             AppPreferences.email = response.profileDetail?.email ?: ""
@@ -74,9 +76,15 @@ class MyProfileViewModel(private val myProfileRepository: MyProfileRepository) :
     }
     fun setEditResponse(response: EditProfileResponse) {
         if(response.success) {
+
             AppPreferences.userId = response.profileDetail[0]?.id ?: ""
             AppPreferences.employeeId = response.profileDetail[0]?.employID ?: ""
-            AppPreferences.fullName = response.profileDetail[0]?.name ?: ""
+           // AppPreferences.fullName = response.profileDetail[0]?.name ?: ""
+            val fname=response.profileDetail[0]?.fname ?: ""
+            val lname=response.profileDetail[0]?.lname ?: ""
+            System.out.println("full name :"+fname +lname)
+            AppPreferences.fullName = "$fname $lname"
+
             AppPreferences.firstName = response.profileDetail[0]?.fname ?: ""
             AppPreferences.lastName = response.profileDetail[0]?.lname ?: ""
             AppPreferences.email = response.profileDetail[0]?.email ?: ""

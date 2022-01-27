@@ -66,9 +66,9 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
                 binding.txtGroupName.text= details.expenseGroupName
                 binding.txtDisc.text= details.description
                 binding.txtMerchantName.text=details.merchant
-                binding.txtNetAmount.text= details.currency_type +" "+details.netAmount.toString()
-                binding.txtTax.text= details.currency_type +" "+details.tax.toString()
-                binding.txtTotalAmount.text= details.currency_type +" "+details.totalAmount.toString()
+                binding.txtNetAmount.text= details.currency_type +" "+String.format("%.2f",details.netAmount.toString().toDouble())
+                binding.txtTax.text= details.currency_type +" "+String.format("%.2f",details.tax.toString().toDouble())
+                binding.txtTotalAmount.text= details.currency_type +" "+String.format("%.2f",details.totalAmount.toString().toDouble())
                 binding.txtExpenceType.text= details.expenseType_expense.toString()
                 binding.labelDate.text="Date Of Claim"
                 binding.txtTripDate.text= Utils.getFormattedDate( details.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
@@ -88,15 +88,16 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
                 binding.txtGroupName.text=details?.expenseGroupName
                 binding.txtDisc.text=details?.description
                 binding.txtMerchantName.text=details?.merchant
-                binding.txtNetAmount.text= details?.currency_type +" "+details?.netAmount.toString()
-                binding.txtTax.text= details?.currency_type +" "+details?.tax.toString()
-                binding.txtTotalAmount.text= details?.currency_type +" "+details?.totalAmount.toString()
-                binding.txtmilesKm.text= details?.miles_claimed.toString()
-                binding.txtClamidMiles.text= details?.miles_claimed.toString()
+                binding.txtNetAmount.text= details?.currency_type +" "+String.format("%.2f",details?.netAmount.toString().toDouble())
+                binding.txtTax.text= details?.currency_type +" "+String.format("%.2f",details?.tax.toString().toDouble())
+                binding.txtTotalAmount.text= details?.currency_type +" "+String.format("%.2f",details?.totalAmount.toString().toDouble())
+                binding.txtmilesKm.text= String.format("%.2f",details?.miles_claimed.toString().toDouble())
+                binding.txtClamidMiles.text= String.format("%.2f",details?.miles_claimed.toString().toDouble())
                 binding.txtExpenceType.text= details?.expenseType_mileage.toString()
                 binding.txtTo.text= details?.to_location
                 binding.txtFrom.text= details?.from_location
                 binding.txtCarType.text= details?.carType
+                binding.tvMilesKm.text= details?.mileageType
                 binding.txtTripDate.text= Utils.getFormattedDate( details?.date_of_trip.toString(), Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
                 if(details?.is_round_trip==1){
                     binding.txtRoundTrip.text="Yes"
@@ -104,6 +105,7 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
                     binding.txtRoundTrip.text="No"
 
                 }
+
             } catch (e: Exception) {
             }
         }

@@ -49,6 +49,7 @@ class AttachmentsAdapter(
                     RequestOptions()
                     .placeholder(R.drawable.ic_default_media)
                     .error(R.drawable.ic_default_media)
+                        .override(600, 200)
                 )
                 .placeholder(R.drawable.ic_default_media)
                 .error(R.drawable.ic_default_media)

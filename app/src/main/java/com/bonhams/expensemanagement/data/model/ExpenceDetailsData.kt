@@ -16,9 +16,9 @@ data class ExpenceDetailsData(
     @SerializedName("expenseType_mileage")
     val expenseType_mileage: String = "",
     @SerializedName("netAmount")
-    val netAmount: Int = 0,
+    val netAmount: Double = 0.0,
     @SerializedName("totalAmount")
-    val totalAmount: Int = 0,
+    val totalAmount: Double = 0.0,
     @SerializedName("trip")
     val trip: String = "",
     @SerializedName("status")
@@ -51,4 +51,6 @@ data class ExpenceDetailsData(
     val date_of_trip: String = "",
     @SerializedName("currency_type")
     val currency_type: String = "",
+    @SerializedName("mileageType")
+    val mileageType: String = "",
 ):Serializable

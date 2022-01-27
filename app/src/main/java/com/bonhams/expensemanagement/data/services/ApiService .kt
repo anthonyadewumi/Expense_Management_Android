@@ -17,7 +17,24 @@ import java.util.concurrent.TimeUnit
 object RetrofitBuilder {
     private const val API_BASE_URL = "https://maps.googleapis.com/"
 
-
+    private val spec = ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
+        .supportsTlsExtensions(true)
+        .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_1, TlsVersion.TLS_1_0)
+        .cipherSuites(
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+            CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+            CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA
+        )
+        .build()
 
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(
         HttpLoggingInterceptor().apply {
@@ -27,12 +44,18 @@ object RetrofitBuilder {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
-        .connectionSpecs(Collections.singletonList(ConnectionSpec.MODERN_TLS))
+        .connectionSpecs(Collections.singletonList(spec))
+
+        /*  .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT,
+              ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                  .allEnabledTlsVersions()
+                  .allEnabledCipherSuites()
+                  .build()))*/
 
         .build()
 
 
-
+       // .connectionSpecs(Collections.singletonList(ConnectionSpec.MODERN_TLS))
 
 
     private fun getRetrofit(): Retrofit {
@@ -75,6 +98,9 @@ interface ApiService {
 
     @POST("notification_list ")
     suspend fun getnoticationData(@Body request: JsonObject) : NotificationListResponse
+
+    @POST("batch-list")
+    suspend fun getBatchData(@Body request: JsonObject) : BatchListResponse
 
     @POST("delete-claim")
     suspend fun deleteClaim(@Body deleteClaimRequest: DeleteClaimRequest): CommonResponse

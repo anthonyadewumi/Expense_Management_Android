@@ -102,8 +102,11 @@ class EditProfileFragment() : Fragment() {
         progDialog.setTitle("Uploading ...")
         mainViewModel.appbarSaveClick?.observe(viewLifecycleOwner, {
             if(validateEditDetails()){
+                if(mainViewModel.isEdit){
+                    mainViewModel.isEdit=false
                 editMyProfileObserver(binding.tvFirstName.text.toString(),binding.tvLastName.text.toString(),binding.tvEmail.text.toString())
             }
+                }
         })
         setMyProfileObserver()
     }
@@ -204,7 +207,8 @@ class EditProfileFragment() : Fragment() {
                         resource.data?.let { response ->
                             try {
                                 Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
-                                Toast.makeText(requireContext(), response.message, Toast.LENGTH_SHORT).show()
+                                if(response.message?.contains("Cannot fetch") != true)
+                               Toast.makeText(requireContext(), response.message, Toast.LENGTH_SHORT).show()
 
                                 setEditResponse(response)
                             } catch (e: Exception) {
@@ -318,6 +322,7 @@ class EditProfileFragment() : Fragment() {
 
     private fun setEditResponse(response: EditProfileResponse) {
         viewModel.setEditResponse(response)
+        viewModel.isProfileRefresh?.value=true
 
         binding.tvEmpId.text = response.profileDetail[0]?.employID
 
@@ -336,6 +341,10 @@ class EditProfileFragment() : Fragment() {
         binding.tvDefaultApprover.text = response.profileDetail[0]?.approver
         AppPreferences.companyId= compnyId.toString()
         AppPreferences.carId= carId.toString()
+        try {
+            (contextActivity as? MainActivity)?.backButtonPressed()
+        } catch (e: Exception) {
+        }
     }
     private fun setResponse(response: MyProfileResponse) {
         viewModel.setResponse(response)
@@ -353,6 +362,7 @@ class EditProfileFragment() : Fragment() {
         binding.tvCountry.text = response.profileDetail?.countryCode
         binding.tvMileageType.text = response.profileDetail?.mileageType
         binding.tvDefaultApprover.text = response.profileDetail?.approver
+
     }
     private fun showBottomSheet(){
         contextActivity?.let {

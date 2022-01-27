@@ -38,8 +38,9 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
 
         fun bind(item: ClaimDetail, position: Int, claimListener: OnClaimClickListener) {
             binding.tvTitle.text = item.title.replaceFirstChar(Char::uppercase)
-            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
-            binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
+            binding.tvSubmittedOn.text = Utils.getFormattedDate(item.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
+           // binding.tvTotalAmount.text = item.currencySymbol + item.totalAmount
+            binding.tvTotalAmount.text = item.currencySymbol + String.format("%.2f",item.totalAmount.toDouble())
 
             val attachment=item.attachments.split(",")
             if(attachment.isNotEmpty()){

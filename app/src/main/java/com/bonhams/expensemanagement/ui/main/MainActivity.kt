@@ -14,6 +14,7 @@ import android.os.Looper
 import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
@@ -37,6 +38,8 @@ import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.databinding.ActivityMainBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.BlankFragment
+import com.bonhams.expensemanagement.ui.OCR.CapturedImageFragment
+import com.bonhams.expensemanagement.ui.batch.BatchFragment
 import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
@@ -92,6 +95,16 @@ class MainActivity : BaseActivity() {
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         println("user type :"+AppPreferences.userType)
 
+      /*  val crashButton = Button(this)
+        crashButton.text = "Test Crash"
+        crashButton.setOnClickListener {
+            throw RuntimeException("Test Crash") // Force a crash
+        }
+
+        addContentView(crashButton, ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT))*/
+
         when (AppPreferences.userType) {
             "Reporting Manager" -> {
 
@@ -142,7 +155,7 @@ class MainActivity : BaseActivity() {
                 navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
             }
         }
-        binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_camera)
+      //  binding.bottomNavigationView.menu.removeItem(R.id.bottom_nav_camera)
 
         if(AppPreferences.userType == "Finance Department"){
             try {
@@ -165,7 +178,8 @@ class MainActivity : BaseActivity() {
         setNoInternetSnackbar()
         fragmentBackstackListener()
         if (savedInstanceState == null) {
-            val fragment = HomeFragment()
+           // val fragment = HomeFragment()
+            val fragment = BatchFragment()
             changeFragment(fragment)
             /*if(AppPreferences.userType.equals("Finance Department")){
                 val fragment = FinanceHomeFragment()
@@ -181,6 +195,8 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        binding.navDrawerTitle.text = AppPreferences.fullName
+
         println("profile img ${AppPreferences.profilePic}")
         Glide.with(this)
             .load(AppPreferences.profilePic)
@@ -199,6 +215,8 @@ class MainActivity : BaseActivity() {
 
     }
     override fun onBackPressed() {
+        binding.navDrawerTitle.text = AppPreferences.fullName
+
         if (binding.navDrawer.isDrawerOpen(GravityCompat.START)) {
             binding.navDrawer.closeDrawer(GravityCompat.START)
         } else {
@@ -213,7 +231,9 @@ class MainActivity : BaseActivity() {
     }
 
      fun backButtonPressed(){
-        // Go to the previous fragment
+         binding.navDrawerTitle.text = AppPreferences.fullName
+
+         // Go to the previous fragment
         supportFragmentManager.popBackStack()
         // Reset app bar
         if (supportFragmentManager.backStackEntryCount == 1) {
@@ -232,14 +252,16 @@ class MainActivity : BaseActivity() {
                         setupAppbar()
                         showBottomNavbar(true)
                         removeAnyOtherFragVisible()
-                        val fragment = HomeFragment()
+                       // val fragment = HomeFragment()
+                        val fragment = BatchFragment()
                         changeFragment(fragment)
                         return@OnNavigationItemSelectedListener true
                     }else{
                         setupAppbar()
                         showBottomNavbar(true)
                         removeAnyOtherFragVisible()
-                        val fragment = HomeFragment()
+                       // val fragment = HomeFragment()
+                        val fragment = BatchFragment()
                         changeFragment(fragment)
                         return@OnNavigationItemSelectedListener true
                     }
@@ -249,7 +271,7 @@ class MainActivity : BaseActivity() {
                     setupAppbar()
                     setAppbarTitle(getString(R.string.scan_receipt))
                     showBottomNavbar(true)
-                    val fragment = BlankFragment()
+                    val fragment = CapturedImageFragment()
                     changeFragment(fragment)
                     return@OnNavigationItemSelectedListener true
                 }
@@ -321,6 +343,7 @@ class MainActivity : BaseActivity() {
             //binding.appBar.appbarSave.visibility = View.VISIBLE
 
             viewModel.appbarSaveClick?.value = it
+            viewModel.isEdit=true
         })
         binding.appBar.ivMore.setOnClickListener(View.OnClickListener {
             viewModel.appbarMenuClick?.value = it
@@ -506,7 +529,8 @@ class MainActivity : BaseActivity() {
                     else -> {
                         setupAppbar()
                         showBottomNavbar(true)
-                        val fragment = HomeFragment()
+                        //val fragment = HomeFragment()
+                        val fragment = BatchFragment()
                         changeFragment(fragment)
                     }
                 }
@@ -619,11 +643,11 @@ class MainActivity : BaseActivity() {
     private fun showforceLogoutAlert() {
         val dialog = Dialog(this)
 //        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog?.setCancelable(false)
-        dialog?.setContentView(R.layout.custom_force_logout_alert_dialog)
-        val title = dialog?.findViewById(R.id.txtTitle) as TextView
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.custom_force_logout_alert_dialog)
+        val title = dialog.findViewById(R.id.txtTitle) as TextView
         val body = dialog.findViewById(R.id.txtDescription) as TextView
         val input = dialog.findViewById(R.id.edtDescription) as EditText
         //val yesBtn = dialog.findViewById(R.id.btnPositive) as Button
@@ -645,7 +669,7 @@ class MainActivity : BaseActivity() {
             finish()
 
         }
-        dialog?.show()
+        dialog.show()
     }
 
     /*

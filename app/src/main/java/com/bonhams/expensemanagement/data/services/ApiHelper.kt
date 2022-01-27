@@ -20,6 +20,7 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiService.createNewClaim(newClaimRequest)
     suspend fun getnoticationData(request: JsonObject) = apiService.getnoticationData(request)
+    suspend fun getBatchData(request: JsonObject) = apiService.getBatchData(request)
 
     suspend fun deleteClaim(deleteClaimRequest: DeleteClaimRequest) = apiService.deleteClaim(deleteClaimRequest)
     suspend fun sendReminder(claimId: JsonObject) = apiService.sendReminder(claimId)

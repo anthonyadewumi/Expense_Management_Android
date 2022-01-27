@@ -45,6 +45,8 @@ class SplitClaimActivity : BaseActivity() {
     private var taxcodeValue: String = ""
     private var compnyId: Int = 0
     private var groupId: String = ""
+    public var taxAmount: Double=0.00
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_split_claim)
@@ -81,7 +83,7 @@ class SplitClaimActivity : BaseActivity() {
                     val expenseTypeOne = binding.spnExpense.selectedItem as ExpenseType?
                     val totalAmountOne = binding.edtTotalAmount.text
                     val taxCodeOne = binding.edtTaxCode.text
-                    val mtax = binding.edtTax.getNumericValue()
+                    val mtax = binding.edtTax.text.toString().toDouble()
                     println("companynumber :" + companyOne?.id)
                     println("companycode :" + companyOne?.code)
                     println("departmentOne :" + departmentOne?.id)
@@ -136,7 +138,6 @@ class SplitClaimActivity : BaseActivity() {
         viewModel.taxList.forEachIndexed { index, element ->
 
             if(element.id.toString() == mtaxcodeId) {
-
                 postion=index
                 return@forEachIndexed
                 //  binding.edtTaxcode.setText(it.tax_code)
@@ -168,11 +169,21 @@ class SplitClaimActivity : BaseActivity() {
             Toast.makeText(this, "Please Enter Applicable Tax ", Toast.LENGTH_SHORT).show()
            return false
         }
-        val amount=binding.edtTotalAmount.text.toString().toDouble()
-        return if(amount<= remaningAmount){
+             val mtotal=binding.edtTotalAmount.text.toString().toDouble()
+             val mtax=binding.edtTax.text.toString().toDouble()
+        if(mtax>mtotal){
+            Toast.makeText(this, "The tax amount must not be greater than the total amount", Toast.LENGTH_SHORT).show()
+            return false
+            binding.edtTax.setText("")
+
+        }
+
+        val amount=String.format("%.2f",binding.edtTotalAmount.text.toString().toDouble()).toDouble()
+        val mremaningAmount=String.format("%.2f",remaningAmount).toDouble()
+        return if(amount<= mremaningAmount){
             true
         }else {
-            Toast.makeText(this, "Please Enter The Amount below ${remaningAmount}", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "Please Enter The Amount below ${mremaningAmount}", Toast.LENGTH_SHORT)
                 .show()
             false
 
@@ -184,8 +195,11 @@ class SplitClaimActivity : BaseActivity() {
         val currancyCode = intent.getSerializableExtra("currencyCode") as String?
         val currencySymbol = intent.getSerializableExtra("currencySymbol") as String?
          groupId = (intent.getSerializableExtra("groupId") as String?).toString()
+         taxAmount = ((intent.getSerializableExtra("taxAmount") as Double?)!!)
+        binding.edtTax.setText(taxAmount.toString())
         if (currencySymbol != null) {
             binding.tvTotalAmountCurrency.text = currencySymbol
+            binding.tvTaxCurrency.text = currencySymbol
            // binding.edtTax.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
         }
         if (currancyCode != null) {
@@ -249,7 +263,7 @@ class SplitClaimActivity : BaseActivity() {
         var compnypostion=0
 
         viewModel.companyList.forEachIndexed { index, element ->
-            if(AppPreferences.company.equals(element.name)){
+            if(AppPreferences.company == element.name){
                 compnypostion=index
                 return@forEachIndexed
             }

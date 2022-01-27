@@ -119,7 +119,7 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                binding.txtTotalClaimed.text = viewModel.totalClaimedList[position].miles_claimed.toString()
+                binding.txtTotalClaimed.text = String.format("%.2f",viewModel.totalClaimedList[position].miles_claimed.toString().toDouble())
 
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -147,6 +147,15 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
             updatedClaimsFromStatus(it as String?, null)
         })
 
+
+        mainViewModel.isMileageListRefresh?.observe(viewLifecycleOwner, {
+            if(it) {
+                mainViewModel.isMileageListRefresh?.value=false
+                adapter.refresh()
+            }
+
+        })
+
         mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
             if(it){
@@ -159,7 +168,7 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
                 binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
         })
-        binding.txtTitle.text = "Total Mileage Claimed"
+        binding.txtTitle.text = "Mileage Claimed"
     }
 
     private fun initAdapter() {

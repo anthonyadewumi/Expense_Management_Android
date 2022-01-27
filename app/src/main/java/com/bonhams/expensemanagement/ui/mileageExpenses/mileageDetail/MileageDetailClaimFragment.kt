@@ -100,11 +100,11 @@ class MileageDetailFragment() : Fragment() , RecylerCallback {
             binding.tvCarType.text = mileageDetail.carType
             binding.tvClaimedMiles.text = mileageDetail.claimedMileage
             binding.tvCurrency.text = mileageDetail.currencyTypeNamename
-            binding.tvPetrolAmount.text =mileageDetail.currencySymbol+" "+mileageDetail.petrolAmount
-            binding.tvParkAmount.text = mileageDetail.currencySymbol+" "+mileageDetail.parking
-            binding.tvTotalAmount.text = mileageDetail.currencySymbol+" "+mileageDetail.totalAmount
-            binding.tvApplicableTax.text = mileageDetail.currencySymbol+" "+mileageDetail.mtax
-            binding.tvNetAmount.text = mileageDetail.currencySymbol+" "+mileageDetail.netAmount
+            binding.tvPetrolAmount.text =mileageDetail.currencySymbol+" "+String.format("%.2f",mileageDetail.petrolAmount.toDouble())
+            binding.tvParkAmount.text = mileageDetail.currencySymbol+" "+String.format("%.2f",mileageDetail.parking.toDouble())
+            binding.tvTotalAmount.text = mileageDetail.currencySymbol+" "+String.format("%.2f",mileageDetail.totalAmount.toDouble())
+            binding.tvApplicableTax.text = mileageDetail.currencySymbol+" "+String.format("%.2f",mileageDetail.mtax.toDouble())
+            binding.tvNetAmount.text = mileageDetail.currencySymbol+" "+String.format("%.2f",mileageDetail.netAmount.toDouble())
             binding.tvTaxCode.text = mileageDetail.tax_code
             binding.tvDescription.text = mileageDetail.description
             binding.tvRMStatus.text = mileageDetail.reportingMStatus
@@ -120,8 +120,12 @@ class MileageDetailFragment() : Fragment() , RecylerCallback {
 
             }
 
-            if(mileageDetail.type=="KM") binding.txtMilesKM.text="Claimed KM" else{
+            if(mileageDetail.type=="KM") {
+                binding.txtMilesKM.text = "Claimed KM"
+                binding.tvCalculatedDistance.text = "Calculated KM"
+            }else{
                 binding.txtMilesKM.text="Claimed Miles"
+                binding.tvCalculatedDistance.text="Calculated Miles"
 
             }
 
@@ -393,6 +397,7 @@ class MileageDetailFragment() : Fragment() , RecylerCallback {
                         resource.data?.let { response ->
                             try {
                                 Log.d(TAG, "deleteClaim: ${resource.status}")
+                                mainViewModel.isMileageListRefresh?.value=true
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()

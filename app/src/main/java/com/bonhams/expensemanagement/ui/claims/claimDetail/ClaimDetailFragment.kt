@@ -52,7 +52,7 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var splitedClaimDetails: ClaimDetailsResponse
-
+    var isApproved=true
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -101,14 +101,18 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
                 binding.tvExpenseType.text = claimDetail.expenseTypeName
                 binding.tvCompanyNumber.text = claimDetail.companyName
                 binding.tvDepartment.text = claimDetail.department
+                binding.tvLedgerId.text = claimDetail.merchant
                 binding.tvDateOfSubmission.text = Utils.getFormattedDate(
-                    claimDetail.createdOn,
+                    claimDetail.date_of_receipt,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                 )
                 binding.tvCurrency.text = claimDetail.currencyTypeName
-                binding.tvTotalAmount.setText(claimDetail.currencySymbol+" "+claimDetail.totalAmount)
-                binding.tvTax.setText(claimDetail.currencySymbol+" "+claimDetail.tax)
-                binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+claimDetail.netAmount)
+                binding.tvTotalAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", claimDetail.totalAmount.toDouble()))
+               // binding.tvTotalAmount.setText(claimDetail.currencySymbol+" "+claimDetail.totalAmount)
+                binding.tvTax.setText(claimDetail.currencySymbol+" "+String.format("%.2f", claimDetail.tax.toDouble()))
+              //  binding.tvTax.setText(claimDetail.currencySymbol+" "+claimDetail.tax)
+                binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", claimDetail.netAmount.toDouble()))
+               // binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+claimDetail.netAmount)
                 binding.tvTaxCode.text = claimDetail.tax_code
 
                  println("claimDetail.rm_updation_date"+claimDetail.rm_updation_date)
@@ -119,6 +123,8 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
                       binding.ivRMReminder.visibility=View.VISIBLE
                     }
                     Constants.STATUS_APPROVED -> {
+                        isApproved=false
+
                         binding.tvRMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorGreen))
                         binding.tvRMStatusDate.visibility=View.VISIBLE
                         binding.tvRMStatusDate.text = Utils.getFormattedDate(
@@ -145,6 +151,7 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
 
                     }
                     Constants.STATUS_APPROVED -> {
+                        isApproved=false
                         binding.tvFMStatus.setTextColor(ContextCompat.getColor(requireContext(),R.color.colorGreen))
                         binding.tvFMStatusDate.visibility=View.VISIBLE
 
@@ -194,6 +201,9 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
         })
     }
     private fun setClickListner() {
+
+
+
         binding.ivRMReminder.setOnClickListener {
             showReminderAlert("Are you sure you want to send reminder to the Reporting  Manager?","RM")
 
@@ -206,6 +216,7 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
         binding.btnSplit.setOnClickListener {
             val fragment = SplitClaimDetailsFragment()
             fragment.setClaimRequestDetail(splitedClaimDetails)
+            fragment.setEditable(isApproved)
             (contextActivity as? MainActivity)?.addFragment(fragment)
 
         }
@@ -263,10 +274,12 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
 
                                 }
                                 try {
-                                    binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+splitedClaimDetails.main_claim?.netAmount)
+                                    binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
+                                 //   binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+splitedClaimDetails.main_claim?.netAmount)
 
                                 } catch (e: Exception) {
-                                    binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount.toString())
+                                    binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount)
+                                   // binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount.toString())
 
 
                                 }
@@ -296,6 +309,7 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
                         resource.data?.let { response ->
                             try {
                                 Log.d(TAG, "deleteClaim: ${resource.status}")
+                                mainViewModel.isClaimListRefresh?.value=true
                                 setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
@@ -445,6 +459,7 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
         val image = dialog.findViewById(R.id.itemImage) as ImageView
         Glide.with(requireContext())
             .load(imageUrl)
+            .dontAnimate()
             .apply(
                 RequestOptions()
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

@@ -51,9 +51,9 @@ class SplitClaimDetalisActivity : BaseActivity() {
         binding.editCompnyName.setText(item?.compnyName)
         binding.editDepartName.setText(item?.departmentName)
         binding.editExpenceType.setText(item?.expenceTypeName)
-        binding.edtTotalAmount.setText(currencySymbol+" "+item?.totalAmount)
+        binding.edtTotalAmount.setText(currencySymbol+" "+String.format("%.2f",item?.totalAmount?.toDouble()))
         binding.edtTaxCode.setText(""+item?.taxCodeValue)
-        binding.edtTax.setText(currencySymbol+" "+item?.tax.toString())
+        binding.edtTax.setText(currencySymbol+" "+String.format("%.2f",item?.tax.toString().toDouble()))
         binding.edtAutionSales.setText(item?.auctionSales)
         binding.editExpenceCode.setText(item?.expenceCode)
     }

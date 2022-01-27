@@ -16,6 +16,7 @@ class ProfileDetails() {
     val name: String = ""
     val profileImage: String = ""
     val fname: String = ""
+    @SerializedName("lname")
     val lname: String = ""
     val email: String = ""
     @SerializedName("contact_no")

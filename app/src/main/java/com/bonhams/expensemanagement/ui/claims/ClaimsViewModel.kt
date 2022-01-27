@@ -84,6 +84,7 @@ class ClaimsViewModel(private val claimsByPageRepository: ClaimsByPageRepository
         claimListRequest.searchKey = search
         claimListRequest.page = 1
         claimListRequest.numberOfItems = Constants.NETWORK_PAGE_SIZE
+        claimListRequest.batch_allotted = Constants.batch_allotted
         claimListRequest.status = statusPicker.value as String?
         claimListRequest.fromDate = (datePicker.value as Pair<*, *>?)?.first as String?
         claimListRequest.toDate  = (datePicker.value as Pair<*, *>?)?.second as String?

@@ -54,7 +54,7 @@ class ExpencesDetailsListAdapter(
         private val binding: ItemExpenceDetailsRowBinding = itemBinding
         fun bindItems(item: ExpenceDetailsData,context:Context,recylerCallback: RecylerCallback,postion:Int) {
             binding.tvClaimId.text = item.requestId.toString()
-           binding.tvClaimAmount.text = item.currency_type+" "+item.totalAmount
+           binding.tvClaimAmount.text = item.currency_type+" "+String.format("%.2f",item.totalAmount)
            binding.tvMerchant.text =item.claimTitle
             binding.tvMerchant.text= Utils.getFormattedDate( item.submittedOn.toString(), Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
 

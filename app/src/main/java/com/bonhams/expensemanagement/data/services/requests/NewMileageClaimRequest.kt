@@ -29,5 +29,6 @@ class NewMileageClaimRequest {
     var netAmount: String? = ""
     var description: String? = ""
     var expenseGroup: String? = ""
+    var mileage_rate: String? = ""
     var attachments: List<String> = emptyList()
 }

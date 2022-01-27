@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+
+    </data>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/batchCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/lnBatchImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/ivClaimImage"
+                        android:layout_width="@dimen/_55sdp"
+                        android:scaleType="fitXY"
+                        android:background="@drawable/ic_baseline_topic_24"
+                        android:layout_height="@dimen/_50sdp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/lnBatchImage"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tvBatchTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:text="Batch No:"
+                            android:singleLine="false"
+                            style="@style/TextMedium12"
+                            android:textColor="@color/colorTextBlack" />
+                        <TextView
+                            android:id="@+id/tvBatchNo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:text="12345"
+                            android:singleLine="false"
+                            style="@style/TextMedium12"
+                            android:textColor="@color/colorTextBlack" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/tvDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:text="10feb"
+                            android:singleLine="false"
+                            style="@style/TextRegular10"
+                            android:textColor="@color/colorDarkGray" />
+                        <View
+                            android:layout_width="1dp"
+                            android:background="@color/black"
+                            android:layout_marginLeft="@dimen/_5sdp"
+                            android:layout_height="@dimen/_13sdp"/>
+                        <TextView
+                            android:id="@+id/tvNoClaims"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:text="15 claims"
+                            android:singleLine="false"
+                            style="@style/TextRegular11"
+                            android:textColor="@color/colorTextBlack" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnMore"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/ivmore"
+                        android:layout_width="@dimen/_2sdp"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/ic_more"
+                        app:tint="@color/black" />
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:id="@+id/lnCurrency"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tvCurrencyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="@string/currency_"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:textColor="@color/colorDarkGray" />
+                    <TextView
+                        android:id="@+id/tvCurrency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="USD"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textColor="@color/colorDarkGray" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnCompany"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_alignParentEnd="true"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tvCompanyTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="@string/company_no"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:textColor="@color/colorDarkGray" />
+                    <TextView
+                        android:id="@+id/tvCompany"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="N/A"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textColor="@color/colorDarkGray" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnLedger"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/lnCurrency"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tvLedgerTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="@string/ledger_id_"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:textColor="@color/colorDarkGray" />
+                    <TextView
+                        android:id="@+id/tvLedger"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="B0321"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textColor="@color/colorDarkGray" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lnAmount"
+                    android:layout_below="@+id/lnCompany"
+                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tvAmountTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="@string/total_amount_colon"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:textColor="@color/colorDarkGray" />
+                    <TextView
+                        android:id="@+id/tvTotalAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:text="$1234"
+                        android:singleLine="false"
+                        style="@style/TextMedium12"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:textColor="@color/colorDarkGray" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
