@@ -58,7 +58,12 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
                     .error(R.drawable.mountains)
                     .into(binding.ivClaimImage);
             }
+            binding.ivClaimImage.setOnClickListener {
+                if(attachment.isNotEmpty()) {
+                    mileageListener.onMileageImageClicked(attachment[0], position)
+                }
 
+            }
             when {
                 item.status.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
                 item.status.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
@@ -96,6 +101,7 @@ class MileageAdapter() : PagingDataAdapter<MileageDetail, MileageAdapter.ViewHol
 
     interface OnMileageExpenseClickListener{
         fun onMileageExpenseItemClicked(claim: MileageDetail?, position: Int)
+        fun onMileageImageClicked(imageUrl: String?, position: Int)
         fun onMileageExpenseCreateCopyClicked(claim: MileageDetail?, position: Int)
     }
 }

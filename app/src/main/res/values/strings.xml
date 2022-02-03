@@ -37,6 +37,7 @@
     <string name="settings_colon">Settings :</string>
     <string name="change_password">Change Password</string>
     <string name="create_copy">Create Copy</string>
+    <string name="edit_claim">Edit</string>
     <string name="create_copy_underline"><u>Create Copy</u></string>
     <string name="enter_your_email">Enter your email</string>
     <string name="submit">Submit</string>
@@ -121,6 +122,8 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="scan_receipt">Scan Receipt</string>
     <string name="create_new_claim">Create New Claim</string>
+    <string name="edit_claims">Edit Claim</string>
+    <string name="edit_mileage">Edit Mileage </string>
     <string name="create_mileage_claim">Create Mileage Claim</string>
     <string name="start_gps">Start GPS</string>
     <string name="all_expense_request">All Expenses Request</string>
@@ -192,6 +195,7 @@
     <string name="submitted_on">Submitted On</string>
     <string name="no_result_found">No Data Available</string>
     <string name="split_expenses">Split Expenses</string>
+    <string name="edit_split_expenses">Edit Split Expenses</string>
     <string name="split_expenses_details">Split Expense Details</string>
     <string name="original_expense">Original Expense</string>
     <string name="retry">Retry</string>
@@ -212,9 +216,11 @@
     <string name="please_enter_all_mandatory_fields">Please enter all mandatory fields</string>
     <string name="delete">Delete</string>
     <string name="delete_claim">Delete Claim</string>
+    <string name="delete_batch">Delete Batch</string>
     <string name="accept_claim">Accept Claim</string>
     <string name="reminder_claim">Send Reminder </string>
     <string name="are_you_sure_you_want_to_delete_claim">Are you sure you want to delete this claim?</string>
+    <string name="are_you_sure_you_want_to_delete_batch">Are you sure you want to delete this batch?</string>
     <string name="are_you_sure_you_want_to_accept_claim">Are you sure you want to accept this claim?</string>
     <string name="title_star">Title*</string>
     <string name="title">Title</string>

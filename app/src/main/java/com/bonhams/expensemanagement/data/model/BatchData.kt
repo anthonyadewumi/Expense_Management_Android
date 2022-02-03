@@ -15,6 +15,8 @@ data class BatchData (
     val lastestSubmissionDate: String = "",
     @SerializedName("currency_type")
     val currency_type: String = "",
+    @SerializedName("currency_symbol")
+    val currency_symbol: String = "",
     @SerializedName("totalAmount")
     val totalAmount: Double = 0.0 ,
     @SerializedName("batch_allotted")

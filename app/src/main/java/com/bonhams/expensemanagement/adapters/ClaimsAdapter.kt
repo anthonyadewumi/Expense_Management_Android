@@ -55,7 +55,12 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
                     .error(R.drawable.mountains)
                     .into(binding.ivClaimImage);
             }
+            binding.ivClaimImage.setOnClickListener {
+                if(attachment.isNotEmpty()) {
+                    claimListener.onClaimImageClicked(attachment[0], position)
+                }
 
+            }
             if(!item.status.isNullOrEmpty()) {
                 binding.tvStatus.text =
                     item.status.replaceFirstChar(Char::uppercase)
@@ -96,6 +101,7 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
 
     interface OnClaimClickListener{
         fun onClaimItemClicked(claim: ClaimDetail?, position: Int)
+        fun onClaimImageClicked(imageUrl: String?, position: Int)
         fun onClaimCreateCopyClicked(claim: ClaimDetail?, position: Int)
     }
 }

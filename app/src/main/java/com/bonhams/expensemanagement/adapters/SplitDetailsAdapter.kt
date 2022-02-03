@@ -29,7 +29,7 @@ class SplitDetailsAdapter(
         attachmentItem?.let { holder.bindItems(isEditable,position,it,currencyCode,currencySymbol,recylerCallback) }
 
             holder.removeItems(splitList, position,recylerCallback)
-            holder.details(splitList, position,mcontext,currencyCode,currencySymbol)
+            holder.details(splitList, position,mcontext,currencyCode,currencySymbol,recylerCallback)
 
     }
     override fun getItemCount(): Int {
@@ -82,10 +82,13 @@ class SplitDetailsAdapter(
                 }
 
             }
-        fun details(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,context:Context,currencyCode :String , currencySymbol: String ) {
+        fun details(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,context:Context,currencyCode :String , currencySymbol: String ,recylerCallback: RecylerCallback) {
             val itemData=listAttachments?.get(postion)
                 binding.tvTitle.setOnClickListener {
-                    val splitItem = SplitClaimItem(
+                    if (itemData != null) {
+                        recylerCallback.callback("details",itemData,postion)
+                    }
+                  /*  val splitItem = SplitClaimItem(
                         itemData?.companyNumber?:"0", itemData?.companyCode?:"0", itemData?.department?:"0", itemData?.expenseType?:"0",
                         itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
                         itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0"
@@ -94,7 +97,7 @@ class SplitDetailsAdapter(
                     intent.putExtra("SplitItem", splitItem)
                     intent.putExtra("currencyCode", currencyCode)
                     intent.putExtra("currencySymbol", currencySymbol)
-                    context.  startActivity(intent)
+                    context.  startActivity(intent)*/
 
                 }
 

@@ -96,11 +96,20 @@ interface ApiService {
     @POST("create-claim")
     suspend fun createNewClaim(@Body newClaimRequest: NewClaimRequest) : CommonResponse
 
+    @POST("edit-expense-claim")
+    suspend fun editClaim(@Body newClaimRequest: JsonObject) : CommonResponse
+
     @POST("notification_list ")
     suspend fun getnoticationData(@Body request: JsonObject) : NotificationListResponse
 
     @POST("batch-list")
     suspend fun getBatchData(@Body request: JsonObject) : BatchListResponse
+
+    @POST("delete-batch")
+    suspend fun deleteBatch(@Body request: JsonObject) : CommonResponse
+
+    @POST("submit-batch")
+    suspend fun submitBatch(@Body request: JsonObject) : CommonResponse
 
     @POST("delete-claim")
     suspend fun deleteClaim(@Body deleteClaimRequest: DeleteClaimRequest): CommonResponse
@@ -131,6 +140,9 @@ interface ApiService {
 
     @POST("new_mileageclaim")
     suspend fun createNewMileageClaim(@Body mileageClaimRequest: NewMileageClaimRequest) : CommonResponse
+
+    @POST("edit-mileage-claim")
+    suspend fun editNewMileageClaim(@Body mileageClaimRequest: EditMileageClaimRequest) : CommonResponse
 
     @POST("changePassword")
     suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest) : CommonResponse

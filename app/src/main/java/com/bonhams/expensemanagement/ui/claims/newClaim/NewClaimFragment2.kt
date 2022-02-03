@@ -224,7 +224,7 @@ class NewClaimFragment2() : Fragment() ,RecylerCallback{
         var compnypostion=0
         viewModel.companyList.forEachIndexed { index, element ->
 
-            if(AppPreferences.company.equals(element.name)){
+            if(AppPreferences.company == element.name){
                 compnypostion=index
                 return@forEachIndexed
             }
@@ -448,7 +448,7 @@ class NewClaimFragment2() : Fragment() ,RecylerCallback{
                 mtaxcodeId= viewModel.expenseTypeList[position].taxCodeID
 
                 setupTax()
-                if(!binding.edtAutionValue.text.toString().isEmpty()){
+                if(binding.edtAutionValue.text.toString().isNotEmpty()){
                     binding.tvAuctionExpCode.text = expenseCode
 
                 }else{

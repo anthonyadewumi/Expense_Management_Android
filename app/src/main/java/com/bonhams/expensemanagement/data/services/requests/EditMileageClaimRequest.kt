@@ -2,12 +2,11 @@ package com.bonhams.expensemanagement.data.services.requests
 
 import com.google.gson.annotations.SerializedName
 
-class NewMileageClaimRequest {
+class EditMileageClaimRequest {
     var title: String? = ""
     var companyName: String? = ""
     var mileageType: String? = ""
     var department: String? = ""
-    var dateSubmitted: String? = ""
     var expenseType:  String? = ""
     @SerializedName("MerchantName")
     var merchantName: String? = ""
@@ -30,6 +29,6 @@ class NewMileageClaimRequest {
     var description: String? = ""
     var expenseGroup: String? = ""
     var mileage_rate: String? = ""
-    var attachments: List<String> = emptyList()
+    var main_id: String? = ""
 
 }

@@ -15,4 +15,6 @@ class MileageExpenseRequest {
     var toDate: String? = null
     @SerializedName("status")
     var status: String? = null
+    @SerializedName("batch_allotted")
+    var batch_allotted: String? = ""
 }

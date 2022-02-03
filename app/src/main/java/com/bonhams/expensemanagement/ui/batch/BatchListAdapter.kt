@@ -52,7 +52,7 @@ class BatchListAdapter(
             binding.tvCurrency.text = item.currency_type
             binding.tvLedger.text = item.ledger_id
             binding.tvNoClaims.text = item.totalClaims+" "+"Claims"
-            binding.tvTotalAmount.text = "$ "+item.totalAmount
+            binding.tvTotalAmount.text = item.currency_symbol+" "+String.format("%.2f",item.totalAmount.toString().toDouble())
            binding.tvDate.text =parseDateFormat(item.lastestSubmissionDate, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "dd MMM")
 
             binding.batchCardView.setOnClickListener {

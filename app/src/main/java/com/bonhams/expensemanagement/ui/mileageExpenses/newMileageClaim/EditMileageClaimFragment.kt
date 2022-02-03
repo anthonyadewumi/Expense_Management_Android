@@ -37,6 +37,7 @@ import com.bonhams.expensemanagement.data.model.Currency
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.GoogleApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
+import com.bonhams.expensemanagement.data.services.requests.EditMileageClaimRequest
 import com.bonhams.expensemanagement.data.services.requests.NewMileageClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
@@ -56,6 +57,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.gson.JsonObject
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
@@ -73,7 +75,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class NewMileageClaimFragment : Fragment() ,RecylerCallback{
+class EditMileageClaimFragment : Fragment() ,RecylerCallback{
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -896,7 +898,7 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            val claimRequest = viewModel.getNewMileageClaimRequest(
+            val claimRequest = viewModel.getMileageEditRequest(
                 binding.edtTitle.text.toString().trim(),
                 if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyName.selectedItemPosition].id else "",
                 if (!viewModel.mileageTypeList.isNullOrEmpty()) viewModel.mileageTypeList[binding.spnMileageType.selectedItemPosition].id else "",
@@ -931,9 +933,10 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
                 binding.edtMileageRate.text.toString().trim(),
                 viewModel.attachmentsList as List<String>,
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseGroupID else "",
+                mileageDetail.id
                 )
 
-            if (!validateCreateClaim(claimRequest)) {
+            if (!validateEditClaim(claimRequest)) {
                 onCreateClaimFailed()
                 return
             }
@@ -961,13 +964,14 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            if(viewModel.attachmentsList.size > 0){
+            editMileageObserver(claimRequest)
+           /* if(viewModel.attachmentsList.size > 0){
                 binding.btnSubmit.visibility = View.GONE
                 uploadAttachement(claimRequest)
             } else{
                 Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
                 return
-            }
+            }*/
 
         }
         catch (error: Exception){
@@ -1162,7 +1166,7 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
                         resource.data?.let { response ->
                             try {
                                 mileageClaimRequest.attachments=response.images
-                                setCreateClaimObserver(mileageClaimRequest)
+                               // setCreateClaimObserver(mileageClaimRequest)
 
 
                             } catch (e: Exception) {
@@ -1207,17 +1211,17 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
             file // it will return null
         }
     }
-    private fun setCreateClaimObserver(mileageClaimRequest: NewMileageClaimRequest) {
-        viewModel.createNewMileageClaim(mileageClaimRequest).observe(viewLifecycleOwner, Observer {
+
+    private fun editMileageObserver(mileageClaimRequest: EditMileageClaimRequest) {
+        viewModel.editNewMileageClaim(mileageClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
-                               // Toast.makeText(contextActivity, "Mileage Claim added successfully/submitted successfully", Toast.LENGTH_SHORT).show()
+                                Log.d(TAG, "editMileageObserver: ${resource.status}")
 
-                                setResponse(response)
+                                //setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -1239,6 +1243,13 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
 
     private fun validateCreateClaim(newClaimRequest: NewMileageClaimRequest): Boolean {
         val isValid = viewModel.validateNewClaimRequest(newClaimRequest)
+        if(!isValid.first){
+            Toast.makeText(contextActivity, isValid.second, Toast.LENGTH_SHORT).show()
+        }
+        return isValid.first
+    }
+    private fun validateEditClaim(newClaimRequest: EditMileageClaimRequest): Boolean {
+        val isValid = viewModel.validateEditClaimRequest(newClaimRequest)
         if(!isValid.first){
             Toast.makeText(contextActivity, isValid.second, Toast.LENGTH_SHORT).show()
         }

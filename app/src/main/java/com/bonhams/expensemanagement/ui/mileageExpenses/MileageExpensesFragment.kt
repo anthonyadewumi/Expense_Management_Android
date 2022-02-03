@@ -1,13 +1,15 @@
 package com.bonhams.expensemanagement.ui.mileageExpenses
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -36,6 +38,9 @@ import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDet
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.utils.Status
 import com.bonhams.expensemanagement.utils.Utils.Companion.showKeyboard
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -243,7 +248,35 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
             }
         }
     }
+    private fun showImagePopup(imageUrl:String) {
+        val dialog = Dialog(requireContext())
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.image_popup_dialog)
 
+        val image = dialog.findViewById(R.id.itemImage) as ImageView
+        Glide.with(this)
+            .load(imageUrl)
+            .apply(
+                RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .placeholder(R.drawable.mountains)
+                    .error(R.drawable.mountains)
+            )
+            .placeholder(R.drawable.mountains)
+            .error(R.drawable.mountains)
+            .into(image)
+
+
+        dialog.show()
+        val noBtn = dialog.findViewById(R.id.lnClose) as LinearLayout
+        noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
     private fun updatedClaimsFromInput() {
         binding.edtSearchClaim.text!!.trim().toString().let {
             if (/*it.isNotBlank() &&*/ viewModel.shouldShowExpensesList(it)) {
@@ -258,6 +291,11 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
         }
     }
 
+    override fun onMileageImageClicked(imageUrl: String?, position: Int) {
+        if (imageUrl != null) {
+            showImagePopup(imageUrl)
+        }
+    }
     override fun onMileageExpenseItemClicked(claim: MileageDetail?, position: Int) {
         Log.d(TAG, "onMileageExpenseItemClicked: $position")
         val fragment = MileageDetailFragment()

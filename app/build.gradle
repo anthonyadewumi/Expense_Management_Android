@@ -57,16 +57,16 @@ android {
             dimension "version"
             //
 //            buildConfigField "String", "BASE_URL", '"http://api-expense.n5631.iworklab.com/api/"'
-           // buildConfigField "String", "BASE_URL", '"https://apiexpense.n2.iworklab.com/api/"'
-           buildConfigField "String", "BASE_URL", '"https://testapi.n4.iworklab.com/api"'
+           buildConfigField "String", "BASE_URL", '"https://expnsmgmt.n2.iworklab.com/api/"'
+           //buildConfigField "String", "BASE_URL", '"https://testapi.n4.iworklab.com/api"'
 
             buildConfigField 'boolean', 'IS_PRODUCTION', 'false'
         }
         production {
             dimension "version"
             //
-          //  buildConfigField "String", "BASE_URL", '"https://apiexpense.n2.iworklab.com/api/"'
-            buildConfigField "String", "BASE_URL", '"https://testapi.n4.iworklab.com/api/"'
+          buildConfigField "String", "BASE_URL", '"https://expnsmgmt.n2.iworklab.com/api/"'
+           // buildConfigField "String", "BASE_URL", '"https://testapi.n4.iworklab.com/api/"'
             buildConfigField 'boolean', 'IS_PRODUCTION', 'true'
         }
     }

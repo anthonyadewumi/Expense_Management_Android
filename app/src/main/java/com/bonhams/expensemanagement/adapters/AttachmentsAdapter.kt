@@ -26,7 +26,7 @@ class AttachmentsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val attachmentItem = listAttachments?.get(position)
+        val attachmentItem = listAttachments[position]
         attachmentItem?.let { holder.bindItems(it) }
 
             holder.removeItems(listAttachments, position,callby,recylerCallback)
@@ -34,15 +34,15 @@ class AttachmentsAdapter(
 
     }
     override fun getItemCount(): Int {
-        listAttachments?.let {
-            return listAttachments?.size!!
+        listAttachments.let {
+            return listAttachments.size!!
         }
     }
 
     class ViewHolder(itemBinding: ItemAttachmentBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         private val binding: ItemAttachmentBinding = itemBinding
-
         fun bindItems(item: String) {
+            println("image item:$item")
             Glide.with(itemView.context)
                 .load(item)
                 .apply(
@@ -55,20 +55,18 @@ class AttachmentsAdapter(
                 .error(R.drawable.ic_default_media)
                 .into(binding.ivAttachment)
         }
-        fun removeItems(listAttachments: MutableList<String?>?,postion:Int,callby:String,recylerCallback: RecylerCallback) {
+        fun removeItems(listAttachments: MutableList<String?>?,postion:Int,callby:String,recylerCallback: RecylerCallback)
+        {
 
             if(!callby.equals("detalis")) {
                 binding.ivDeleteCross.visibility=View.VISIBLE
-
                 binding.ivDeleteCross.setOnClickListener {
                     listAttachments?.removeAt(postion)
                     listAttachments?.size?.let { it1 ->
                         recylerCallback.callback("remove",
                             it1,postion)
                     }
-
-
-                    System.out.println("remove listAttachments size :${listAttachments?.size}")
+                    println("remove listAttachments size :${listAttachments?.size}")
 
                     bindingAdapter?.notifyDataSetChanged()
                 }
@@ -77,8 +75,6 @@ class AttachmentsAdapter(
                 }
             }
                 fun showItems(listAttachments: MutableList<String?>?,postion:Int,callby:String,recylerCallback: RecylerCallback) {
-
-
                     binding.ivAttachment.setOnClickListener {
                         listAttachments?.get(postion)?.let { it1 ->
                             recylerCallback.callback("show",

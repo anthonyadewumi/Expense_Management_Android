@@ -37,6 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/batch_edit"
+                    android:visibility="gone"
                     style="@style/TextMedium12"
                     android:padding="@dimen/_15sdp"
                     android:gravity="center"/>
@@ -45,6 +46,7 @@
                     android:id="@+id/dividerOne"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
+                    android:visibility="gone"
                     android:background="@color/colorTextDarkGray" />
 
                 <TextView

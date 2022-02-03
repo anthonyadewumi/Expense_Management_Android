@@ -1,6 +1,9 @@
 package com.bonhams.expensemanagement.ui.claims.splitClaim
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -32,6 +35,7 @@ import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
 import com.bonhams.expensemanagement.utils.AppPreferences
+import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.RecylerCallback
 import com.bonhams.expensemanagement.utils.Status
 import com.google.gson.Gson
@@ -50,9 +54,12 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     private lateinit var viewModel: SplitClaimViewModel
     private lateinit var newClaimViewModel: NewClaimViewModel
     private lateinit var claimRequest: NewClaimRequest
+    private lateinit var mItem: SplitClaimItem
     private lateinit var splitAdapter: SplitAdapter
     private var currencyCode: String = ""
     private var currencySymbol: String = ""
+    var splitedSplitAmount=0.0
+
     companion object {
        public var splitItmlist: MutableList<SplitClaimItem> = mutableListOf()
        public var totalAmount: Double=0.00
@@ -81,10 +88,17 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+    }
     override fun onResume() {
         super.onResume()
-        viewModel.splitList.add("add more ")
-        splitAdapter.notifyDataSetChanged()
         if(splitItmlist.isNotEmpty()) {
             var splittotalamount: Double = 0.00
             var splitTaxamount: Double = 0.00
@@ -112,9 +126,9 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
             } catch (e: Exception) {
             }
 
-            viewModel.splitList.add("add more ")
             splitAdapter.notifyDataSetChanged()
         }
+        splitAdapter.notifyDataSetChanged()
        // binding.tvTotalAmount.setText(totalAmount.toString())
 
     }
@@ -122,6 +136,12 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         claimRequest = request
         System.out.println("claimRequest totalAmount : ${claimRequest.totalAmount}")
         System.out.println("claimRequest netAmount : ${claimRequest.netAmount}")
+
+
+    }
+    fun setSplitRequestDetail(item: SplitClaimItem){
+        mItem = item
+
 
 
     }
@@ -174,10 +194,13 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     private fun setupView(){
 //        binding.tvMerchantName.text = claimRequest.expenseCode
      //   binding.tvDate.text = claimRequest.dateSubmitted
-       binding.layoutTotalSplit.visibility=View.GONE
+        splitItmlist.add(mItem)
+
+        binding.layoutTotalSplit.visibility=View.GONE
 
         binding.tvTotalAmountCurrency.setText(currencySymbol)
         binding.tvTaxAmount.setText(currencySymbol)
+        binding.tvTaxCurrency.setText(currencySymbol)
        // binding.tvTotalAmount.setLocale(currencyCode)
         netAmount=claimRequest.netAmount.toString().toDouble()
         taxAmount=claimRequest.tax.toString().toDouble()
@@ -186,6 +209,7 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         val  totalAmountWithTax=claimRequest?.totalAmount.toString().toDouble()
         val  taxAmount=claimRequest?.tax.toString().toDouble()
         totalAmount =totalAmountWithTax-taxAmount
+        splitedSplitAmount=totalAmount
 
         //binding.tvTotalAmount.text = "$ "+totalAmount
         binding.tvTotalAmount.setText(String.format("%.2f",netAmount.toString().toDouble()))
@@ -204,9 +228,6 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         ).get(NewClaimViewModel::class.java)
     }
     private fun setupSplitRecyclerView(){
-        repeat(3) { index ->
-            viewModel.splitList.add("Split $index")
-        }
         val linearLayoutManager = LinearLayoutManager(
             context,
             LinearLayoutManager.VERTICAL,
@@ -385,6 +406,7 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     private fun createNewClaim() {
         println("chk split item size :"+splitItmlist.size)
         splitItmlist.forEach {
+            println(" split item :"+it)
             var auction="0"
                 if(it.auctionSales.isNotEmpty())
             {
@@ -585,9 +607,30 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         Toast.makeText(contextActivity, getString(R.string.please_enter_all_mandatory_fields), Toast.LENGTH_SHORT).show()
     }
 
+
+
+
     override fun callback(action: String, data: Any, postion: Int) {
 
-        if(action=="remove") {
+        if(action == "update"){
+
+            /*val amount = data as Double
+            val item= splitItmlist[postion]
+            item.totalAmount= amount.toString()
+
+            splitItmlist.removeAt(postion)
+            splitItmlist.add(postion,item)
+            var totalSplitAmount=0.0
+            splitItmlist.forEach {
+                println(" splited amount :"+it)
+
+                totalSplitAmount += it.totalAmount.toDouble()
+                println(" splited amount :"+totalSplitAmount)
+            }
+            remaningAmount=splitedSplitAmount-totalSplitAmount
+            binding.tvTotalAmount.setText(String.format("%.2f", remaningAmount))
+            binding.totalSplitAmount.text = currencySymbol+" "+totalSplitAmount*/
+        }else if(action=="remove") {
             if (splitItmlist.isNotEmpty()) {
                 var splittotalamount: Double = 0.0
                 var splitTaxamount: Double = 0.0
@@ -612,12 +655,26 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
                     binding.tvTotalAmount.setText(String.format("%.2f",totalCalculateamount.toString().toDouble()))
                 }
 
-                viewModel.splitList.add("add more ")
                 splitAdapter.notifyDataSetChanged()
             }else{
                 binding.tvTotalAmount.setText(String.format("%.2f",netAmount.toString().toDouble()))
                 remaningAmount= netAmount
             }
+        }else if(action=="details"){
+            val itemData=data as SplitClaimItem
+            val splitItem = SplitClaimItem(
+                itemData?.companyNumber?:"0", itemData?.companyCode?:"0", itemData?.department?:"0", itemData?.expenseType?:"0",
+                itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
+                itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0"
+            )
+            val intent = Intent(requireContext(), EditSplitClaimActivity::class.java)
+            intent.putExtra("SplitItem", splitItem)
+            intent.putExtra("currencyCode", currencyCode)
+            intent.putExtra("currencySymbol", currencySymbol)
+            intent.putExtra("postion", postion)
+            intent.putExtra("groupId", claimRequest.expenseGroup)
+            intent.putExtra("taxAmount", binding.tvTaxAmount.text.toString().toDouble())
+            requireActivity()?.startActivity(intent)
         }
     }
 }

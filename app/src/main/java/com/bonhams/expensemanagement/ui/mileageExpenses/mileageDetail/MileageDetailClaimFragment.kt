@@ -25,6 +25,7 @@ import com.bonhams.expensemanagement.databinding.FragmentMileageClaimDetailBindi
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
+import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.EditMileageClaimFragment
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.utils.Constants
 import com.bonhams.expensemanagement.utils.RecylerCallback
@@ -280,8 +281,8 @@ class MileageDetailFragment() : Fragment() , RecylerCallback {
         popup.inflate(R.menu.claims_menu)
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
-                R.id.action_copy -> {
-                    val fragment = NewMileageClaimFragment()
+                R.id.action_edit -> {
+                    val fragment = EditMileageClaimFragment()
                     fragment.setMileageDetails(mileageDetail)
 //                    fragment.setRefreshPageListener(this)
                     (contextActivity as? MainActivity)?.addFragment(fragment)

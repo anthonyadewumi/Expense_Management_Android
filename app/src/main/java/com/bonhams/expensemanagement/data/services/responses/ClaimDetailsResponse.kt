@@ -64,7 +64,9 @@ class MainClaim (
     @SerializedName("rm_updation_date")
     val rm_updation_date: String = "",
     @SerializedName("fm_updation_date")
-    val fm_updation_date: String = ""
+    val fm_updation_date: String = "" ,
+    @SerializedName("split_id")
+    val split_id: String = ""
 )
 class SplitedClaim (
     val id: String = "",

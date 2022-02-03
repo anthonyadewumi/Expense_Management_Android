@@ -25,6 +25,7 @@ import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsRespons
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.databinding.FragmentClaimDetailBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
@@ -201,9 +202,6 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
         })
     }
     private fun setClickListner() {
-
-
-
         binding.ivRMReminder.setOnClickListener {
             showReminderAlert("Are you sure you want to send reminder to the Reporting  Manager?","RM")
 
@@ -374,6 +372,12 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
             when (item.itemId) {
                 R.id.action_copy -> {
                     val fragment = NewClaimFragment()
+                    fragment.setClaimDetails(claimDetail)
+//                    fragment.setRefreshPageListener(this)
+                    (contextActivity as? MainActivity)?.addFragment(fragment)
+                }
+                R.id.action_edit -> {
+                    val fragment = EditClaimFragment()
                     fragment.setClaimDetails(claimDetail)
 //                    fragment.setRefreshPageListener(this)
                     (contextActivity as? MainActivity)?.addFragment(fragment)

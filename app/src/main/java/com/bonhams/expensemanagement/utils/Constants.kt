@@ -16,5 +16,6 @@ class Constants {
         const val STATUS_APPROVED = "Approved"
         const val STATUS_PENDING = "Pending"
         const val STATUS_REJECTED = "Rejected"
+        const val ADDSPLIT = "addsplit"
     }
 }

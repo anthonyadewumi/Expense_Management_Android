@@ -41,13 +41,17 @@ import com.bonhams.expensemanagement.ui.BlankFragment
 import com.bonhams.expensemanagement.ui.OCR.CapturedImageFragment
 import com.bonhams.expensemanagement.ui.batch.BatchFragment
 import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
+import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsActivity
+import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.gpsTracking.GPSTrackingFragment
 import com.bonhams.expensemanagement.ui.home.HomeFragment
 import com.bonhams.expensemanagement.ui.login.LoginActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.mileageDetail.MileageDetailFragment
+import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.EditMileageClaimFragment
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
@@ -826,8 +830,22 @@ class MainActivity : BaseActivity() {
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
                 }
-                else if(fragName.equals(SplitClaimFragment::class.java.simpleName, true)){
+                else if(fragName.equals(EditClaimFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.edit_claims))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
+                else if(fragName.equals(EditMileageClaimFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.edit_mileage))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }else if(fragName.equals(SplitClaimFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.split_expenses))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
+                else if(fragName.equals(EditSplitClaimDetailsFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.edit_split_expenses))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
                 }

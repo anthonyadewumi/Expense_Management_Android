@@ -29,6 +29,14 @@ class SplitClaimViewModel(private val splitClaimRepository: SplitClaimRepository
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+    fun editClaim(newClaimRequest: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = splitClaimRepository.editClaim(newClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
     fun uploadClaimAttachement(newClaimRequest: RequestBody) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {

@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement.ui.claims.newClaim
+package com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit
 
 import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
@@ -7,6 +7,7 @@ import androidx.lifecycle.liveData
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimRepository
 import com.bonhams.expensemanagement.utils.Resource
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
-class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : ViewModel() {
+class EditClaimViewModel(private val newClaimRepository: NewClaimRepository) : ViewModel() {
 
     var expenseGroupList: MutableList<ExpenseGroup> = mutableListOf<ExpenseGroup>()
     var expenseTypeList: MutableList<ExpenseType> = mutableListOf<ExpenseType>()
@@ -37,6 +38,14 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
         emit(Resource.loading(data = null))
         try {
             emit(Resource.success(data = newClaimRepository.createNewClaim(newClaimRequest)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun editClaim(newClaimRequest: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = newClaimRepository.editClaim(newClaimRequest)))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }

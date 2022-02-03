@@ -88,6 +88,7 @@ class MileageExpensesViewModel(private val mileageExpensesByPageRepository: Mile
         val expenseRequest = MileageExpenseRequest()
         expenseRequest.searchKey = search
         expenseRequest.page = 1
+        expenseRequest.batch_allotted = Constants.batch_allotted
         expenseRequest.numberOfItems = Constants.NETWORK_PAGE_SIZE
         expenseRequest.status = statusPicker.value as String?
         expenseRequest.fromDate = (datePicker.value as Pair<*, *>?)?.first as String?

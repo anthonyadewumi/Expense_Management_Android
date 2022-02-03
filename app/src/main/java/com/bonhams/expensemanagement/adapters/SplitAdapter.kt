@@ -12,6 +12,7 @@ import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.SplitClaimItem
 import com.bonhams.expensemanagement.databinding.ItemSplitRowBinding
 import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimDetalisActivity
+import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimActivity
 import com.bonhams.expensemanagement.utils.RecylerCallback
 
 
@@ -28,7 +29,7 @@ class SplitAdapter(
         attachmentItem?.let { holder.bindItems(position,it,currencyCode,currencySymbol,recylerCallback) }
 
             holder.removeItems(splitList, position,recylerCallback)
-            holder.details(splitList, position,mcontext,currencyCode,currencySymbol)
+            holder.details(splitList, position,mcontext,currencyCode,currencySymbol,recylerCallback)
 
     }
     override fun getItemCount(): Int {
@@ -40,7 +41,7 @@ class SplitAdapter(
     class ViewHolder(itemBinding: ItemSplitRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
         private val binding: ItemSplitRowBinding = itemBinding
         fun bindItems(postion:Int,item: SplitClaimItem, currencyCode :String , currencySymbol: String ,recylerCallback: RecylerCallback) {
-            binding.tvTitles.text = item.compnyName
+            binding.tvTitles.text = item.companyCode
            // binding.tvamount.setCurrencySymbol(currencySymbol)
            // binding.tvamount.setLocale(currencyCode)
             try {
@@ -85,19 +86,12 @@ class SplitAdapter(
                 }
 
             }
-        fun details(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,context:Context,currencyCode :String , currencySymbol: String ) {
+        fun details(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,context:Context,currencyCode :String , currencySymbol: String,recylerCallback: RecylerCallback ) {
             val itemData=listAttachments?.get(postion)
                 binding.tvTitle.setOnClickListener {
-                    val splitItem = SplitClaimItem(
-                        itemData?.companyNumber?:"0", itemData?.companyCode?:"0", itemData?.department?:"0", itemData?.expenseType?:"0",
-                        itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
-                        itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0"
-                    )
-                    val intent = Intent(context, SplitClaimDetalisActivity::class.java)
-                    intent.putExtra("SplitItem", splitItem)
-                    intent.putExtra("currencyCode", currencyCode)
-                    intent.putExtra("currencySymbol", currencySymbol)
-                    context.  startActivity(intent)
+                    if (itemData != null) {
+                        recylerCallback.callback("details",itemData,postion)
+                    }
 
                 }
 

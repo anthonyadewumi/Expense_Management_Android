@@ -27,6 +27,7 @@ import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsResponse
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
+import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
 import com.bonhams.expensemanagement.data.services.responses.SplitedClaim
 import com.bonhams.expensemanagement.databinding.FragmentSplitClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
@@ -49,7 +50,7 @@ import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.io.File
 
 
-class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
+class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
@@ -59,6 +60,8 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     private lateinit var newClaimViewModel: NewClaimViewModel
     private lateinit var splitedClaimlist: List<SplitedClaim>
     private lateinit var splitedClaimDetails: ClaimDetailsResponse
+    private lateinit var objectRequest: JsonObject
+    private lateinit var dropdownResponse: DropdownResponse
     private lateinit var splitAdapter: SplitDetailsAdapter
     private var currencyCode: String = ""
     private var currencySymbol: String = ""
@@ -112,6 +115,24 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
 
 
     }
+    fun setClaimRequestDetailJson(request: JsonObject){
+        try {
+            objectRequest = request
+
+        } catch (e: Exception) {
+        }
+
+
+    }
+    fun setdropdownResponse(dropDownResponse: DropdownResponse){
+        try {
+            dropdownResponse = dropDownResponse
+
+        } catch (e: Exception) {
+        }
+
+
+    }
     fun setEditable(editable: Boolean){
 
 
@@ -156,26 +177,50 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                 }else{
                     val totalCalculateamount=totalAmount-splittotalamount
                    // binding.tvTotalAmount.setText(totalCalculateamount.toString())
-                    println("Splited id array$idOfSplitList")
-                    println("Splited amount array$valueOfSplitList")
-                    println("Splited net amount $totalCalculateamount")
-                    println("Splited main_claim_id ${splitedClaimDetails.main_claim?.id}")
+                    println("companyList size ${newClaimViewModel.companyList.size}")
+                    println("departmentList size ${newClaimViewModel.departmentList.size}")
+                    println("expenseTypeList size ${newClaimViewModel.expenseTypeList.size}")
 
-                     val jsonArrayId=JsonArray()
-                     val jsonArrayValue=JsonArray()
-                    idOfSplitList.forEach {
-                        jsonArrayId.add(it)
+
+
+                    val jsonArraySplitId= JsonArray()
+                    val jsonArraySplitData= JsonArray()
+                    splitItmlist.forEachIndexed { index, splitClaimItem ->
+                        println("splitClaimItem ${splitClaimItem}")
+
+                        jsonArraySplitId.add(splitClaimItem.split_id)
+                        val data= JsonObject()
+                        var expenceCode= ""
+                        var mtaxcodeId= ""
+                        newClaimViewModel.expenseTypeListExpenseGroup.forEach {
+                            if(it.id==splitClaimItem.expenseType)
+                                expenceCode=it.expenseCodeID
+                            mtaxcodeId=it.taxCodeID
+                        }
+                        var companyId= ""
+                        newClaimViewModel.companyList.forEach {
+                            if(it.code==splitClaimItem.companyCode||it.code==splitClaimItem.compnyName)
+                                companyId=it.id
+                        }
+                        var departmentId= ""
+                        newClaimViewModel.departmentListCompany.forEach {
+                            if(it.id==splitClaimItem.department||it.cost_code==splitClaimItem.departmentName)
+                                departmentId=it.id
+                        }
+                        data.addProperty("expense_type_id",splitClaimItem.expenseType  )
+                        data.addProperty("company_id", companyId)
+                        data.addProperty("department_id", departmentId )
+                        data.addProperty("amount", splitClaimItem.totalAmount)
+                        data.addProperty("tax_code",mtaxcodeId)
+                        data.addProperty("auction",splitClaimItem.auctionSales )
+                        data.addProperty("expense_code", expenceCode )
+                        jsonArraySplitData.add(data)
                     }
-                    valueOfSplitList.forEach {
-                        jsonArrayValue.add(it)
-                    }
-                    val jsonObject = JsonObject().also {
-                        it.add("split_ids",jsonArrayId)
-                        it.add("split_total_amt",jsonArrayValue)
-                        it.addProperty("main_net_amt", netAmount)
-                        it.addProperty("main_claim_id", splitedClaimDetails.main_claim?.id)
-                    }
-                    editSplit(jsonObject)
+                    objectRequest.add("split_ids",jsonArraySplitId)
+                    objectRequest.add("split_data",jsonArraySplitData)
+
+
+                    callApiEditClaim(objectRequest)
                 }
 
             }
@@ -183,6 +228,17 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     }
 
     private fun setupView(){
+
+
+        newClaimViewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType
+        newClaimViewModel.departmentListCompany = dropdownResponse.departmentList
+        newClaimViewModel.currencyList  = dropdownResponse.currencyType as MutableList<Currency>
+        newClaimViewModel.carTypeList  = dropdownResponse.carType
+        newClaimViewModel.statusTypeList  = dropdownResponse.statusType
+        newClaimViewModel.mileageTypeList  = dropdownResponse.mileageType
+        newClaimViewModel.companyList  = dropdownResponse.companyList
+        newClaimViewModel.taxList  = dropdownResponse.tax
+
         binding.layoutAddSplit.visibility=View.GONE
         splitItmlist.clear()
         splitedClaimlist.forEach {
@@ -261,91 +317,41 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
         splitAdapter = SplitDetailsAdapter(isApproved,currencyCode,currencySymbol,splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
         binding.rvsplit.adapter = splitAdapter
     }
-    private fun setupSpinners(){
-        // Company Adapter
-        val companyAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            newClaimViewModel.companyList
-        )
-        binding.spnCompany.adapter = companyAdapter
-        binding.spnCompany.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.companyList[position]
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-
-        // Department Adapter
-        val departmentAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            newClaimViewModel.departmentList
-        )
-        binding.spnDepartment.adapter = departmentAdapter
-        binding.spnDepartment.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.departmentList[position]
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-
-        // Expense Adapter
-        val expenseAdapter = CustomSpinnerAdapter(
-            requireContext(),
-            R.layout.item_spinner,
-            newClaimViewModel.expenseTypeList
-        )
-        binding.spnExpense.adapter = expenseAdapter
-        binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
-            View.OnFocusChangeListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val item = newClaimViewModel.expenseTypeList[position]
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {}
-        }
-    }
 
 
-    private fun editSplit(jsonObject:JsonObject) {
-
-        viewModel.updateSplit(jsonObject).observe(viewLifecycleOwner, Observer {
+    private fun callApiEditClaim(newClaimRequest: JsonObject){
+        viewModel.editClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                               (contextActivity as? MainActivity)?.backButtonPressed()
-                               (contextActivity as? MainActivity)?.clearFragmentBackstack()
-                                mainViewModel.isRefresh?.value=true
-                                //setResponse(response)
+                                /*(contextActivity as? MainActivity)?.backButtonPressed()
+                                (contextActivity as? MainActivity)?.clearFragmentBackstack()
+                                mainViewModel.isRefresh?.value=true*/
+                                activity?.getFragmentManager()?.popBackStackImmediate();
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
                         }
                     }
                     Status.ERROR -> {
-                        Log.e(TAG, "deleteClaim: ${it.message}")
-                        it.message?.let { it1 ->
-                            Toast.makeText(
-                                contextActivity,
-                                it1,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+                        binding.mProgressBars.visibility = View.GONE
+                        binding.btnSubmit.visibility = View.VISIBLE
+                        Log.e(TAG, "editClaimObserver: ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
-
+                        binding.mProgressBars.visibility = View.VISIBLE
                     }
                 }
             }
         })
     }
+
+
+
+
     override fun callback(action: String, data: Any, postion: Int) {
 
         if(action=="details"){
@@ -353,9 +359,10 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             val splitItem = SplitClaimItem(
                 itemData?.companyNumber?:"0", itemData?.companyCode?:"0", itemData?.department?:"0", itemData?.expenseType?:"0",
                 itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
-                itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0"
+                itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0",itemData.expenseCodeID,itemData.taxCodeValue,itemData.split_id
             )
             val intent = Intent(requireContext(), EditSplitClaimDetailsActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("SplitItem", splitItem)
             intent.putExtra("currencyCode", currencyCode)
             intent.putExtra("currencySymbol", currencySymbol)

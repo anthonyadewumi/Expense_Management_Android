@@ -5,6 +5,14 @@
         android:id="@+id/action_copy"
         android:orderInCategory="100"
         android:title="@string/create_copy"
+        android:visible="false"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/_12ssp"
+        android:fontFamily="@font/inter_regular"/>
+    <item
+        android:id="@+id/action_edit"
+        android:orderInCategory="100"
+        android:title="@string/edit_claim"
         android:textColor="@color/colorBlack"
         android:textSize="@dimen/_12ssp"
         android:fontFamily="@font/inter_regular"/>

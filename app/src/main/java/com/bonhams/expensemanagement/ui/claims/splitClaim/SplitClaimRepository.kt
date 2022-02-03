@@ -11,5 +11,6 @@ class SplitClaimRepository(private val apiHelper: ApiHelper) {
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiHelper.createNewClaim(newClaimRequest)
     suspend fun uploadImage(newClaimRequest: RequestBody) = apiHelper.uploadImage(newClaimRequest)
     suspend fun updateSplit(jsonobject: JsonObject) = apiHelper.updateSplit(jsonobject)
+    suspend fun editClaim(jsonobject: JsonObject) = apiHelper.editClaim(jsonobject)
 
 }
