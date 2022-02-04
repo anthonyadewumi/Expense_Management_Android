@@ -57,5 +57,9 @@ data class MileageDetail (
     @SerializedName("rm_updation_date")
     val rm_updation_date: String = "",
     @SerializedName("fm_updation_date")
-    val fm_updation_date: String = ""
+    val fm_updation_date: String = "",
+    @SerializedName("expenseCode")
+    val expenseCode: String = "" ,
+    @SerializedName("auction")
+    val auction: String = ""
 )

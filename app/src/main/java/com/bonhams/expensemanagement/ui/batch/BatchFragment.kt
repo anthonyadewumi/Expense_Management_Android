@@ -193,7 +193,7 @@ class BatchFragment() : Fragment(), RecylerCallback {
         if(action == "details"){
             Constants.batch_allotted= (data as BatchData).batch_allotted.toString()
             val fragment = HomeFragment()
-            (contextActivity as? MainActivity)?.changeFragment(fragment)
+            (contextActivity as? MainActivity)?.changeFragmentHome(fragment)
         }else if(action == "batch"){
             showBatchBottomSheet(batchNumber)
         }

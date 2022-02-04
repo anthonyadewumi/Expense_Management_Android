@@ -239,7 +239,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1.2"
                     android:layout_height="wrap_content"
-                    android:text="@string/tax_amount"
+                    android:text="@string/tax_applicable"
                     style="@style/TextRegular11"
                     android:textColor="@color/colorTextBlack"
                     />

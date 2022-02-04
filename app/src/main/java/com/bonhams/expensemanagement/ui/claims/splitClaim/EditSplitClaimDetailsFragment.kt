@@ -195,7 +195,10 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                         newClaimViewModel.expenseTypeListExpenseGroup.forEach {
                             if(it.id==splitClaimItem.expenseType)
                                 expenceCode=it.expenseCodeID
-                            mtaxcodeId=it.taxCodeID
+                        }
+                        newClaimViewModel.taxList.forEach {
+                            if(it.tax_code==splitClaimItem.taxCodeValue)
+                                mtaxcodeId= it.id.toString()
                         }
                         var companyId= ""
                         newClaimViewModel.companyList.forEach {
@@ -280,14 +283,27 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
 
         binding.tvTotalAmountCurrency.text = currencySymbol
        // binding.tvTotalAmount.setLocale(currencyCode)
-        netAmount=splitedClaimDetails.main_claim?.netAmount.toString().toDouble()
-       val  totalAmountWithTax=splitedClaimDetails.main_claim?.totalAmount.toString().toDouble()
-       val  taxAmount=splitedClaimDetails.main_claim?.tax.toString().toDouble()
+      //  netAmount=splitedClaimDetails.main_claim?.netAmount.toString().toDouble()
+       //val  totalAmountWithTax=splitedClaimDetails.main_claim?.totalAmount.toString().toDouble()
+        //val  taxAmount=splitedClaimDetails.main_claim?.tax.toString().toDouble()
+        netAmount=objectRequest.get("netAmount").asDouble
+
+        val  totalAmountWithTax=objectRequest.get("totalAmount").asDouble
+        val  taxAmount=objectRequest.get("tax").asDouble
+        println("totalAmountWithTax:"+totalAmountWithTax)
+        println("taxAmount:"+taxAmount)
+
+
         totalAmount=totalAmountWithTax-taxAmount
        // binding.tvTotalAmount.text = "$ "+totalAmount
       // binding.tvTotalAmount.setText(netAmount.toString())
 
       // binding.tvTotalAmount.setText(remaningAmount.toString())
+
+        remaningAmount=totalAmount-totalSplitAmount
+        //binding.tvTotalAmount.setText(remaningAmount.toString())
+        binding.tvTotalAmount.setText(String.format("%.2f", remaningAmount))
+
         binding.tvTotalAmount.setText(String.format("%.2f", remaningAmount))
 
     }
@@ -326,10 +342,14 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
+                                binding.mProgressBars.visibility = View.GONE
+                                val intent = Intent(requireActivity(), MainActivity::class.java)
+                                startActivity(intent)
+                                requireActivity(). finish()
                                 /*(contextActivity as? MainActivity)?.backButtonPressed()
                                 (contextActivity as? MainActivity)?.clearFragmentBackstack()
-                                mainViewModel.isRefresh?.value=true*/
-                                activity?.getFragmentManager()?.popBackStackImmediate();
+                                mainViewModel.isRefresh?.value=true
+                                activity?.getFragmentManager()?.popBackStackImmediate()*/
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -361,13 +381,15 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                 itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
                 itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0",itemData.expenseCodeID,itemData.taxCodeValue,itemData.split_id
             )
+            println("splitItem :$splitItem")
+
             val intent = Intent(requireContext(), EditSplitClaimDetailsActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra("SplitItem", splitItem)
             intent.putExtra("currencyCode", currencyCode)
             intent.putExtra("currencySymbol", currencySymbol)
             intent.putExtra("postion", postion)
-            intent.putExtra("groupId", splitedClaimDetails.main_claim?.expenseGroupID)
+            intent.putExtra("groupId", objectRequest.get("expenseGroup").asString)
            // intent.putExtra("taxAmount", binding.tvTaxAmount.text.toString().toDouble())
             requireActivity()?.startActivity(intent)
         }else if(action == "update"){
@@ -383,7 +405,7 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                 totalSplitAmount += it.totalAmount.toDouble()
                 println(" splited amount detalis :"+totalSplitAmount)
             }
-            remaningAmount=splitedSplitAmount-totalSplitAmount
+            remaningAmount= totalAmount-totalSplitAmount
             //binding.tvTotalAmount.setText(remaningAmount.toString())
             binding.tvTotalAmount.setText(String.format("%.2f", remaningAmount))
 

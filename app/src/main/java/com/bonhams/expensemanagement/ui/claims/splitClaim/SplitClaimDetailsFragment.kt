@@ -17,10 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.R
-import com.bonhams.expensemanagement.adapters.AttachmentsAdapter
-import com.bonhams.expensemanagement.adapters.CustomSpinnerAdapter
-import com.bonhams.expensemanagement.adapters.SplitAdapter
-import com.bonhams.expensemanagement.adapters.SplitDetailsAdapter
+import com.bonhams.expensemanagement.adapters.*
 import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
@@ -34,6 +31,7 @@ import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailViewModel
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimActivity
+import com.bonhams.expensemanagement.ui.claims.newClaim.SplitClaimDetalisActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
@@ -59,7 +57,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     private lateinit var newClaimViewModel: NewClaimViewModel
     private lateinit var splitedClaimlist: List<SplitedClaim>
     private lateinit var splitedClaimDetails: ClaimDetailsResponse
-    private lateinit var splitAdapter: SplitDetailsAdapter
+    private lateinit var splitAdapter: SplitDetailsAdapterReadOnly
     private var currencyCode: String = ""
     private var currencySymbol: String = ""
     private var idOfSplitList: MutableList<String> = mutableListOf()
@@ -184,6 +182,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
 
     private fun setupView(){
         binding.layoutAddSplit.visibility=View.GONE
+        binding.btnSubmit.visibility=View.GONE
         splitItmlist.clear()
         splitedClaimlist.forEach {
             var auction=""
@@ -258,7 +257,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             false
         )
         binding.rvsplit.layoutManager = linearLayoutManager
-        splitAdapter = SplitDetailsAdapter(isApproved,currencyCode,currencySymbol,splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
+        splitAdapter = SplitDetailsAdapterReadOnly(isApproved,currencyCode,currencySymbol,splitItmlist as MutableList<SplitClaimItem?>,requireActivity(),this)
         binding.rvsplit.adapter = splitAdapter
     }
     private fun setupSpinners(){
@@ -355,7 +354,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                 itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
                 itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0"
             )
-            val intent = Intent(requireContext(), EditSplitClaimDetailsActivity::class.java)
+            val intent = Intent(requireContext(), SplitClaimDetalisActivity::class.java)
             intent.putExtra("SplitItem", splitItem)
             intent.putExtra("currencyCode", currencyCode)
             intent.putExtra("currencySymbol", currencySymbol)

@@ -734,6 +734,7 @@ class MainActivity : BaseActivity() {
         binding.appBar.layoutAppBarSearch.visibility = View.VISIBLE
     }
 
+
     fun showAppbarBackButton(show: Boolean){
         binding.appBar.appbarTitle.visibility = View.VISIBLE//if(show) View.VISIBLE else View.INVISIBLE
         binding.appBar.layoutGreeting.visibility = View.GONE
@@ -800,7 +801,23 @@ class MainActivity : BaseActivity() {
             fragment.javaClass.simpleName
         ).commit()
     }
+    fun changeFragmentHome(fragment: Fragment) {
+        setAppbarTitle("Batch No: "+Constants.batch_allotted)
+        supportFragmentManager.beginTransaction().replace(
+            R.id.container,
+            fragment,
+            fragment.javaClass.simpleName
+        ).commit()
+    }
 
+    fun addFragmentHome(fragment: Fragment) {
+        setAppbarTitle("Batch: "+Constants.batch_allotted)
+        supportFragmentManager.beginTransaction().add(
+            R.id.container,
+            fragment,
+            fragment.javaClass.simpleName
+        ).addToBackStack(fragment.javaClass.simpleName).commit()
+    }
     fun addFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().add(
             R.id.container,
@@ -810,6 +827,8 @@ class MainActivity : BaseActivity() {
     }
 
     fun clearFragmentBackstack() {
+        println("call clearFragmentBackstack")
+
         removeAnyOtherFragVisible()
         supportFragmentManager.popBackStack(HomeFragment::class.java.simpleName, FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
@@ -819,13 +838,19 @@ class MainActivity : BaseActivity() {
 
     private fun fragmentBackstackListener(){
         supportFragmentManager.addOnBackStackChangedListener {
+
             val fragment = supportFragmentManager.findFragmentById(R.id.container)
             if (fragment != null) {
                 val fragName = fragment.javaClass.simpleName
-                if(fragName.equals(HomeFragment::class.java.name, true)){
-                    setupAppbar()
-                }
-                else if(fragName.equals(NewClaimFragment::class.java.simpleName, true)){
+
+                if(fragName.equals("HomeFragment")){
+                    println("call fragmentBackstackListener"+fragName)
+
+                    setAppbarTitle("Batch No: "+Constants.batch_allotted)
+                   // setupAppbar()
+                    //showBottomNavbar(false)
+
+                } else if(fragName.equals(NewClaimFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.create_new_claim))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)

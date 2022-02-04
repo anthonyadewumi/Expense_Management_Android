@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -57,7 +56,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.gson.JsonObject
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
@@ -71,8 +69,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Locale
 
 
 class EditMileageClaimFragment : Fragment() ,RecylerCallback{
@@ -104,7 +104,10 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
     private var countryName="United States"
     private var companyDateFormate: String = ""
     private var companyLocation: String = ""
+    private var submitDate: String = ""
+    private var tripDate: String = ""
     private var icCreateCopy: Boolean = false
+    private var isennitial: Boolean = true
         override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -157,18 +160,36 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
             if (this::mileageDetail.isInitialized) {
                 icCreateCopy=true
              //   binding.edtTitle.setText(mileageDetail.title)
-                binding.tvDateOfSubmission.text = Utils.getFormattedDate(
+               /* binding.tvDateOfSubmission.text = Utils.getFormattedDate(
                     mileageDetail.submittedOn,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
+                )*/
+
+                binding.tvDateOfSubmission.text = Utils.getFormattedDate(
+                    mileageDetail.submittedOn,
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
                 )
+
+                submitDate = Utils.getFormattedDate2(
+                    mileageDetail.submittedOn,
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                )
+
+
+
                 binding.edtMerchantName.setText(mileageDetail.merchant)
                 binding.tvDateOfTrip.text = Utils.getFormattedDate(
                     mileageDetail.tripDate,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
                 )
+                tripDate = Utils.getFormattedDate2(
+                    mileageDetail.tripDate,
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+                )
                 binding.tvTripFrom.text = mileageDetail.fromLocation
                 binding.tvTripTo.text = mileageDetail.toLocation
-                binding.edtClaimedMiles.setText(mileageDetail.claimedMileage)
+                binding.edtClaimedMiles.setText(mileageDetail.distance)
+                binding.edtClaimedMiles2.setText(mileageDetail.claimedMileage)
                 binding.edtPetrolAmount.setText(String.format("%.2f",mileageDetail.petrolAmount.toDouble()))
                 binding.edtParkAmount.setText(String.format("%.2f",mileageDetail.parking.toDouble()))
                 binding.edtTotalAmount.setText(String.format("%.2f",mileageDetail.totalAmount.toDouble()))
@@ -176,6 +197,8 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 //binding.tvNetAmount.text = mileageDetail.netAmount
                 binding.tvNetAmount.setText(String.format("%.2f",mileageDetail.netAmount.toDouble()))
                 binding.edtDescription.setText(mileageDetail.description)
+                binding.tvAuctionExpCode.setText(mileageDetail.expenseCode)
+                binding.edtAutionValue.setText(mileageDetail.auction)
 
 
                 binding.switchRoundTrip.isChecked = mileageDetail.isRoundTrip == "1"
@@ -366,14 +389,14 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                         val code=it.code
                         currencyCode=code
                         currencySymbol=symbol
-                        binding.edtTax.setText("0")
-                        binding.edtTotalAmount.setText("")
-                        binding.edtPetrolAmount.setText("")
-                        binding.edtParkAmount.setText("")
-                        binding.tvNetAmount.setText("")
-                        binding.tvDateOfSubmission.text = ""
-                        binding.tvDateOfTrip.text = ""
-                        binding.edtClaimedMiles2.setText("")
+                        //binding.edtTax.setText("0")
+                        //binding.edtTotalAmount.setText("")
+                       // binding.edtPetrolAmount.setText("")
+                       // binding.edtParkAmount.setText("")
+                       // binding.tvNetAmount.setText("")
+                       // binding.tvDateOfSubmission.text = ""
+                      //  binding.tvDateOfTrip.text = ""
+                       // binding.edtClaimedMiles2.setText("")
                         binding.edtTax.addDecimalLimiter()
                         binding.edtPetrolAmount.addDecimalLimiter()
                         binding.edtParkAmount.addDecimalLimiter()
@@ -768,16 +791,14 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
         )
         binding.spntaxcode.adapter = taxAdapter
 
-        var postion=0
-        viewModel.taxList.forEachIndexed { index, element ->
+            var postion=0
+            viewModel.taxList.forEachIndexed { index, element ->
+                if (element.tax_code == mileageDetail.tax_code) {
+                    postion = index
+                    return@forEachIndexed
+                }
 
-            if(element.id.toString() == mtaxcodeId) {
 
-                postion=index
-                return@forEachIndexed
-              //  binding.edtTaxcode.setText(it.tax_code)
-
-            }
         }
         binding.spntaxcode.setSelection(postion)
 
@@ -885,7 +906,6 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
     }
 
     private fun createNewClaim() {
-
         try {
             var dateFormate = if(companyDateFormate=="USA") {
                 Constants.MMM_DD_YYYY_FORMAT
@@ -893,6 +913,7 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 Constants.DD_MM_YYYY_FORMAT
 
             }
+
             if (binding.edtMileageRate.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please Enter Mileage Rate", Toast.LENGTH_LONG).show()
                 onCreateClaimFailed()
@@ -903,16 +924,10 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyName.selectedItemPosition].id else "",
                 if (!viewModel.mileageTypeList.isNullOrEmpty()) viewModel.mileageTypeList[binding.spnMileageType.selectedItemPosition].id else "",
                 if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
-                Utils.getDateInServerRequestFormat(
-                    binding.tvDateOfSubmission.text.toString().trim(),
-                    dateFormate
-                ),
+                submitDate,
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "",
                 binding.edtMerchantName.text.toString().trim(),
-                Utils.getDateInServerRequestFormat(
-                    binding.tvDateOfTrip.text.toString().trim(),
-                    dateFormate
-                ),
+                tripDate,
                 binding.tvTripFrom.text.toString().trim(),
                 binding.tvTripTo.text.toString().trim(),
                // "1",/*binding.spnDistance*/
@@ -940,8 +955,6 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-
-
             if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
                 onCreateClaimFailed()
@@ -1004,12 +1017,13 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                                     distanceKmMiles = distance/1.609
                                 }
                             }
-
-
-
                             val decimalmiles = distanceKmMiles.let { it1 -> BigDecimal(it1).setScale(1, RoundingMode.HALF_EVEN) }
-                            binding.edtClaimedMiles.setText(decimalmiles.toString())
-                            binding.edtClaimedMiles2.setText(decimalmiles.toString())
+                            if(!isennitial){
+                                isennitial=false
+                                binding.edtClaimedMiles.setText(decimalmiles.toString())
+                                binding.edtClaimedMiles2.setText(decimalmiles.toString())
+                            }
+
                         }
                     }
                     Status.ERROR -> {
@@ -1221,7 +1235,7 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                             try {
                                 Log.d(TAG, "editMileageObserver: ${resource.status}")
 
-                                //setResponse(response)
+                                setResponse(response)
                             } catch (e: Exception) {
                                 e.printStackTrace()
                             }
@@ -1301,6 +1315,11 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
             if(isDateOfSubmission) {
                 binding.tvDateOfSubmission.text = date
                 binding.tvDateOfTrip.text = date
+
+                submitDate =Utils.getDateInDisplayFormatWithCountry2(it)
+                tripDate =Utils.getDateInDisplayFormatWithCountry2(it)
+
+
             } else {
                 binding.tvDateOfSubmission.text = date
                 binding.tvDateOfTrip.text = date

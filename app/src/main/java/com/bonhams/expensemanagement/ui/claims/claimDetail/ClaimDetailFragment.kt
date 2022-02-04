@@ -368,6 +368,14 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(contextActivity, view)
         popup.inflate(R.menu.claims_menu)
+        println("claimDetail.reportingMStatus"+claimDetail.reportingMStatus)
+        println("claimDetail.financeMStatus"+claimDetail.financeMStatus)
+        if(claimDetail.reportingMStatus==Constants.STATUS_PENDING||claimDetail.reportingMStatus==Constants.STATUS_REJECTED&&claimDetail.financeMStatus==Constants.STATUS_PENDING||claimDetail.financeMStatus==Constants.STATUS_REJECTED){
+
+        }else{
+            popup.menu.findItem(R.id.action_edit).isVisible = false
+
+        }
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.action_copy -> {

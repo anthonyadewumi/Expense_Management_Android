@@ -131,10 +131,15 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 binding.edtMerchantName.setText(
                     claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
                 )
+                binding.tvDateOfSubmission.text = Utils.getFormattedDate(
+                    claimDetail.date_of_receipt,
+                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
+                )
+
 //            binding.edtCompanyNumber.setText(claimDetail.companyName)
-                binding.tvDateOfSubmission.text = if (!claimDetail.date_of_receipt.trim().isNullOrEmpty())
+              /*  binding.tvDateOfSubmission.text = if (!claimDetail.date_of_receipt.trim().isNullOrEmpty())
                     Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
-                    ) else "n/a"
+                    ) else "n/a"*/
                // binding.edtTotalAmount.setText(claimDetail.totalAmount)
                // binding.edtTax.setText(claimDetail.tax)
                 // binding.tvNetAmount.text = claimDetail.netAmount
@@ -144,13 +149,13 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
                         .isNotEmpty()
                 ) {
-                    val attachment=claimDetail.attachments.split(",")
+                    /*val attachment=claimDetail.attachments.split(",")
                     viewModel.attachmentsList.clear()
                     attachment.forEach {
                         viewModel.attachmentsList.add(it)
                     }
 
-                    viewModel.attachmentsList = mutableListOf(claimDetail.attachments)
+                    viewModel.attachmentsList = mutableListOf(claimDetail.attachments)*/
                 }
                 refreshAttachments()
 
@@ -255,7 +260,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                     binding.edtTotalAmount.setText("")
                     binding.edtTax.setText("0")
                     binding.tvNetAmount.setText("")
-                    binding.tvDateOfSubmission.text = ""
+                   // binding.tvDateOfSubmission.text = ""
                     binding.edtGroupValue.setText("")
 
                 }
@@ -531,9 +536,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                if(!isDefaultShow) {
                     binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList[position].name)
-
                     expenseCode = viewModel.expenseTypeList[position].activityCode
                     mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
 
@@ -544,9 +547,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                     } else {
                         binding.tvAuctionExpCode.text = ""
                     }
-                }else{
-                    isDefaultShow=false
-                }
+
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -593,14 +594,11 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
         var postion=0
         viewModel.taxList.forEachIndexed { index, element ->
+                 if (element.tax_code == claimDetail.tax_code) {
+                    postion = index
+                    return@forEachIndexed
+                }
 
-            if(element.id.toString() == mtaxcodeId) {
-
-                postion=index
-                return@forEachIndexed
-                //  binding.edtTaxcode.setText(it.tax_code)
-
-            }
         }
         binding.spntaxcode.setSelection(postion)
 
@@ -1024,7 +1022,13 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            if(viewModel.attachmentsList.size > 0){
+            val fragment = EditSplitClaimDetailsFragment()
+            fragment.setClaimRequestDetail(splitedClaimDetails)
+            fragment.setClaimRequestDetailJson(newClaimRequest)
+            fragment.setdropdownResponse(dropDownResponse)
+            fragment.setCurrency(currencyCode,currencySymbol)
+            (contextActivity as? MainActivity)?.addFragment(fragment)
+          /*  if(viewModel.attachmentsList.size > 0){
                 val fragment = EditSplitClaimDetailsFragment()
                 fragment.setClaimRequestDetail(splitedClaimDetails)
                 fragment.setClaimRequestDetailJson(newClaimRequest)
@@ -1034,7 +1038,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             } else{
                 Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
                 return
-            }
+            }*/
 
         }
         catch (e: Exception){

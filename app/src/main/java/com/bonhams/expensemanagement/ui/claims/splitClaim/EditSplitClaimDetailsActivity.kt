@@ -54,6 +54,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
     var selectedCompanyCode="n/a"
     var selectedExpenceTypeId="-1"
     var selectedSplitId=""
+    var selectedTaxcode=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +67,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         selectedCompanyCode=item?.companyCode?:"n/a"
         selectedExpenceTypeId=item?.expenseType?:"0"
         selectedSplitId=item?.split_id?:"0"
+        selectedTaxcode=item?.taxCodeValue?:"00"
         binding.edtTotalAmount.setText(item?.totalAmount)
         binding.edtTax.setText(item?.tax.toString())
         binding.edtAutionValue.setText(item?.auctionSales)
@@ -115,7 +117,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
                         companyOne?.code?:"0",
                         companyOne?.code?:"0", departmentOne?.id?:"0", expenseTypeOne?.id!!,
                         totalAmountOne.toString(),
-                        expenseTypeOne.taxCodeID, mtax,companyOne?.name?:"",departmentOne?.name?:"",
+                        taxcodeId, mtax,companyOne?.name?:"",departmentOne?.name?:"",
                         expenseTypeOne.name,binding.edtAutionValue.text.toString(),binding.tvAuctionExpCode.text.toString(),
                         expenseTypeOne.expenseCodeID,taxcodeValue,selectedSplitId
                     )
@@ -158,15 +160,11 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
             viewModel.taxList
         )
         binding.spntaxcode.adapter = taxAdapter
-
         var postion=0
         viewModel.taxList.forEachIndexed { index, element ->
-
-            if(element.id.toString() == mtaxcodeId) {
+            if(element.tax_code == selectedTaxcode) {
                 postion=index
                 return@forEachIndexed
-                //  binding.edtTaxcode.setText(it.tax_code)
-
             }
         }
         binding.spntaxcode.setSelection(postion)
@@ -305,8 +303,6 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
                 binding.edtGroupValue.setText(" ")
                 setupExpenceGroupType(true)
                 viewModel.departmentListCompany.forEach {
-                    println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
-
                     if(it.company_id == compnyId.toString()){
                         viewModel.departmentList.add(it)
                     }
@@ -410,8 +406,6 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-
-                if(!isDefaultShow) {
                     binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList.get(position).name)
                     expenseCode = viewModel.expenseTypeList.get(position).activityCode
                     mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
@@ -424,9 +418,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
                     } else {
                         binding.tvAuctionExpCode.text = ""
                     }
-                }else{
-                    isDefaultShow=false
-                }
+
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
