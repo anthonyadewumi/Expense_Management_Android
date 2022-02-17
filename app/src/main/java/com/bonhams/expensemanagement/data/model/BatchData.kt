@@ -20,5 +20,7 @@ data class BatchData (
     @SerializedName("totalAmount")
     val totalAmount: Double = 0.0 ,
     @SerializedName("batch_allotted")
-    val batch_allotted: Int = 0
+    val batch_allotted: Int = 0 ,
+    @SerializedName("company_code")
+    val company_code: String = "N/A"
 )

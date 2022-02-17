@@ -167,7 +167,7 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
         binding.tvTotalAmount.doAfterTextChanged {
             if(binding.tvTotalAmount.text.isNotEmpty()){
                 if(binding.tvTotalAmount.text.toString()=="0.00"){
-                    binding.layoutAddSplit.visibility=View.GONE
+                    binding.layoutAddSplit.visibility=View.VISIBLE
                 }else{
                     binding.layoutAddSplit.visibility=View.VISIBLE
 
@@ -198,9 +198,9 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
 
         binding.layoutTotalSplit.visibility=View.GONE
 
-        binding.tvTotalAmountCurrency.setText(currencySymbol)
+        binding.tvTotalAmountCurrency.text = currencySymbol
         binding.tvTaxAmount.setText(currencySymbol)
-        binding.tvTaxCurrency.setText(currencySymbol)
+        binding.tvTaxCurrency.text = currencySymbol
        // binding.tvTotalAmount.setLocale(currencyCode)
         netAmount=claimRequest.netAmount.toString().toDouble()
         taxAmount=claimRequest.tax.toString().toDouble()

@@ -45,7 +45,7 @@ class SplitDetailsAdapter(
             binding.tvCurrencySymbol.text = currencySymbol
            // binding.tvamount.setLocale(currencyCode)
 
-                   binding.tvamount.isEnabled=isEditable
+                   binding.tvamount.isEnabled=false
 
                 binding.tvamount.setText(String.format("%.2f",item.totalAmount.toDouble()))
 

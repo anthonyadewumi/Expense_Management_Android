@@ -61,6 +61,7 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     private lateinit var splitedClaimlist: List<SplitedClaim>
     private lateinit var splitedClaimDetails: ClaimDetailsResponse
     private lateinit var objectRequest: JsonObject
+    private  var isRMEdit=false
     private lateinit var dropdownResponse: DropdownResponse
     private lateinit var splitAdapter: SplitDetailsAdapter
     private var currencyCode: String = ""
@@ -118,6 +119,15 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     fun setClaimRequestDetailJson(request: JsonObject){
         try {
             objectRequest = request
+
+        } catch (e: Exception) {
+        }
+
+
+    }
+    fun setEditModeRM(isedit: Boolean){
+        try {
+            isRMEdit = isedit
 
         } catch (e: Exception) {
         }
@@ -210,13 +220,22 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                             if(it.id==splitClaimItem.department||it.cost_code==splitClaimItem.departmentName)
                                 departmentId=it.id
                         }
-                        data.addProperty("expense_type_id",splitClaimItem.expenseType  )
+                       /* data.addProperty("expense_type_id",splitClaimItem.expenseType  )
                         data.addProperty("company_id", companyId)
                         data.addProperty("department_id", departmentId )
                         data.addProperty("amount", splitClaimItem.totalAmount)
                         data.addProperty("tax_code",mtaxcodeId)
                         data.addProperty("auction",splitClaimItem.auctionSales )
-                        data.addProperty("expense_code", expenceCode )
+                        data.addProperty("expense_code", expenceCode ) */
+
+                        data.addProperty("expenseType",splitClaimItem.expenseType  )
+                        data.addProperty("companyNumber", companyId)
+                        data.addProperty("department", departmentId )
+                        data.addProperty("totalAmount", splitClaimItem.totalAmount)
+                        data.addProperty("taxCode",mtaxcodeId)
+                        data.addProperty("tax",splitClaimItem.tax)
+                        data.addProperty("auction",splitClaimItem.auctionSales )
+                        data.addProperty("expenseCode", expenceCode )
                         jsonArraySplitData.add(data)
                     }
                     objectRequest.add("split_ids",jsonArraySplitId)
@@ -231,8 +250,7 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     }
 
     private fun setupView(){
-
-
+        binding.lnTax.visibility=View.GONE
         newClaimViewModel.expenseTypeListExpenseGroup = dropdownResponse.expenseType
         newClaimViewModel.departmentListCompany = dropdownResponse.departmentList
         newClaimViewModel.currencyList  = dropdownResponse.currencyType as MutableList<Currency>
@@ -257,11 +275,11 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             }
             val splitOne = SplitClaimItem(
                 it.id ?:"0",
-                "0", "0", it.expenseTypeID,
+                it.companyNumber, it.department, it.expenseTypeID,
                 it.totalAmount,
                 it.tax_code, it.tax.toDouble(), it.companyNumber ?:"", it.department ?:"",
                 it.expenseTypeName,auction,expenseCode,
-                expenseCode,it.tax_code,it.split_id
+                expenseCode,it.tax_code,it.split_id,it.expenseGroupID
             )
             println("item :$splitOne")
 
@@ -292,9 +310,11 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
         val  taxAmount=objectRequest.get("tax").asDouble
         println("totalAmountWithTax:"+totalAmountWithTax)
         println("taxAmount:"+taxAmount)
+        println("netAmount:"+netAmount)
 
 
-        totalAmount=totalAmountWithTax-taxAmount
+       // totalAmount=totalAmountWithTax-taxAmount
+        totalAmount= netAmount
        // binding.tvTotalAmount.text = "$ "+totalAmount
       // binding.tvTotalAmount.setText(netAmount.toString())
 
@@ -342,10 +362,14 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                                binding.mProgressBars.visibility = View.GONE
-                                val intent = Intent(requireActivity(), MainActivity::class.java)
-                                startActivity(intent)
-                                requireActivity(). finish()
+                                if(isRMEdit){
+                                    requireActivity().finish()
+                                }else {
+                                    binding.mProgressBars.visibility = View.GONE
+                                    val intent = Intent(requireActivity(), MainActivity::class.java)
+                                    startActivity(intent)
+                                    requireActivity().finish()
+                                }
                                 /*(contextActivity as? MainActivity)?.backButtonPressed()
                                 (contextActivity as? MainActivity)?.clearFragmentBackstack()
                                 mainViewModel.isRefresh?.value=true
@@ -369,9 +393,6 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
         })
     }
 
-
-
-
     override fun callback(action: String, data: Any, postion: Int) {
 
         if(action=="details"){
@@ -379,7 +400,9 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             val splitItem = SplitClaimItem(
                 itemData?.companyNumber?:"0", itemData?.companyCode?:"0", itemData?.department?:"0", itemData?.expenseType?:"0",
                 itemData?.totalAmount?:"0", itemData?.taxcode?:"0",itemData?.tax?:0.0,itemData?.compnyName?:"0",itemData?.departmentName?:"0",
-                itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0",itemData.expenseCodeID,itemData.taxCodeValue,itemData.split_id
+                itemData?.expenceTypeName?:"0",itemData?.auctionSales?:"0",itemData?.expenceCode?:"0",itemData.expenseCodeID,itemData.taxCodeValue,itemData.split_id,
+                itemData.expense_group_id
+
             )
             println("splitItem :$splitItem")
 

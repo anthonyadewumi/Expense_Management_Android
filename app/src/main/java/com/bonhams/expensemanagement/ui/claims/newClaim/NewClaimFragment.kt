@@ -1186,12 +1186,12 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
         val calendarStart: Calendar = Calendar.getInstance()
 //        val calendarEnd: Calendar = Calendar.getInstance()
 
-        calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
+       // calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
 //        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
 
         val constraintsBuilder =
             CalendarConstraints.Builder()
-                .setStart(calendarStart.timeInMillis)
+                //.setStart(calendarStart.timeInMillis)
                 .setEnd(calendar.timeInMillis)
                 .setValidator(DateValidatorPointBackward.now())
 

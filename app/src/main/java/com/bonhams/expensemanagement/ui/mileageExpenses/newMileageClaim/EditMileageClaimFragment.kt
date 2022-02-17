@@ -147,6 +147,8 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
     }
     private fun setupView(){
         try {
+            binding.txtAttachement.visibility=View.GONE
+            binding.rlAttachement.visibility=View.GONE
             binding.tvCTotalClaimedMiles.text = AppPreferences.claimedMils
 
             var dateFormate = if(companyDateFormate=="USA") {
@@ -210,7 +212,7 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 }*/
             }
 
-            refreshAttachments()
+           // refreshAttachments()
         }
         catch (error: Exception){
             Log.e(TAG, "setupView: ${error.message}")
@@ -484,9 +486,8 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
 
         // Tax Adapter
 
-
         // Car Type Adapter
-        val carTypeAdapter = CustomSpinnerAdapter(
+       /* val carTypeAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
             viewModel.carTypeList
@@ -500,7 +501,7 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
+*/
         // Currency Adapter
         val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
@@ -580,9 +581,11 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 val carType: CarType? =
                     viewModel.carTypeList.find { it.type == mileageDetail.carType }
                 val carTypePos = viewModel.carTypeList.indexOf(carType)
-                if (carTypePos >= 0) {
+                binding.edtCarType.setText(viewModel.carTypeList.get(carTypePos).type)
+
+               /* if (carTypePos >= 0) {
                     binding.spnCarType.setSelection(carTypePos)
-                }
+                }*/
 
                 val currency: Currency? =
                     viewModel.currencyList.find { it.id == mileageDetail.currencyID }
@@ -919,6 +922,9 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
+            val carType: CarType? =
+                viewModel.carTypeList.find { it.type == binding.edtCarType.text.toString() }
+            val carTypePos = viewModel.carTypeList.indexOf(carType)
             val claimRequest = viewModel.getMileageEditRequest(
                 binding.edtTitle.text.toString().trim(),
                 if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyName.selectedItemPosition].id else "",
@@ -932,7 +938,7 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 binding.tvTripTo.text.toString().trim(),
                // "1",/*binding.spnDistance*/
                 binding.edtClaimedMiles.text.toString(),
-                if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[binding.spnCarType.selectedItemPosition].id else "", //spnCurrency.selectedItemPosition,
+                if (!viewModel.carTypeList.isNullOrEmpty()) viewModel.carTypeList[carTypePos].id else "", //spnCurrency.selectedItemPosition,
                 binding.edtClaimedMiles2.text.toString().trim(),
                 binding.switchRoundTrip.isChecked,
                 if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
@@ -948,7 +954,10 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
                 binding.edtMileageRate.text.toString().trim(),
                 viewModel.attachmentsList as List<String>,
                 if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseGroupID else "",
-                mileageDetail.id
+                mileageDetail.id,
+                mileageDetail.overall_status_id,
+                mileageDetail.rm_status_id,
+                mileageDetail.fm_status_id
                 )
 
             if (!validateEditClaim(claimRequest)) {
@@ -1295,11 +1304,11 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
         val calendarStart: Calendar = Calendar.getInstance()
 //        val calendarEnd: Calendar = Calendar.getInstance()
 
-        calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
+        //calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
 //        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
         val constraintsBuilder =
             CalendarConstraints.Builder()
-                .setStart(calendarStart.timeInMillis)
+                //.setStart(calendarStart.timeInMillis)
                 .setEnd(calendar.timeInMillis)
                 .setValidator(DateValidatorPointBackward.now())
 

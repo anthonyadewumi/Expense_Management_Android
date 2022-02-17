@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit
+package com.bonhams.expensemanagement.ui.rmExpence
 
 import android.app.Activity
 import android.app.Dialog
@@ -33,9 +33,12 @@ import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
 import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsResponse
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
+import com.bonhams.expensemanagement.data.services.responses.MainClaim
 import com.bonhams.expensemanagement.databinding.FragmentEditClaimBinding
 import com.bonhams.expensemanagement.databinding.FragmentNewClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimViewModel
+import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsFragment
@@ -64,11 +67,12 @@ import java.io.*
 import java.util.*
 
 
-class EditClaimFragment() : Fragment() ,RecylerCallback{
+class EditClaimRMFragment() : Fragment() ,RecylerCallback{
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private lateinit var claimDetail: ClaimDetail
+    private lateinit var claimDetail2: ClaimDetailsResponse
+    private lateinit var claimDetail: MainClaim
     private lateinit var viewModel: EditClaimViewModel
     private lateinit var binding: FragmentEditClaimBinding
 
@@ -109,9 +113,10 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         return view
     }
 
-    fun setClaimDetails(detail: ClaimDetail?){
+    fun setClaimDetails(detail: ClaimDetailsResponse?){
         detail?.let {
-            claimDetail = it
+            claimDetail2 = it
+            claimDetail = it.main_claim!!
         }
     }
 
@@ -1029,7 +1034,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             val fragment = EditSplitClaimDetailsFragment()
             fragment.setClaimRequestDetail(splitedClaimDetails)
             fragment.setClaimRequestDetailJson(newClaimRequest)
-            fragment.setEditModeRM(false)
+            fragment.setEditModeRM(true)
             fragment.setdropdownResponse(dropDownResponse)
             fragment.setCurrency(currencyCode,currencySymbol)
             (contextActivity as? MainActivity)?.addFragment(fragment)
@@ -1066,6 +1071,9 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
         data.addProperty("main_id",claimDetail.id)
         data.addProperty("split_id",splitedClaimDetails.main_claim?.split_id)
+        data.addProperty("overall_status_id",splitedClaimDetails.main_claim?.overall_status_id)
+        data.addProperty("fm_status_id",splitedClaimDetails.main_claim?.fm_status_id)
+        data.addProperty("rm_status_id",splitedClaimDetails.main_claim?.rm_status_id)
         data.addProperty("title",binding.edtTitle.text.toString().trim())
         data.addProperty("merchantName",binding.edtMerchantName.text.toString().trim())
         if(binding.edtGroupValue.text.isEmpty())
@@ -1213,12 +1221,12 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         val calendarStart: Calendar = Calendar.getInstance()
 //        val calendarEnd: Calendar = Calendar.getInstance()
 
-        calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
+       // calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
 //        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
 
         val constraintsBuilder =
             CalendarConstraints.Builder()
-               // .setStart(calendarStart.timeInMillis)
+                //.setStart(calendarStart.timeInMillis)
                 .setEnd(calendar.timeInMillis)
                 .setValidator(DateValidatorPointBackward.now())
 

@@ -1,7 +1,6 @@
 package com.bonhams.expensemanagement.ui.claims.claimDetail
 
 import android.app.Dialog
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -28,7 +27,6 @@ import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
-import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.main.MainViewModel
 import com.bonhams.expensemanagement.utils.*
@@ -36,8 +34,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.net.URL
@@ -370,7 +366,7 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
         popup.inflate(R.menu.claims_menu)
         println("claimDetail.reportingMStatus"+claimDetail.reportingMStatus)
         println("claimDetail.financeMStatus"+claimDetail.financeMStatus)
-        if(claimDetail.reportingMStatus==Constants.STATUS_PENDING||claimDetail.reportingMStatus==Constants.STATUS_REJECTED&&claimDetail.financeMStatus==Constants.STATUS_PENDING||claimDetail.financeMStatus==Constants.STATUS_REJECTED){
+        if(claimDetail.reportingMStatus==Constants.STATUS_PENDING||claimDetail.reportingMStatus==Constants.STATUS_REJECTED&&claimDetail.financeMStatus==Constants.STATUS_PENDING||claimDetail.financeMStatus==Constants.STATUS_REJECTED||claimDetail.status==Constants.STATUS_REJECTED){
 
         }else{
             popup.menu.findItem(R.id.action_edit).isVisible = false

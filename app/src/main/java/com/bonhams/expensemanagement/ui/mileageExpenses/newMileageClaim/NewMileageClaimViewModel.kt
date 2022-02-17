@@ -152,7 +152,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
                                   roundTrip: Boolean, currency: String, petrolAmount: String,
                                   parkAmount: String, totalAmount: String, tax: String,
                                   netAmount: String, description: String,taxcode: String,auction: String,expencecode: String,mileageRate:String, attachments: List<String>,expenseGroup: String,
-                                  mainId:String): EditMileageClaimRequest {
+                                  mainId:String,overall_status_id:String,rm_status_id:String,fm_status_id:String): EditMileageClaimRequest {
 
         val newClaimRequest = EditMileageClaimRequest()
         newClaimRequest.title = title
@@ -168,6 +168,9 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
         newClaimRequest.distance = distance
         newClaimRequest.carType = carType
         newClaimRequest.claimedMiles = claimedMiles
+        newClaimRequest.overall_status_id = overall_status_id
+        newClaimRequest.rm_status_id = rm_status_id
+        newClaimRequest.fm_status_id = fm_status_id
         newClaimRequest.roundTrip = if(roundTrip) "1" else "0"
         newClaimRequest.currency = currency
         if(petrolAmount.isEmpty()){

@@ -120,6 +120,9 @@ interface ApiService {
     @POST("claim-detail")
     suspend fun getDetails(@Body claimId: JsonObject): ClaimDetailsResponse
 
+    @POST("claim-detail")
+    suspend fun getMielageDetails(@Body claimId: JsonObject): MIleageDetailsResponse
+
     @POST("edit-split")
     suspend fun updateSplit(@Body claimId: JsonObject): ClaimDetailsResponse
 

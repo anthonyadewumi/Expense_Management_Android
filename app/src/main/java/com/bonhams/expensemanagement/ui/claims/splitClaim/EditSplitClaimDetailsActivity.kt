@@ -50,11 +50,12 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
     private var groupId: String = ""
     public var taxAmount: Double=0.00
 
-    val selectedGroupID=-1
+    var selectedGroupID="0"
     var selectedCompanyCode="n/a"
     var selectedExpenceTypeId="-1"
     var selectedSplitId=""
     var selectedTaxcode=""
+    var selecteddepartment=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,8 +67,10 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
          selectedPostion = (intent.getSerializableExtra("postion") as Int?)!!
         selectedCompanyCode=item?.companyCode?:"n/a"
         selectedExpenceTypeId=item?.expenseType?:"0"
+        selectedGroupID=item?.expense_group_id?:"0"
         selectedSplitId=item?.split_id?:"0"
         selectedTaxcode=item?.taxCodeValue?:"00"
+        selecteddepartment=item?.department?:"0"
         binding.edtTotalAmount.setText(item?.totalAmount)
         binding.edtTax.setText(item?.tax.toString())
         binding.edtAutionValue.setText(item?.auctionSales)
@@ -217,7 +220,8 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
 
         val currancyCode = intent.getSerializableExtra("currencyCode") as String?
         val currencySymbol = intent.getSerializableExtra("currencySymbol") as String?
-         groupId = (intent.getSerializableExtra("groupId") as String?).toString()
+       //  groupId = (intent.getSerializableExtra("groupId") as String?).toString()
+         groupId = selectedGroupID
          //taxAmount = ((intent.getSerializableExtra("taxAmount") as Double?)!!)
         //binding.edtTax.setText(taxAmount.toString())
         if (currencySymbol != null) {
@@ -284,6 +288,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         )
         binding.spnCompany.adapter = companyAdapter
         var compnypostion=0
+        System.out.println("selectedCompanyCode in edit:"+selectedCompanyCode)
             viewModel.companyList.forEachIndexed { index, element ->
                 if (selectedCompanyCode == element.code) {
                     compnypostion = index
@@ -301,7 +306,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
 
                 binding.spnExpenseGroup.adapter=null
                 binding.edtGroupValue.setText(" ")
-                setupExpenceGroupType(true)
+                setupExpenceGroupType()
                 viewModel.departmentListCompany.forEach {
                     if(it.company_id == compnyId.toString()){
                         viewModel.departmentList.add(it)
@@ -324,8 +329,17 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         viewModel.expenseTypeList.clear()
         binding.edtExpenceTypeValue.setText(" ")
         viewModel.expenseTypeListExpenseGroup.forEach {
+           // viewModel.expenseTypeList.add(it)
 
-            if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
+           /* if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
+                viewModel.expenseTypeList.add(it)
+                // println("selected expenseTypeList Added :" )
+
+            } else if (it.companyID.isNullOrEmpty()) {
+                //viewModel.expenseTypeList.add(it)
+
+            }*/
+            if (it.expenseGroupID == groupid ) {
                 viewModel.expenseTypeList.add(it)
                 // println("selected expenseTypeList Added :" )
 
@@ -337,8 +351,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         }
         setupExpenceType(false)
     }
-    private fun setupExpenceGroupType(isShowDefault:Boolean){
-        var isDefaultshow=isShowDefault
+    private fun setupExpenceGroupType(){
         // Expense Group Adapter
         // viewModel.expenseGroupList.add(ExpenseGroup("0","N/A","0","active"))
         val expenseGroupAdapter = CustomSpinnerAdapter(
@@ -350,7 +363,6 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         binding.spnExpenseGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                if(!isDefaultshow) {
                     binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
                     val groupid = viewModel.expenseGroupList[position].id
                     println("selected group ID :$groupid")
@@ -369,9 +381,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
 
                     }
                     setupExpenceType(true)
-                }else{
-                    isDefaultshow=false
-                }
+
             }
             override fun onNothingSelected(parent: AdapterView<*>) {
                 Toast.makeText(this@EditSplitClaimDetailsActivity, "Nothing selected", Toast.LENGTH_SHORT).show();
@@ -435,7 +445,7 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
         var postion=0
         viewModel.departmentList.forEachIndexed { index, element ->
 
-            if(AppPreferences.department == element.name){
+            if(selecteddepartment == element.cost_code){
                 postion=index
                 return@forEachIndexed
             }

@@ -112,6 +112,7 @@
                         android:layout_width="wrap_content"
                         style="@style/TextRegular12"
                         android:text="@string/amount"
+                        android:enabled="false"
                         android:inputType="number"
                         android:padding="@dimen/_5sdp"
                         android:textColor="@color/secondary"

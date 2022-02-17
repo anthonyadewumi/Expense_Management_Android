@@ -50,6 +50,7 @@ class BatchListAdapter(
         ) {
             binding.tvBatchNo.text = item.batch_allotted.toString()
             binding.tvCurrency.text = item.currency_type
+            binding.tvCompany.text = item.company_code
             binding.tvLedger.text = item.ledger_id
             binding.tvNoClaims.text = item.totalClaims+" "+"Claims"
             binding.tvTotalAmount.text = item.currency_symbol+" "+String.format("%.2f",item.totalAmount.toString().toDouble())

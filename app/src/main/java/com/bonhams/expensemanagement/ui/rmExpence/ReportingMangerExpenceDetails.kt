@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
@@ -164,6 +165,9 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
             }
         })
     }
+
+
+
 
     private fun acceptRejectObserver(accept_reject:Int,reson:String) {
         val data= JsonObject()

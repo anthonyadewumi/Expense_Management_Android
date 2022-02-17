@@ -1,9 +1,12 @@
 package com.bonhams.expensemanagement.data.services.responses
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-class ClaimDetailsResponse {
+class ClaimDetailsResponse() : Serializable {
     @SerializedName("success")
     var success: Boolean = false
     @SerializedName("message")
@@ -30,10 +33,18 @@ class MainClaim (
     val totalAmount: String = "",
     @SerializedName("created_on")
     val createdOn: String = "",
+    @SerializedName("date_of_receipt")
+    val date_of_receipt: String = "",
     val reportingMStatus: String = "",
     val financeMStatus: String = "",
     @SerializedName("status")
     val status: String = "",
+    @SerializedName("rm_status_id")
+    val rm_status_id: String = "",
+    @SerializedName("fm_status_id")
+    val fm_status_id: String = "",
+    @SerializedName("overall_status_id")
+    val overall_status_id: String = "",
     @SerializedName("expense_group_id")
     val expenseGroupID: String = "",
     @SerializedName("expense_group_name")
@@ -67,7 +78,7 @@ class MainClaim (
     val fm_updation_date: String = "" ,
     @SerializedName("split_id")
     val split_id: String = ""
-)
+): Serializable
 class SplitedClaim (
     val id: String = "",
     @SerializedName("claim_type")
@@ -122,5 +133,7 @@ class SplitedClaim (
     @SerializedName("fm_updation_date")
     val fm_updation_date: String = "" ,
     @SerializedName("split_id")
-    val split_id: String = ""
-)
+    val split_id: String = "",
+ /*   @SerializedName("expense_group_id")
+    val expense_group_id: String = ""*/
+): Serializable

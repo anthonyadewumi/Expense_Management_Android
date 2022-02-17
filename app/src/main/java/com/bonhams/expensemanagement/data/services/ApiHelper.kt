@@ -28,6 +28,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun deleteClaim(deleteClaimRequest: DeleteClaimRequest) = apiService.deleteClaim(deleteClaimRequest)
     suspend fun sendReminder(claimId: JsonObject) = apiService.sendReminder(claimId)
     suspend fun getDetails(claimId: JsonObject,mclaimId: String) = apiService.getDetails(claimId)
+    suspend fun getMielageDetails(claimId: JsonObject,mclaimId: String) = apiService.getMielageDetails(claimId)
     suspend fun updateSplit(jsonobject: JsonObject) = apiService.updateSplit(jsonobject)
     suspend fun uploadImage(newClaimRequest: RequestBody) = apiService.uploadImage(newClaimRequest)
     suspend fun uploadProfileImage(claimImage :List<MultipartBody.Part>) = apiService.uploadProfileImage(claimImage)

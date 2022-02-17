@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.inputmethod.EditorInfo
@@ -21,11 +22,15 @@ import com.bonhams.expensemanagement.adapters.ImagePager2Adapter
 import com.bonhams.expensemanagement.data.model.*
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
+import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsResponse
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
+import com.bonhams.expensemanagement.data.services.responses.MIleageDetailsResponse
 import com.bonhams.expensemanagement.databinding.ActivityExpenceAcceptedBinding
 import com.bonhams.expensemanagement.databinding.ActivityReportingMangerExpenceDetailsBinding
 import com.bonhams.expensemanagement.databinding.ActivityRequestClaimDetailsBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimFragment
+import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -40,15 +45,25 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
     private lateinit var viewModel: ExpenceViewModel
     val attachmentList =  ArrayList<String>()
     var requestId=""
+    var claimType=""
     private var requestid: String = "0"
-
+    private lateinit var claimDetail: ClaimDetailsResponse
+    private lateinit var mileageDetail: MIleageDetailsResponse
+    var rmStatus=""
+    var fmStatus=""
+    var status=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_request_claim_details)
         binding.lifecycleOwner = this
         setupViewModel()
         setClickListeners()
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupView()
+
     }
 
     private fun setupView() {
@@ -56,58 +71,16 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
 
         val details = intent.getSerializableExtra("Details") as? ExpenceDetailsData
         requestid = intent.getStringExtra("employeeId").toString()
-
+        claimType= details?.claimType.toString()
         println("details :$details")
         requestId=details?.requestId.toString()
-
+        getDetails(requestId)
         if(details?.claimType=="Expense")
-        {
-            try {
-                binding.txtGroupName.text= details.expenseGroupName
-                binding.txtDisc.text= details.description
-                binding.txtMerchantName.text=details.merchant
-                binding.txtNetAmount.text= details.currency_type +" "+String.format("%.2f",details.netAmount.toString().toDouble())
-                binding.txtTax.text= details.currency_type +" "+String.format("%.2f",details.tax.toString().toDouble())
-                binding.txtTotalAmount.text= details.currency_type +" "+String.format("%.2f",details.totalAmount.toString().toDouble())
-                binding.txtExpenceType.text= details.expenseType_expense.toString()
-                binding.labelDate.text="Date Of Claim"
-                binding.txtTripDate.text= Utils.getFormattedDate( details.submittedOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
-            } catch (e: Exception) {
-            }
+        { getDetails(requestId)
+
 
         }else{
-            try {
-                binding.labelDate.text="Date Of Trip"
-                binding.lnMilesKm.visibility=View.VISIBLE
-                binding.lnClaimMiles.visibility=View.VISIBLE
-                binding.lnFrom.visibility=View.VISIBLE
-                binding.lnTo.visibility=View.VISIBLE
-                binding.lnRound.visibility=View.VISIBLE
-                binding.lnCarType.visibility=View.VISIBLE
-
-                binding.txtGroupName.text=details?.expenseGroupName
-                binding.txtDisc.text=details?.description
-                binding.txtMerchantName.text=details?.merchant
-                binding.txtNetAmount.text= details?.currency_type +" "+String.format("%.2f",details?.netAmount.toString().toDouble())
-                binding.txtTax.text= details?.currency_type +" "+String.format("%.2f",details?.tax.toString().toDouble())
-                binding.txtTotalAmount.text= details?.currency_type +" "+String.format("%.2f",details?.totalAmount.toString().toDouble())
-                binding.txtmilesKm.text= String.format("%.2f",details?.miles_claimed.toString().toDouble())
-                binding.txtClamidMiles.text= String.format("%.2f",details?.miles_claimed.toString().toDouble())
-                binding.txtExpenceType.text= details?.expenseType_mileage.toString()
-                binding.txtTo.text= details?.to_location
-                binding.txtFrom.text= details?.from_location
-                binding.txtCarType.text= details?.carType
-                binding.tvMilesKm.text= details?.mileageType
-                binding.txtTripDate.text= Utils.getFormattedDate( details?.date_of_trip.toString(), Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,"")
-                if(details?.is_round_trip==1){
-                    binding.txtRoundTrip.text="Yes"
-                }else{
-                    binding.txtRoundTrip.text="No"
-
-                }
-
-            } catch (e: Exception) {
-            }
+            getMileageDetails(requestId)
         }
 
 
@@ -137,6 +110,32 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
     private fun setClickListeners() {
         binding.appbarGreeting.text = "Hello ${AppPreferences.firstName}!"
 
+        binding.appbarEdit.setOnClickListener {
+      if(claimDetail!=null) {
+
+
+          if(claimType=="Expense")
+          {
+              val intent = Intent(this, MainActivity::class.java)
+              intent.putExtra("details_edit", claimDetail)
+              intent.putExtra("call_by", "rm_edit")
+              intent.putExtra("request_type", "claim")
+
+              startActivity(intent)
+
+          }else{
+              val intent = Intent(this, MainActivity::class.java)
+              intent.putExtra("details_edit", mileageDetail)
+              intent.putExtra("call_by", "rm_edit")
+              intent.putExtra("request_type", "mileage")
+
+              startActivity(intent)
+          }
+
+
+        }
+
+        }
         binding.layoutBack.setOnClickListener {
             finish()
         }
@@ -147,7 +146,188 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
             acceptRequest(requestId)
         }
     }
+    private fun getDetails(claim_id :String) {
+        val jsonObject = JsonObject().also {
+            it.addProperty("claim_id", claim_id.toInt())
+        }
+        viewModel.getDetails(jsonObject,claim_id).observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            claimDetail=response
+                            val details=claimDetail.main_claim
+                            try {
+                                if(details!=null) {
 
+                                     rmStatus=details.reportingMStatus
+                                     fmStatus=details.financeMStatus
+                                     status=details.status
+                                    editSetting(rmStatus,fmStatus,status)
+
+
+                                    binding.txtGroupName.text = details.expenseGroupName
+                                    binding.txtDisc.text = details.description
+                                    binding.txtMerchantName.text = details.merchant
+                                    binding.txtNetAmount.text = details.currencySymbol + " " + String.format("%.2f", details.netAmount.toString().toDouble())
+                                    binding.txtTax.text = details.currencySymbol + " " + String.format("%.2f", details.tax.toString().toDouble())
+                                    binding.txtTotalAmount.text = details.currencySymbol + " " + String.format("%.2f", details.totalAmount.toString().toDouble())
+                                    binding.txtExpenceType.text =
+                                        details.expenseTypeName.toString()
+                                    binding.labelDate.text = "Date Of Claim"
+                                    binding.txtTripDate.text = Utils.getFormattedDate(
+                                        details.date_of_receipt,
+                                        Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,
+                                        ""
+                                    )
+                                }
+                            } catch (e: Exception) {
+                            }
+
+                        }
+                    }
+                    Status.ERROR -> {
+                        Log.e("Reporting Manger", "claim details : ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+
+                    }
+                }
+            }
+        })
+    }
+
+    private fun getMileageDetails(claim_id :String) {
+        val jsonObject = JsonObject().also {
+            it.addProperty("claim_id", claim_id.toInt())
+        }
+        viewModel.getMielageDetails(jsonObject,claim_id).observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            mileageDetail=response
+                            val details=mileageDetail.main_claim
+                            try {
+                                if(details!=null) {
+                                    rmStatus=details.reportingMStatus
+                                    fmStatus=details.financeMStatus
+                                    status=details.status
+                                    editSetting(rmStatus,fmStatus,status)
+
+                                    binding.labelDate.text = "Date Of Trip"
+                                    binding.lnMilesKm.visibility = View.VISIBLE
+                                    binding.lnClaimMiles.visibility = View.VISIBLE
+                                    binding.lnFrom.visibility = View.VISIBLE
+                                    binding.lnTo.visibility = View.VISIBLE
+                                    binding.lnRound.visibility = View.VISIBLE
+                                    binding.lnCarType.visibility = View.VISIBLE
+
+                                    binding.txtGroupName.text = details?.groupName
+                                    binding.txtDisc.text = details?.description
+                                    binding.txtMerchantName.text = details?.merchant
+                                    binding.txtNetAmount.text = details?.currencySymbol + " " + String.format("%.2f", details?.netAmount.toString().toDouble())
+                                    binding.txtTax.text = details?.currencySymbol + " " + String.format("%.2f", details?.mtax.toString().toDouble())
+                                    binding.txtTotalAmount.text = details?.currencySymbol + " " + String.format("%.2f", details?.totalAmount.toString().toDouble())
+                                    binding.txtmilesKm.text = String.format("%.2f", details?.distance.toString().toDouble())
+                                    binding.txtClamidMiles.text = String.format("%.2f", details?.claimedMileage.toString().toDouble())
+                                    binding.txtExpenceType.text = details?.expense_type_name.toString()
+                                    binding.txtTo.text = details?.toLocation
+                                    binding.txtFrom.text = details?.fromLocation
+                                    binding.txtCarType.text = details?.carType
+                                    binding.tvMilesKm.text = details?.type
+                                    binding.txtTripDate.text = Utils.getFormattedDate(details?.tripDate.toString(), Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT, "")
+                                    if (details?.isRoundTrip == "1") {
+                                        binding.txtRoundTrip.text = "Yes"
+                                    } else {
+                                        binding.txtRoundTrip.text = "No"
+
+                                    }
+                                }
+                            } catch (e: Exception) {
+                            }
+
+                        }
+                    }
+                    Status.ERROR -> {
+                        Log.e("Reporting Manger", "claim details : ${it.message}")
+                        it.message?.let { it1 -> Toast.makeText(this, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+
+                    }
+                }
+            }
+        })
+    }
+
+    private fun editSetting(rmStatus :String,fmStatus :String,status :String) {
+        when (AppPreferences.userType) {
+            "Reporting Manager" -> {
+                when (rmStatus) {
+                    Constants.STATUS_PENDING -> {
+                        binding.appbarEdit.visibility=View.VISIBLE
+                    }
+                    Constants.STATUS_APPROVED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                    Constants.STATUS_REJECTED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                }
+
+
+            }
+            "Finance Department" -> {
+                when (fmStatus) {
+                    Constants.STATUS_PENDING -> {
+                        binding.appbarEdit.visibility=View.VISIBLE
+                    }
+                    Constants.STATUS_APPROVED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                    Constants.STATUS_REJECTED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                }
+            }
+            "Final Approver" -> {
+                when (status) {
+                    Constants.STATUS_PENDING -> {
+                        binding.appbarEdit.visibility=View.VISIBLE
+                    }
+                    Constants.STATUS_APPROVED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                    Constants.STATUS_REJECTED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                }
+            }
+            "Admin" -> {
+                when (status) {
+                    Constants.STATUS_PENDING -> {
+                        binding.appbarEdit.visibility=View.VISIBLE
+                    }
+                    Constants.STATUS_APPROVED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                    Constants.STATUS_REJECTED -> {
+                        binding.appbarEdit.visibility=View.GONE
+
+                    }
+                }
+            }
+        }
+    }
 
     private fun acceptRejectObserver(accept_reject: Int, reson: String,requestId:String) {
         val data = JsonObject()
@@ -160,7 +340,7 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
             data.addProperty("reason", reson)
 
         }
-        data.addProperty("role", AppPreferences.userType)
+        data.addProperty("role", AppPreferences.userType)//////////////////////////
         viewModel.acceptReject(data).observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {

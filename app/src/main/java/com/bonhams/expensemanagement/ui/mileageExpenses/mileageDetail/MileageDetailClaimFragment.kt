@@ -279,7 +279,7 @@ class MileageDetailFragment() : Fragment() , RecylerCallback {
     private fun showPopupMenu(view: View) {
         val popup = PopupMenu(contextActivity, view)
         popup.inflate(R.menu.claims_menu)
-        if(mileageDetail.reportingMStatus==Constants.STATUS_PENDING||mileageDetail.reportingMStatus==Constants.STATUS_REJECTED&&mileageDetail.financeMStatus==Constants.STATUS_PENDING||mileageDetail.financeMStatus==Constants.STATUS_REJECTED){
+        if(mileageDetail.reportingMStatus==Constants.STATUS_PENDING||mileageDetail.reportingMStatus==Constants.STATUS_REJECTED&&mileageDetail.financeMStatus==Constants.STATUS_PENDING||mileageDetail.financeMStatus==Constants.STATUS_REJECTED||mileageDetail.status==Constants.STATUS_REJECTED){
 
         }else{
             popup.menu.findItem(R.id.action_edit).isVisible = false

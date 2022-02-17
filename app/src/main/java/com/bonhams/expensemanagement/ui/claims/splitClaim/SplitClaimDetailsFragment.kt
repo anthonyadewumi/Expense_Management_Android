@@ -181,6 +181,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
     }
 
     private fun setupView(){
+        binding.lnTax.visibility=View.GONE
         binding.layoutAddSplit.visibility=View.GONE
         binding.btnSubmit.visibility=View.GONE
         splitItmlist.clear()
@@ -373,13 +374,13 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
              var totalSplitAmount=0.0
             splitItmlist.forEach {
                 totalSplitAmount += it.totalAmount.toDouble()
-                println(" splited amount detalis :"+totalSplitAmount)
+                println(" splited amount detalis :$totalSplitAmount")
             }
             remaningAmount=splitedSplitAmount-totalSplitAmount
             //binding.tvTotalAmount.setText(remaningAmount.toString())
             binding.tvTotalAmount.setText(String.format("%.2f", remaningAmount))
 
-            binding.totalSplitAmount.setText(currencySymbol+" "+totalSplitAmount)
+            binding.totalSplitAmount.text = currencySymbol+" "+totalSplitAmount
         }else {
             val amount = data as Double
             totalAmount += amount

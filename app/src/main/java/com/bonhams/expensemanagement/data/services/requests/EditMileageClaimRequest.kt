@@ -30,5 +30,8 @@ class EditMileageClaimRequest {
     var expenseGroup: String? = ""
     var mileage_rate: String? = ""
     var main_id: String? = ""
+    var overall_status_id: String? = ""
+    var rm_status_id: String? = ""
+    var fm_status_id: String? = ""
 
 }

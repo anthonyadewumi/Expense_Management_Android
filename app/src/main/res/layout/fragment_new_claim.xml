@@ -819,6 +819,7 @@
                         android:id="@+id/ivPicUpload"
                         android:layout_width="@dimen/_25sdp"
                         android:layout_height="@dimen/_25sdp"
+                        android:visibility="invisible"
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:padding="@dimen/_5sdp"
@@ -870,7 +871,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_corner_theme"
-                        android:text="@string/submit"
+                        android:text="@string/done"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textStyle="bold" />

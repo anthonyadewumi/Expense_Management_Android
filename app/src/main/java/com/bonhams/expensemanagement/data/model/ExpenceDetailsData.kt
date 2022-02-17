@@ -33,8 +33,7 @@ data class ExpenceDetailsData(
     val description: String = "",
     @SerializedName("merchant")
     val merchant: String = "",
-    @SerializedName("attachments")
-    val attachments: String = "",
+    @SerializedName("attachments")    val attachments: String = "",
     @SerializedName("expenseType_expense")
     val expenseType_expense: String = "",
     @SerializedName("from_location")

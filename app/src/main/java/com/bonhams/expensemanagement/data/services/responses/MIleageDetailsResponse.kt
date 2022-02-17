@@ -1,8 +1,20 @@
-package com.bonhams.expensemanagement.data.model
+package com.bonhams.expensemanagement.data.services.responses
 
+import android.os.Parcel
+import android.os.Parcelable
+import com.bonhams.expensemanagement.data.model.ClaimDetail
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-data class MileageDetail (
+class MIleageDetailsResponse() : Serializable {
+    @SerializedName("success")
+    var success: Boolean = false
+    @SerializedName("message")
+    var message: String? = ""
+    @SerializedName("main_claim")
+    var main_claim: MileageMainClaim?=null
+}
+class MileageMainClaim (
     val id: String = "",
     val title: String = "",
     val description: String = "",
@@ -61,11 +73,11 @@ data class MileageDetail (
     @SerializedName("expenseCode")
     val expenseCode: String = "" ,
     @SerializedName("auction")
-    val auction: String = "" ,
+    val auction: String = "",
     @SerializedName("overall_status_id")
     val overall_status_id: String = "",
     @SerializedName("rm_status_id")
     val rm_status_id: String = "",
     @SerializedName("fm_status_id")
     val fm_status_id: String = ""
-)
+): Serializable

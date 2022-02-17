@@ -32,9 +32,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.BuildConfig
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.NavDrawerAdapter
+import com.bonhams.expensemanagement.data.model.ExpenceDetailsData
 import com.bonhams.expensemanagement.data.model.NavDrawerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
+import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsResponse
+import com.bonhams.expensemanagement.data.services.responses.MIleageDetailsResponse
 import com.bonhams.expensemanagement.databinding.ActivityMainBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.BlankFragment
@@ -57,6 +60,8 @@ import com.bonhams.expensemanagement.ui.myProfile.MyProfileFragment
 import com.bonhams.expensemanagement.ui.myProfile.changePassword.ChangePasswordFragment
 import com.bonhams.expensemanagement.ui.myProfile.editProfile.EditProfileFragment
 import com.bonhams.expensemanagement.ui.notification.NotificationFragment
+import com.bonhams.expensemanagement.ui.rmExpence.EditClaimRMFragment
+import com.bonhams.expensemanagement.ui.rmExpence.EditMileageClaimRMFragment
 import com.bonhams.expensemanagement.ui.rmExpence.ExpenceToBeAccepted
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
@@ -73,7 +78,8 @@ class MainActivity : BaseActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var navDrawerAdapter: NavDrawerAdapter
     private val TAG = javaClass.simpleName
-
+    var isEdit=false
+    var isclaim_mileage=false
 
    private var navDrawerItems = arrayListOf(
         NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1),
@@ -146,6 +152,44 @@ class MainActivity : BaseActivity() {
                 navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
                 navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))*/
             }
+            "Admin" -> {
+
+                navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
+                //    navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved", 7))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
+
+                /*  navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))*/
+            }
+            "Final Approver" -> {
+
+                navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Manually Create", 1))
+                //    navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Scan Receipt", 2))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_scan, "Expense to be approved", 7))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Mileage", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_car, "Manually Create", 3))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_gps, "Start GPS", 4))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Others", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))
+
+                /*  navDrawerItems.clear()
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_my_profile, "My Account", 5))
+                navDrawerItems.add( NavDrawerItem(R.drawable.ic_nav_logout, "Logout", 6))*/
+            }
             else -> {
                 navDrawerItems.clear()
                 navDrawerItems.add( NavDrawerItem(R.drawable.ic_plus_circle, "Expense", -1))
@@ -183,8 +227,45 @@ class MainActivity : BaseActivity() {
         fragmentBackstackListener()
         if (savedInstanceState == null) {
            // val fragment = HomeFragment()
-            val fragment = BatchFragment()
-            changeFragment(fragment)
+
+            val extras = intent.extras
+            if(extras!=null) {
+                val request_type = extras.get("request_type") as String
+
+                if (request_type == "claim") {
+                    val details =
+                        intent.getSerializableExtra("details_edit") as? ClaimDetailsResponse
+                    if (details != null) {
+                        showBottomNavbar(false)
+                        setAppbarTitle(getString(R.string.edit_claims))
+                        showAppbarBackButton(true)
+                        val fragment = EditClaimRMFragment()
+                        fragment.setClaimDetails(details)
+                        changeFragment(fragment)
+                        isEdit=true
+                    }
+
+                }
+                if (request_type == "mileage") {
+                    val details = intent.getSerializableExtra("details_edit") as? MIleageDetailsResponse
+                    if (details != null) {
+                        showBottomNavbar(false)
+                        setAppbarTitle(getString(R.string.edit_mileage))
+                        showAppbarBackButton(true)
+                        val fragment = EditMileageClaimRMFragment()
+                        fragment.setMileageDetails(details)
+                        changeFragment(fragment)
+                        isEdit=true
+                    }
+
+                }
+            }else{
+                val fragment = BatchFragment()
+                changeFragment(fragment)
+            }
+
+
+
             /*if(AppPreferences.userType.equals("Finance Department")){
                 val fragment = FinanceHomeFragment()
                 changeFragment(fragment)
@@ -225,12 +306,13 @@ class MainActivity : BaseActivity() {
             binding.navDrawer.closeDrawer(GravityCompat.START)
         } else {
             // Checking for fragment count on back stack
-            if (supportFragmentManager.backStackEntryCount > 0) {
-                backButtonPressed()
-            } else {
-                // Exit the app
-                super.onBackPressed()
-            }
+                    if (supportFragmentManager.backStackEntryCount > 0) {
+                        backButtonPressed()
+                    } else {
+                        // Exit the app
+                        super.onBackPressed()
+
+                }
         }
     }
 
@@ -322,6 +404,19 @@ class MainActivity : BaseActivity() {
 
     private fun setupClickListeners(){
         binding.appBar.layoutBack.setOnClickListener(View.OnClickListener {
+            println("clicked on back ")
+            if(isEdit)
+            {
+                finish()
+
+            }else if(isclaim_mileage){
+                isclaim_mileage=false
+                setupAppbar()
+                showBottomNavbar(true)
+                removeAnyOtherFragVisible()
+                val fragment = BatchFragment()
+                changeFragment(fragment)
+            }
             if (supportFragmentManager.backStackEntryCount > 0) {
                 viewModel.appbarbackClick?.value = it
                 backButtonPressed()
@@ -803,6 +898,9 @@ class MainActivity : BaseActivity() {
     }
     fun changeFragmentHome(fragment: Fragment) {
         setAppbarTitle("Batch No: "+Constants.batch_allotted)
+        showBottomNavbar(true)
+        showAppbarBackButton(true)
+        isclaim_mileage=true
         supportFragmentManager.beginTransaction().replace(
             R.id.container,
             fragment,
@@ -860,7 +958,17 @@ class MainActivity : BaseActivity() {
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
                 }
+                else if(fragName.equals(EditClaimRMFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.edit_claims))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
                 else if(fragName.equals(EditMileageClaimFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.edit_mileage))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
+                }
+                else if(fragName.equals(EditMileageClaimRMFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.edit_mileage))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)

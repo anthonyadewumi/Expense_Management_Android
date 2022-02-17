@@ -161,8 +161,9 @@
                         android:background="@android:color/transparent"
                         android:padding="@dimen/_10sdp"
                         android:text="@string/edit"
+                        android:visibility="gone"
                         android:textColor="@color/white"
-                        android:visibility="gone" />
+                         />
 
                 </RelativeLayout>
 

@@ -579,7 +579,27 @@
                 android:textColor="@color/colorTextBlack"
                 />
 
-            <Spinner
+    <TextView
+        android:id="@+id/edtCarType"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/_28sdp"
+        android:hint="@string/car_type"
+        android:imeOptions="actionNext"
+        android:inputType="text"
+        android:enabled="false"
+        style="@style/TextRegular11"
+        android:textColor="@color/colorTextBlack"
+        android:background="@drawable/round_border_app_light_bg"
+        android:textSize="@dimen/_10sdp"
+        android:padding="@dimen/_5sdp"
+        android:layout_gravity="center_vertical"
+        />
+
+
+
+ <!--   <Spinner
                 android:id="@+id/spnCarType"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
@@ -592,9 +612,8 @@
                 android:textSize="@dimen/_10sdp"
                 android:padding="@dimen/_5sdp"
                 android:gravity="center|start"
-
                 android:layout_gravity="center_vertical"
-                />
+                />-->
 </LinearLayout>
             <LinearLayout
             android:layout_width="match_parent"
@@ -1359,6 +1378,7 @@
  </LinearLayout>
 
             <TextView
+                android:id="@+id/txt_attachement"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/attachments"
@@ -1367,6 +1387,7 @@
                 android:layout_marginTop="@dimen/_10sdp"/>
 
             <RelativeLayout
+                android:id="@+id/rlAttachement"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp">
@@ -1399,6 +1420,7 @@
                     app:tint="@color/secondary"
                     android:src="@drawable/ic_plus_circle"
                     android:padding="@dimen/_5sdp"
+                    android:visibility="invisible"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"/>
             </RelativeLayout>
@@ -1435,7 +1457,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/round_corner_theme"
-                    android:text="@string/submit"
+                    android:text="@string/done"
                     android:textAllCaps="false"
                     style="@style/TextRegular11"
                     android:textColor="@color/white"
