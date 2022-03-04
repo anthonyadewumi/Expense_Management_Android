@@ -48,6 +48,7 @@ class BatchFragment() : Fragment(), RecylerCallback {
     private var recyclerView: RecyclerView? = null
     private var spnCurrency: Spinner? = null
     private var txtTotalClaimed: TextView? = null
+    private var lnAmountClaimed: LinearLayout? = null
     private var mNoResult: TextView? = null
 
 
@@ -61,6 +62,7 @@ class BatchFragment() : Fragment(), RecylerCallback {
         recyclerView = view.findViewById(R.id.recyclerView)
         spnCurrency = view.findViewById(R.id.spnCurrency)
         txtTotalClaimed = view.findViewById(R.id.txt_total_claimed)
+        lnAmountClaimed = view.findViewById(R.id.lnAmountClaimed)
         mNoResult = view.findViewById(R.id.mNoResult)
         setupViewModel()
         getBatchDataObserver()
@@ -137,6 +139,12 @@ class BatchFragment() : Fragment(), RecylerCallback {
 
     private fun setupSpinners(){
         // Tax Adapter
+        if(viewModel.totalClaimedList.isNotEmpty()){
+            lnAmountClaimed?.visibility=View.VISIBLE
+        }else{
+            lnAmountClaimed?.visibility=View.GONE
+
+        }
         val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,

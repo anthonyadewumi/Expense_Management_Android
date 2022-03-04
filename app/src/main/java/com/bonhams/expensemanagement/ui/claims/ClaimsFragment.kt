@@ -154,6 +154,14 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
         })
     }
     private fun setupSpinners(){
+
+        if(viewModel.totalClaimedList.isNotEmpty()){
+            binding.lnAmountClaimed.visibility=View.VISIBLE
+        }else{
+            binding.lnAmountClaimed.visibility=View.GONE
+
+        }
+
         // Tax Adapter
         val currencyAdapter = CustomSpinnerAdapter(
             requireContext(),

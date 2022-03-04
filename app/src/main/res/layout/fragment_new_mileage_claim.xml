@@ -1379,6 +1379,7 @@
 
             <TextView
                 android:id="@+id/txt_attachement"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/attachments"
@@ -1388,6 +1389,7 @@
 
             <RelativeLayout
                 android:id="@+id/rlAttachement"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp">

@@ -1,5 +1,6 @@
 package com.bonhams.expensemanagement.ui.myProfile.changePassword
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.ChangePasswordRequest
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.login.LoginActivity
 import com.bonhams.expensemanagement.utils.Status
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 
@@ -137,6 +139,10 @@ class ChangePasswordFragment() : Fragment() {
         mProgressBar?.visibility = View.GONE
         btnReset?.visibility = View.VISIBLE
         Toast.makeText(contextActivity, commonResponse.message, Toast.LENGTH_SHORT).show()
+        val intent = Intent(contextActivity, LoginActivity::class.java)
+        startActivity(intent)
+        contextActivity?.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        contextActivity?.finish()
     }
 
     private fun onChangePasswordFailed() {

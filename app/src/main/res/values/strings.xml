@@ -191,6 +191,8 @@
     <string name="batch_edit">Batch Edit</string>
     <string name="batch_delete">Batch Delete</string>
     <string name="submit_batch">Submit Batch</string>
+    <string name="approve_batch">Approve Batch</string>
+    <string name="approve_reject">Reject Batch</string>
 
     <string name="submitted_on">Submitted On</string>
     <string name="no_result_found">No Data Available</string>
@@ -226,4 +228,7 @@
     <string name="title">Title</string>
     <string name="please_enter_title">Please enter title</string>
     <string name="please_enter_company_numer">Please enter Company Number</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="fcm_message">FCM Message</string>
 </resources>

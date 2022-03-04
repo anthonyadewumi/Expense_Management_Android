@@ -10,14 +10,21 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 
 object RetrofitBuilder {
     private const val API_BASE_URL = "https://maps.googleapis.com/"
 
-    private val spec = ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
+    /*private val spec = ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
         .supportsTlsExtensions(true)
         .tlsVersions(TlsVersion.TLS_1_2, TlsVersion.TLS_1_1, TlsVersion.TLS_1_0)
         .cipherSuites(
@@ -34,8 +41,15 @@ object RetrofitBuilder {
             CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
             CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA
         )
+        .build()*/
+    var spec: ConnectionSpec? = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        .tlsVersions(TlsVersion.TLS_1_2)
+        .cipherSuites(
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+        )
         .build()
-
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -44,7 +58,7 @@ object RetrofitBuilder {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .callTimeout(60, TimeUnit.SECONDS)
-        .connectionSpecs(Collections.singletonList(spec))
+        //.connectionSpecs(Collections.singletonList(spec))
 
         /*  .connectionSpecs(listOf(ConnectionSpec.CLEARTEXT,
               ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
@@ -59,10 +73,19 @@ object RetrofitBuilder {
 
 
     private fun getRetrofit(): Retrofit {
+        val clint=getUnsafeOkHttpClient()
+            .addInterceptor(RetrofitHeaderInterceptor())
+            .readTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .callTimeout(60, TimeUnit.SECONDS)
+        clint.addInterceptor(
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
+            .client(clint.build())
             .build() //Doesn't require the adapter
     }
     private fun getRetrofitMatrix(): Retrofit {
@@ -72,7 +95,45 @@ object RetrofitBuilder {
             .client(okHttpClient)
             .build() //Doesn't require the adapter
     }
+    fun getUnsafeOkHttpClient(): OkHttpClient.Builder {
+        return try {
+            // Create a trust manager that does not validate certificate chains
+            val trustAllCerts = arrayOf<TrustManager>(
+                object : X509TrustManager {
+                    @Throws(CertificateException::class)
+                    override fun checkClientTrusted(
+                        chain: Array<X509Certificate>,
+                        authType: String
+                    ) {
+                    }
 
+                    @Throws(CertificateException::class)
+                    override fun checkServerTrusted(
+                        chain: Array<X509Certificate>,
+                        authType: String
+                    ) {
+                    }
+
+                    override fun getAcceptedIssuers(): Array<X509Certificate> {
+                        return arrayOf()
+                    }
+                }
+            )
+
+            // Install the all-trusting trust manager
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, SecureRandom())
+
+            // Create an ssl socket factory with our all-trusting manager
+            val sslSocketFactory: SSLSocketFactory = sslContext.socketFactory
+            val builder = OkHttpClient.Builder()
+            builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+            builder.hostnameVerifier { hostname, session -> true }
+            builder
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
     val apiService: ApiService = getRetrofit().create(ApiService::class.java)
     val googleApiService: GoogleApiService = getRetrofitMatrix().create(GoogleApiService::class.java)
 }
@@ -165,8 +226,14 @@ interface ApiService {
     @POST("acc-rej-claim")
     suspend fun acceptReject(@Body data: JsonObject): ExpenceDetailsResponse
 
+    @POST("acc-rej-batch")
+    suspend fun acceptRejectBatch(@Body data: JsonObject): ExpenceDetailsResponse
+
     @GET("logout")
     suspend fun logoutUser(): CommonResponse
+
+    @POST("add-device-token")
+    suspend fun addFcmKey(@Body data: JsonObject): CommonResponse
 
     @GET("my_profile")
     suspend fun profileDetail(): MyProfileResponse

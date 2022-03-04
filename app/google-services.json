@@ -1,34 +1,77 @@
 {
   "project_info": {
-    "project_number": "109979154051",
-    "project_id": "expense-management-ed2d8",
-    "storage_bucket": "expense-management-ed2d8.appspot.com"
+    "project_number": "976994720194",
+    "project_id": "expense-management-83707",
+    "storage_bucket": "expense-management-83707.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:109979154051:android:511c9ad9c6c2efdc060db6",
+        "mobilesdk_app_id": "1:976994720194:android:d472c3061a174c8e565e5b",
         "android_client_info": {
           "package_name": "com.bonhams.expensemanagement"
         }
       },
       "oauth_client": [
         {
-          "client_id": "109979154051-698ebgcouc3oj2gaph7g23qigi65480h.apps.googleusercontent.com",
+          "client_id": "976994720194-l3p2cjfth22oocl1a09oesgk3qkiuc7n.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB_NI_Enkt6HIdXk05Fqg9r3d8PNjOojyQ"
+          "current_key": "AIzaSyDKL7bdYyZ8tqacS3IQ6kMjqnghSbBLq4s"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "109979154051-698ebgcouc3oj2gaph7g23qigi65480h.apps.googleusercontent.com",
+              "client_id": "976994720194-l3p2cjfth22oocl1a09oesgk3qkiuc7n.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "976994720194-u8sddaskuihckrij1umapmkbvj5fbrcm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vinove.workstatus"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:976994720194:android:de965ea0e679cd13565e5b",
+        "android_client_info": {
+          "package_name": "com.navin.fcmpushnotification"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "976994720194-l3p2cjfth22oocl1a09oesgk3qkiuc7n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKL7bdYyZ8tqacS3IQ6kMjqnghSbBLq4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "976994720194-l3p2cjfth22oocl1a09oesgk3qkiuc7n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "976994720194-u8sddaskuihckrij1umapmkbvj5fbrcm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vinove.workstatus"
+              }
             }
           ]
         }

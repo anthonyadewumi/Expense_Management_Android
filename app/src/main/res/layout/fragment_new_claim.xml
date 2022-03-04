@@ -560,7 +560,7 @@
                             android:layout_weight=".8"
                             android:layout_marginLeft="@dimen/_4sdp"
                             android:gravity="center|start"
-                            android:text="0"
+                            android:hint="0"
                             android:maxLength="8"
                             android:inputType="numberDecimal"
                             android:layout_height="match_parent"

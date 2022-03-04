@@ -47,8 +47,10 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun getRequestExpences(mileageExpenseRequest: JsonObject) = apiService.getRequestExpences(mileageExpenseRequest)
     suspend fun getRequestExpencesDetails(mileageExpenseRequest: JsonObject) = apiService.getRequestExpencesDetails(mileageExpenseRequest)
     suspend fun acceptReject(data: JsonObject) = apiService.acceptReject(data)
+    suspend fun acceptRejectBatch(data: JsonObject) = apiService.acceptRejectBatch(data)
 
     suspend fun logoutUser() = apiService.logoutUser()
+    suspend fun addFcmKey(requestObject: JsonObject) = apiService.addFcmKey(requestObject)
 
     suspend fun profileDetail() = apiService.profileDetail()
     suspend fun editProfile(data: JsonObject) = apiService.editProfile(data)

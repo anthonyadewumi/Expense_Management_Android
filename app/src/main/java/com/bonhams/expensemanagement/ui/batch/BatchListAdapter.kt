@@ -3,12 +3,14 @@ package com.bonhams.expensemanagement.ui.batch
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.BatchData
 import com.bonhams.expensemanagement.databinding.ItemBatchBinding
+import com.bonhams.expensemanagement.databinding.ItemBatchsssssssBinding
 import com.bonhams.expensemanagement.utils.RecylerCallback
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -39,8 +41,8 @@ class BatchListAdapter(
 
     }
 
-    class ViewHolder(itemBinding: ItemBatchBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-        private val binding: ItemBatchBinding= itemBinding
+    class ViewHolder(itemBinding: ItemBatchsssssssBinding) : RecyclerView.ViewHolder(itemBinding.root) {
+        private val binding: ItemBatchsssssssBinding= itemBinding
         fun bindItems(
             item: BatchData,
             context: Context,
@@ -52,10 +54,28 @@ class BatchListAdapter(
             binding.tvCurrency.text = item.currency_type
             binding.tvCompany.text = item.company_code
             binding.tvLedger.text = item.ledger_id
-            binding.tvNoClaims.text = item.totalClaims+" "+"Claims"
+
             binding.tvTotalAmount.text = item.currency_symbol+" "+String.format("%.2f",item.totalAmount.toString().toDouble())
            binding.tvDate.text =parseDateFormat(item.lastestSubmissionDate, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "dd MMM")
 
+            if(item.e_claims>0){
+                binding.claimView.visibility=View.VISIBLE
+                binding.tvNoClaims.visibility=View.VISIBLE
+                binding.tvNoClaims.text = item.e_claims.toString()+" "+"Claims"
+            }else{
+                binding.claimView.visibility=View.GONE
+                binding.tvNoClaims.visibility=View.GONE
+
+            }
+            if(item.m_claims>0){
+                binding.mileageView.visibility=View.VISIBLE
+                binding.tvNoMileage.visibility=View.VISIBLE
+                binding.tvNoMileage.text = item.m_claims.toString()+" "+"Mileage"
+
+            }else{
+                binding.mileageView.visibility=View.GONE
+                binding.tvNoMileage.visibility=View.GONE
+            }
             binding.batchCardView.setOnClickListener {
 
                 recylerCallback.callback("details",item,postion)
@@ -90,7 +110,7 @@ class BatchListAdapter(
                 return ViewHolder(
                     DataBindingUtil.inflate(
                         LayoutInflater.from(parent.context),
-                        R.layout.item_batch, parent, false
+                        R.layout.item_batchsssssss, parent, false
                     )
                 )
             }

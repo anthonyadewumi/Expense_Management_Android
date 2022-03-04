@@ -16,6 +16,8 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/lnAmountClaimed"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:weightSum="1"
             android:layout_marginStart="@dimen/_12sdp"

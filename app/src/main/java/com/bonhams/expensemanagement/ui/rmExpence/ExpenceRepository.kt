@@ -14,9 +14,11 @@ class ExpenceRepository(private val apiHelper: ApiHelper) {
     suspend fun getRequestExpences(mileageExpenseRequest: JsonObject) = apiHelper.getRequestExpences(mileageExpenseRequest)
     suspend fun getRequestExpencesDetails(mileageExpenseRequest: JsonObject) = apiHelper.getRequestExpencesDetails(mileageExpenseRequest)
     suspend fun acceptReject(data: JsonObject) = apiHelper.acceptReject(data)
+    suspend fun acceptRejectBatch(data: JsonObject) = apiHelper.acceptRejectBatch(data)
     suspend fun createNewClaim(newClaimRequest: NewClaimRequest) = apiHelper.createNewClaim(newClaimRequest)
     suspend fun uploadImage(newClaimRequest: RequestBody) = apiHelper.uploadImage(newClaimRequest)
     suspend fun getDetails(claimId: JsonObject,mclaimId: String) = apiHelper.getDetails(claimId,mclaimId)
     suspend fun getMielageDetails(claimId: JsonObject,mclaimId: String) = apiHelper.getMielageDetails(claimId,mclaimId)
-
+    suspend fun deleteBatch(request: JsonObject) = apiHelper.deleteBatch(request)
+    suspend fun submitBatch(request: JsonObject) = apiHelper.submitBatch(request)
 }

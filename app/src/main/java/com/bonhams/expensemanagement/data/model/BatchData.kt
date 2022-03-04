@@ -9,6 +9,10 @@ data class BatchData (
     val ledger_id: String = "",
     @SerializedName("totalClaims")
     val totalClaims: String = "",
+    @SerializedName("e_claims")
+    val e_claims: Int = 0,
+    @SerializedName("m_claims")
+    val m_claims: Int = 0,
     @SerializedName("employeeName")
     val employeeName: String = "",
     @SerializedName("lastestSubmissionDate")

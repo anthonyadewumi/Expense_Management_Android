@@ -110,6 +110,14 @@ class MileageExpensesFragment() : Fragment(), MileageAdapter.OnMileageExpenseCli
     }
     private fun setupSpinners(){
         // Tax Adapter
+
+        if(viewModel.totalClaimedList.isNotEmpty()){
+            binding.lnMileageClaimed.visibility=View.VISIBLE
+        }else{
+            binding.lnMileageClaimed.visibility=View.GONE
+
+        }
+
         var mutableList1 = mutableListOf("")
         mutableList1.clear()
         viewModel.totalClaimedList.forEach {

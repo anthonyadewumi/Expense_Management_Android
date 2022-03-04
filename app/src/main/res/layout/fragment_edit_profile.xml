@@ -215,6 +215,7 @@
                 style="@style/TextRegular12"
                 android:enabled="false"
                 android:textColor="@color/colorTextBlack"
+                android:drawableEnd="@drawable/ic_baseline_edit_24"
                 android:background="@drawable/round_border_gray_white_bg"
                 android:minHeight="@dimen/_28sdp"
                 android:textSize="@dimen/_10sdp"

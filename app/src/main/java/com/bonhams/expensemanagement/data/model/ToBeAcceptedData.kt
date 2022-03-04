@@ -16,8 +16,18 @@ data class ToBeAcceptedData(
     val totalAmount: Double = 0.0,
     @SerializedName("totalClaims")
     val totalClaims: Int = 0,
-    @SerializedName("currency_type")
+    @SerializedName("batch_allotted")
+    val batch_allotted: Int = 0,
+    @SerializedName("e_claims")
+    val e_claims: Int = 0,
+    @SerializedName("m_claims")
+    val m_claims: Int = 0,
+    @SerializedName("currency_symbol")
     val currency_type: String = "",
+    @SerializedName("company_code")
+    val company_code: String = "",
+    @SerializedName("ledger_id")
+    val ledger_id: String = "",
     @SerializedName("lastestSubmissionDate")
     val lastestSubmissionDate: String = "",
 

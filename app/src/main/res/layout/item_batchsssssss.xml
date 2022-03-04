@@ -151,6 +151,10 @@
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:weightSum="2"
                     android:orientation="horizontal"
                     android:layout_height="wrap_content">
@@ -186,32 +190,6 @@
 
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:id="@+id/lnLedger"
-                            android:layout_width="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/tvLedgerTitle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:text="@string/ledger_id_"
-                                android:singleLine="false"
-                                style="@style/TextMedium12"
-                                android:textColor="@color/colorDarkGray" />
-                            <TextView
-                                android:id="@+id/tvLedger"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:text="B0321"
-                                android:singleLine="false"
-                                style="@style/TextMedium12"
-                                android:textColor="@color/colorDarkGray" />
-
-                        </LinearLayout>
 
 
                     </LinearLayout>
@@ -247,42 +225,80 @@
                                 android:textColor="@color/colorDarkGray" />
 
                         </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/lnAmount"
-                            android:layout_width="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/tvAmountTitle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:text="@string/total_amount_colon"
-                                android:singleLine="false"
-                                style="@style/TextMedium12"
-                                android:textColor="@color/colorDarkGray" />
-                            <TextView
-                                android:id="@+id/tvTotalAmount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="@dimen/_5sdp"
-                                android:text="$1234"
-                                android:singleLine="false"
-                                style="@style/TextMedium12"
-                                android:textColor="@color/colorDarkGray" />
-
-                        </LinearLayout>
-
                     </LinearLayout>
 
 
 
 
                 </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:orientation="vertical"
+                            android:layout_height="wrap_content">
+                            <LinearLayout
+                                android:id="@+id/lnLedger"
+                                android:layout_width="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tvLedgerTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_5sdp"
+                                    android:text="@string/ledger_id_"
+                                    android:singleLine="false"
+                                    style="@style/TextMedium12"
+                                    android:textColor="@color/colorDarkGray" />
+                                <TextView
+                                    android:id="@+id/tvLedger"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_5sdp"
+                                    android:text="B0321"
+                                    android:singleLine="false"
+                                    style="@style/TextMedium12"
+                                    android:textColor="@color/colorDarkGray" />
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/lnAmount"
+                                android:layout_width="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="@dimen/_5sdp"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/tvAmountTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_5sdp"
+                                    android:text="@string/total_amount_colon"
+                                    android:singleLine="false"
+                                    style="@style/TextMedium12"
+                                    android:textColor="@color/colorDarkGray" />
+                                <TextView
+                                    android:id="@+id/tvTotalAmount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="@dimen/_5sdp"
+                                    android:text="$1234"
+                                    android:singleLine="false"
+                                    style="@style/TextMedium12"
+                                    android:textColor="@color/colorDarkGray" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
 
 
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
             </RelativeLayout>

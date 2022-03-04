@@ -9,7 +9,7 @@ data class SplitClaimItem (
     val expenseType: String = "",
     var totalAmount: String = "",
     val taxcode: String = "",
-    val tax: Double = 0.0,
+    var tax: Double = 0.0,
     val compnyName: String = "",
     val departmentName: String = "",
     val expenceTypeName: String = "",

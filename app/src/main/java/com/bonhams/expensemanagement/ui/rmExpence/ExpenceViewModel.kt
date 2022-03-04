@@ -47,6 +47,14 @@ class ExpenceViewModel(private val newClaimRepository: ExpenceRepository) : View
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
+    fun acceptRejectBatch(data: JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = newClaimRepository.acceptRejectBatch(data)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
     fun getDetails(claimId: JsonObject,mclaimId: String) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -63,6 +71,21 @@ class ExpenceViewModel(private val newClaimRepository: ExpenceRepository) : View
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
         }
     }
-
+    fun deleteBatch(requestData:JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = newClaimRepository.deleteBatch(requestData)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
+    fun submitBatch(requestData:JsonObject) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = newClaimRepository.submitBatch(requestData)))
+        } catch (exception: Exception) {
+            emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
+        }
+    }
 
 }

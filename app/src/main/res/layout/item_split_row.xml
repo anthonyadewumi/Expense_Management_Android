@@ -106,18 +106,19 @@
                         android:textColor="@color/secondary" />
 
 
-                    <com.cottacush.android.currencyedittext.CurrencyEditText
+                    <EditText
                         android:id="@+id/tvamount"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
                         style="@style/TextRegular12"
-                        android:text="@string/amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
                         android:enabled="false"
+                        android:editable="false"
+                        android:gravity="center|start"
                         android:inputType="number"
                         android:padding="@dimen/_5sdp"
-                        android:textColor="@color/secondary"
-                        android:gravity="center|start"
-                        android:ellipsize="end"/>
+                        android:text="@string/amount"
+                        android:textColor="@color/secondary" />
 
 
                 </LinearLayout>

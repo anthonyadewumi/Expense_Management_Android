@@ -44,6 +44,7 @@ import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
+import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragmentEdit
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
@@ -91,6 +92,7 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
     private lateinit var splitedClaimDetails: ClaimDetailsResponse
     private lateinit var dropDownResponse: DropdownResponse
     private var dateofRecipt: String = ""
+    var groupname="n/a"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -232,7 +234,20 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
-
+        when (AppPreferences.userType) {
+            "Reporting Manager" -> { }
+            "Finance Department" -> { }
+            "Admin" -> { }
+            "Final Approver" -> { }
+            else->{
+                viewModel.companyList.forEach {
+                    if(AppPreferences.company == it.name){
+                        viewModel.companyList= listOf(it)
+                        return@forEach
+                    }
+                }
+            }
+        }
         val companyAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_spinner, viewModel.companyList)
         binding.spnCompanyNumber.adapter = companyAdapter
         var compnypostion=0
@@ -435,6 +450,30 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
                     binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
                     val groupid = viewModel.expenseGroupList[position].id
                     println("selected group ID :$groupid")
+                     groupname = viewModel.expenseGroupList[position].name
+                    println("selected group ID :$groupid")
+                    if(groupname == "Capital Asset"){
+                        viewModel.departmentList.clear()
+                        viewModel.departmentListCompany.forEach {
+                            if(it.name == "Tangible Assets"&&it.company_id==compnyId.toString() ){
+                                viewModel.departmentList.add(it)
+                                return@forEach
+                            }
+                        }
+                        binding.spnDepartment.setBackgroundResource(R.drawable.spinner_bg)
+
+                        setupDeparmentType()
+                    }else{
+                        viewModel.departmentList.clear()
+                        viewModel.departmentListCompany.forEach {
+                            if(it.company_id == compnyId.toString()){
+                                viewModel.departmentList.add(it)
+                            }
+                        }
+                        binding.spnDepartment.setBackgroundResource(R.drawable.spinner_purple_bg)
+
+                        setupDeparmentType()
+                    }
                     viewModel.expenseTypeList.clear()
                     binding.edtExpenceTypeValue.setText(" ")
                     viewModel.expenseTypeList.add(ExpenseType("0","Select Expense Type",""))
@@ -486,6 +525,30 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
                     binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
                     val groupid = viewModel.expenseGroupList[position].id
                     println("selected group ID :$groupid")
+                val groupname = viewModel.expenseGroupList[position].name
+                println("selected group ID :$groupid")
+                if(groupname == "Capital Asset"){
+                    viewModel.departmentList.clear()
+                    viewModel.departmentListCompany.forEach {
+                        if(it.name == "Tangible Assets"&&it.company_id==compnyId.toString() ){
+                            viewModel.departmentList.add(it)
+                            return@forEach
+                        }
+                    }
+                    binding.spnDepartment.setBackgroundResource(R.drawable.spinner_bg)
+
+                    setupDeparmentType()
+                }else{
+                    viewModel.departmentList.clear()
+                    viewModel.departmentListCompany.forEach {
+                        if(it.company_id == compnyId.toString()){
+                            viewModel.departmentList.add(it)
+                        }
+                    }
+                    binding.spnDepartment.setBackgroundResource(R.drawable.spinner_purple_bg)
+
+                    setupDeparmentType()
+                }
                     viewModel.expenseTypeList.clear()
                     binding.edtExpenceTypeValue.setText(" ")
                     viewModel.expenseTypeList.add(ExpenseType("0","Select Expense Type",""))
@@ -1004,7 +1067,50 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
             Log.e(TAG, "createNewClaim: ${e.message}")
         }
     }
+    private fun getClaimRequest() : NewClaimRequest{
+        var dateFormate = if(companyDateFormate=="USA") {
+            Constants.MMM_DD_YYYY_FORMAT
+        }else{
+            Constants.DD_MM_YYYY_FORMAT
 
+        }
+        return viewModel.getNewClaimRequest(
+            binding.edtTitle.text.toString().trim(),
+            binding.edtMerchantName.text.toString().trim(),
+            if(binding.edtGroupValue.text.isEmpty())
+            {
+                ""
+            }else{
+                if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else ""
+
+            },
+            if(binding.edtExpenceTypeValue.text.isEmpty())
+            {
+                ""
+            }else{
+                if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else ""
+
+            },
+            if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "",
+//            binding.edtCompanyNumber.text.toString().trim(),
+            if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
+            Utils.getDateInServerRequestFormat(
+                binding.tvDateOfSubmission.text.toString().trim(),
+                dateFormate
+            ),
+            if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
+            binding.edtTotalAmount.text.toString(),
+            binding.edtTax.text.toString(),
+            binding.tvNetAmount.text.toString(),
+            binding.edtDescription.text.toString().trim(),
+            if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
+            binding.edtAutionValue.text.toString().trim(),
+            if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "",
+
+            viewModel.claimImageList as List<String>,
+            viewModel.attachmentsList as List<String>
+        )
+    }
     private fun splitNewClaim() {
         //  attachments = viewModel.attachmentsList.joinToString { it }
         try {
@@ -1031,12 +1137,23 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            val fragment = EditSplitClaimDetailsFragment()
+            /*val fragment = SplitClaimFragmentEdit()
             fragment.setClaimRequestDetail(splitedClaimDetails)
             fragment.setClaimRequestDetailJson(newClaimRequest)
             fragment.setEditModeRM(true)
             fragment.setdropdownResponse(dropDownResponse)
+            fragment.setCurrency(currencyCode,currencySymbol)*/
+
+            val fragment = SplitClaimFragmentEdit()
+            fragment.setClaimRequestDetail(getClaimRequest())
+            fragment.setClaimRequestDetail(splitedClaimDetails)
+            fragment.setClaimRequestDetailJson(newClaimRequest)
+            fragment.setGroupName(groupname)
+            fragment.setEditModeRM(true)
+            fragment.setdropdownResponse(dropDownResponse)
             fragment.setCurrency(currencyCode,currencySymbol)
+
+
             (contextActivity as? MainActivity)?.addFragment(fragment)
           /*  if(viewModel.attachmentsList.size > 0){
                 val fragment = EditSplitClaimDetailsFragment()

@@ -130,9 +130,7 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun login() {
-        if (viewModel.token.isNullOrEmpty()){
-            getFirebaseToken()
-        }
+
 
         if (validateLoginDetails()) {
             onLoginFailed()
@@ -197,11 +195,6 @@ class LoginActivity : BaseActivity() {
         } ?: kotlin.run {
 
         }
-    }
-
-    private fun getFirebaseToken(){
-        viewModel.token = AppPreferences.fireBaseToken
-        Log.w("LoginActivity", "getFirebaseToken: ${viewModel.token}", )
     }
 
     private fun gotoDashboard(){

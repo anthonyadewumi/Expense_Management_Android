@@ -27,7 +27,6 @@ import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.remaningAmount
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.splitItmlist
-import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment.Companion.totalAmount
 import com.bonhams.expensemanagement.ui.forgotPassword.ForgotPasswordActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.resetPassword.ResetPasswordActivity
@@ -150,6 +149,21 @@ class EditSplitClaimActivity : BaseActivity() {
         })
     }
     private fun setupTax(){
+
+        when (AppPreferences.userType) {
+            "Reporting Manager" -> { }
+            "Finance Department" -> { }
+            "Admin" -> { }
+            "Final Approver" -> { }
+            else->{
+                viewModel.taxList.forEach {
+                    if(it.id.toString() == mtaxcodeId){
+                        viewModel.taxList= listOf(it)
+                        return@forEach
+                    }
+                }
+            }
+        }
         val taxAdapter = CustomSpinnerAdapter(
             this,
             R.layout.item_spinner,
@@ -214,7 +228,15 @@ class EditSplitClaimActivity : BaseActivity() {
        return true
     }
     private fun setDropdownDataObserver() {
-
+        when (AppPreferences.userType) {
+            "Reporting Manager" -> { }
+            "Finance Department" -> { }
+            "Admin" -> { }
+            "Final Approver" -> { }
+            else->{
+                binding.edtTax.isEnabled=false
+            }
+        }
         val currancyCode = intent.getSerializableExtra("currencyCode") as String?
         val currencySymbol = intent.getSerializableExtra("currencySymbol") as String?
          groupId = (intent.getSerializableExtra("groupId") as String?).toString()

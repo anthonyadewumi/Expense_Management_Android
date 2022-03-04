@@ -58,6 +58,8 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
+            android:id="@+id/lnMileageClaimed"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:weightSum="1"
             android:layout_marginStart="@dimen/_12sdp"

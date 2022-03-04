@@ -43,6 +43,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
     private var taxcodeId: String = ""
     private var requestid: String = "0"
     private var empname: String = ""
+    private var batch_allotted: String = ""
     private var currency_type: String = ""
     private lateinit var expencesListAdapter: ExpencesDetailsListAdapter
 
@@ -54,6 +55,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
         requestid = intent.getStringExtra("employeeId").toString()
         empname = intent.getStringExtra("employeeName").toString()
         currency_type = intent.getStringExtra("currency_type").toString()
+        batch_allotted = intent.getStringExtra("batch_allotted").toString()
 
 
         setupViewModel()
@@ -176,6 +178,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
         data.add("claim_ids",jsonIdArray)
         data.addProperty("action",accept_reject)
         data.addProperty("user_id",requestid.toInt())
+        data.addProperty("batch_number",batch_allotted)
         if(accept_reject==2){
             data.addProperty("reason",reson)
 
@@ -240,6 +243,7 @@ class ReportingMangerExpenceDetails : BaseActivity(), RecylerCallback {
                 val fp = Intent(this, RequestClaimDetails::class.java)
                 fp.putExtra("Details",(data as ExpenceDetailsData))
                 fp.putExtra("employeeId",requestid)
+                fp.putExtra("batch_allotted",batch_allotted)
                 startActivity(fp)
             }else{
                 idList.remove((data as ExpenceDetailsData).requestId)

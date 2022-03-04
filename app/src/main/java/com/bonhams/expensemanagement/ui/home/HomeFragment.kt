@@ -56,7 +56,6 @@ class HomeFragment : Fragment() {
         setupViewModel()
         setupViewPager()
         setClickListeners()
-
         return view
     }
 
@@ -70,6 +69,9 @@ class HomeFragment : Fragment() {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
     private fun setupViewPager() {
         adapter = HomeViewPagerAdapter(childFragmentManager, lifecycle)
         binding.viewPager.adapter = adapter

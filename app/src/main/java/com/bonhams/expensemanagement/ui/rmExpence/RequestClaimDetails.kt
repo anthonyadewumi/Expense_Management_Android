@@ -52,6 +52,7 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
     var rmStatus=""
     var fmStatus=""
     var status=""
+    var batch_allotted=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_request_claim_details)
@@ -71,6 +72,7 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
 
         val details = intent.getSerializableExtra("Details") as? ExpenceDetailsData
         requestid = intent.getStringExtra("employeeId").toString()
+        batch_allotted = intent.getStringExtra("batch_allotted").toString()
         claimType= details?.claimType.toString()
         println("details :$details")
         requestId=details?.requestId.toString()
@@ -336,6 +338,7 @@ class RequestClaimDetails : BaseActivity(), RecylerCallback {
         data.add("claim_ids", jsonIdArray)
         data.addProperty("action", accept_reject)
         data.addProperty("user_id",requestid)
+        data.addProperty("batch_number",batch_allotted)
         if (accept_reject == 2) {
             data.addProperty("reason", reson)
 

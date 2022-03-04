@@ -4,6 +4,7 @@ package com.bonhams.expensemanagement.adapters
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
@@ -44,8 +45,17 @@ class SplitAdapter(
             binding.tvTitles.text = item.companyCode
            // binding.tvamount.setCurrencySymbol(currencySymbol)
            // binding.tvamount.setLocale(currencyCode)
+
+            if(postion==0){
+                binding.ivDeleteSplit.visibility=View.INVISIBLE
+            }else{
+                binding.ivDeleteSplit.visibility=View.VISIBLE
+
+            }
             try {
-                binding.tvamount.setText(currencySymbol+" "+item.totalAmount)
+                binding.tvCurrencySymbol.text = currencySymbol
+                binding.tvamount.setText(String.format("%.2f", item.totalAmount.toDouble()))
+              //  binding.tvamount.setText(currencySymbol+" "+item.totalAmount)
             } catch (e: Exception) {
                 binding.tvamount.setText(item.totalAmount)
 
@@ -58,7 +68,7 @@ class SplitAdapter(
             binding.tvtaxcode.text = "Tax Code : "+item?.taxcode
 
             binding.tvamount.doAfterTextChanged {
-                var textamount =binding.tvamount.getNumericValue()
+                var textamount =binding.tvamount.text.toString().toDouble()
                 println("chk total amount in details :"+textamount)
 
                 if (textamount != null) {
@@ -79,10 +89,15 @@ class SplitAdapter(
 
         fun removeItems(listAttachments: MutableList<SplitClaimItem?>?,postion:Int,recylerCallback: RecylerCallback) {
                 binding.ivDeleteSplit.setOnClickListener {
+                    val itemData=listAttachments?.get(postion)
+
                     val amount= listAttachments?.get(postion)?.totalAmount.toString().toDouble()
+                    val tax= listAttachments?.get(postion)?.tax.toString().toDouble()
                     listAttachments?.removeAt(postion)
                     bindingAdapter?.notifyDataSetChanged()
-                    recylerCallback.callback("remove",amount,postion)
+                    if (itemData != null) {
+                        recylerCallback.callback("remove",itemData,postion)
+                    }
                 }
 
             }

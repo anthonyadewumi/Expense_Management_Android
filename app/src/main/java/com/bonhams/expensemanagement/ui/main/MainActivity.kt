@@ -4,35 +4,32 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.telephony.TelephonyManager
+import android.provider.Settings
+import android.util.Base64
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bonhams.expensemanagement.BuildConfig
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.NavDrawerAdapter
-import com.bonhams.expensemanagement.data.model.ExpenceDetailsData
 import com.bonhams.expensemanagement.data.model.NavDrawerItem
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
@@ -46,7 +43,6 @@ import com.bonhams.expensemanagement.ui.batch.BatchFragment
 import com.bonhams.expensemanagement.ui.claims.claimDetail.ClaimDetailFragment
 import com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit.EditClaimFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
-import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsActivity
 import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
@@ -69,8 +65,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.JsonObject
 import org.imaginativeworld.oopsnointernet.callbacks.ConnectionCallback
 import org.imaginativeworld.oopsnointernet.snackbars.fire.NoInternetSnackbarFire
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 
 class MainActivity : BaseActivity() {
@@ -104,6 +103,7 @@ class MainActivity : BaseActivity() {
 
         binding.bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         println("user type :"+AppPreferences.userType)
+       // printHashKey(this)
 
       /*  val crashButton = Button(this)
         crashButton.text = "Test Crash"
@@ -261,7 +261,7 @@ class MainActivity : BaseActivity() {
                 }
             }else{
                 val fragment = BatchFragment()
-                changeFragment(fragment)
+                addFragment(fragment)
             }
 
 
@@ -276,6 +276,7 @@ class MainActivity : BaseActivity() {
 
 
         }
+        addFcmKey()
     }
 
     override fun onResume() {
@@ -405,6 +406,9 @@ class MainActivity : BaseActivity() {
     private fun setupClickListeners(){
         binding.appBar.layoutBack.setOnClickListener(View.OnClickListener {
             println("clicked on back ")
+            println("clicked on back isEdit"+isEdit)
+            println("clicked on back isclaim_mileage"+isclaim_mileage)
+            println("supportFragmentManager.backStackEntryCount : "+supportFragmentManager.backStackEntryCount)
             if(isEdit)
             {
                 finish()
@@ -420,6 +424,12 @@ class MainActivity : BaseActivity() {
             if (supportFragmentManager.backStackEntryCount > 0) {
                 viewModel.appbarbackClick?.value = it
                 backButtonPressed()
+            }else{
+                setupAppbar()
+                showBottomNavbar(true)
+                removeAnyOtherFragVisible()
+                val fragment = BatchFragment()
+                changeFragment(fragment)
             }
         })
 
@@ -698,6 +708,41 @@ class MainActivity : BaseActivity() {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         finish()
     }
+
+    private fun addFcmKey(){
+        val deviceId = Settings.Secure.getString(
+            this.getContentResolver(), Settings.Secure.ANDROID_ID
+        )
+            println("device_id :"+deviceId)
+            println("device_token :"+AppPreferences.fireBaseToken)
+        val jsonObject = JsonObject().also {
+            it.addProperty("device_id", deviceId)
+            it.addProperty("device_token", AppPreferences.fireBaseToken)
+        }
+
+        viewModel.addFcmKey(jsonObject).observe(this, Observer {
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            Log.d(TAG, "add facm key: ${response.message}")
+                        }
+                    }
+                    Status.ERROR -> {
+                        it.message?.let { it1 -> Log.d(TAG, "add facm key: $it1")}
+                    }
+                    Status.LOADING -> {
+                        Log.d(TAG, "Loading.......")
+                    }
+                }
+            }
+        })
+
+
+    }
+
+
+
     private fun myProfile(){
 
         println("profile img ${AppPreferences.profilePic}")
@@ -883,13 +928,14 @@ class MainActivity : BaseActivity() {
     * */
     fun removeAnyOtherFragVisible(){
         supportFragmentManager.fragments.forEach {
-            if (it !is HomeFragment) {
+            if (it !is BatchFragment) {
                 supportFragmentManager.beginTransaction().remove(it).commit()
             }
         }
     }
 
     fun changeFragment(fragment: Fragment) {
+        isclaim_mileage=false
         supportFragmentManager.beginTransaction().replace(
             R.id.container,
             fragment,
@@ -900,7 +946,7 @@ class MainActivity : BaseActivity() {
         setAppbarTitle("Batch No: "+Constants.batch_allotted)
         showBottomNavbar(true)
         showAppbarBackButton(true)
-        isclaim_mileage=true
+       isclaim_mileage=true
         supportFragmentManager.beginTransaction().replace(
             R.id.container,
             fragment,
@@ -917,6 +963,8 @@ class MainActivity : BaseActivity() {
         ).addToBackStack(fragment.javaClass.simpleName).commit()
     }
     fun addFragment(fragment: Fragment) {
+        isclaim_mileage=false
+
         supportFragmentManager.beginTransaction().add(
             R.id.container,
             fragment,
@@ -943,7 +991,9 @@ class MainActivity : BaseActivity() {
 
                 if(fragName.equals("HomeFragment")){
                     println("call fragmentBackstackListener"+fragName)
-
+                    isclaim_mileage=true
+                    showAppbarBackButton(true)
+                    showBottomNavbar(true)
                     setAppbarTitle("Batch No: "+Constants.batch_allotted)
                    // setupAppbar()
                     //showBottomNavbar(false)
@@ -1066,5 +1116,21 @@ class MainActivity : BaseActivity() {
                 snackbarDismissActionText = "OK" // Optional
             }
         }.build()
+    }
+    fun printHashKey(pContext: Context) {
+        try {
+            val info: PackageInfo = pContext.getPackageManager()
+                .getPackageInfo(pContext.getPackageName(), PackageManager.GET_SIGNATURES)
+            for (signature in info.signatures) {
+                val md = MessageDigest.getInstance("SHA")
+                md.update(signature.toByteArray())
+                val hashKey = String(Base64.encode(md.digest(), 0))
+                Log.i(TAG, "printHashKey() Hash Key: $hashKey")
+            }
+        } catch (e: NoSuchAlgorithmException) {
+            Log.e(TAG, "printHashKey()", e)
+        } catch (e: java.lang.Exception) {
+            Log.e(TAG, "printHashKey()", e)
+        }
     }
 }

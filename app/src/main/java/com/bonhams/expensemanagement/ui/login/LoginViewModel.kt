@@ -22,7 +22,6 @@ class LoginViewModel(private val loginRepository: LoginRepository): ViewModel(){
     var isRememberMe = false
     var isInvalid: MutableLiveData<Boolean>? = null
     var message: String? = null
-    var token: String? = null
     var loginData: LoginResponse? = null
     init {
         login = MutableLiveData()

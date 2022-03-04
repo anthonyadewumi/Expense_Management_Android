@@ -104,7 +104,7 @@ class EditProfileFragment() : Fragment() {
             if(validateEditDetails()){
                 if(mainViewModel.isEdit){
                     mainViewModel.isEdit=false
-                editMyProfileObserver(binding.tvFirstName.text.toString(),binding.tvLastName.text.toString(),binding.tvEmail.text.toString())
+                editMyProfileObserver(binding.tvFirstName.text.toString(),binding.tvLastName.text.toString(),binding.tvEmail.text.toString(),binding.tvPhoneNumber.text.toString())
             }
                 }
         })
@@ -192,11 +192,12 @@ class EditProfileFragment() : Fragment() {
 
 
 
-    private fun editMyProfileObserver(fname:String, lname:String, email:String) {
+    private fun editMyProfileObserver(fname:String, lname:String, email:String,phone:String) {
         val data = JsonObject()
         data.addProperty("fname", fname)
         data.addProperty("lname", lname)
        // data.addProperty("email", email)
+        data.addProperty("contact_no", phone)
         data.addProperty("company_id", compnyId)
         data.addProperty("car_type_id", carId)
 
