@@ -13,15 +13,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.adapters.ImagePager2Adapter
+import com.bonhams.expensemanagement.data.services.ApiHelper
+import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.rmExpence.ZoomOutPageTransformer
 import com.bonhams.expensemanagement.utils.RecylerCallback
+import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
@@ -29,6 +36,8 @@ import com.lassi.domain.media.LassiOption
 import com.lassi.domain.media.MediaType
 import com.lassi.presentation.builder.Lassi
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -43,7 +52,10 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
     private lateinit var progDialog: ProgressDialog
     //private lateinit var imageView: ImageView
     private lateinit var viewPager2: ViewPager2
+    private lateinit var txtFinish: TextView
     private lateinit var dotsIndicator: WormDotsIndicator
+    private lateinit var viewModel: OcrViewModel
+
     var bitmapArray = ArrayList<Bitmap>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,12 +64,13 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_image_capture, container, false)
         contextActivity = activity as? BaseActivity
-
+        setupViewModel()
         (contextActivity as MainActivity).setAppbarTitle(getString(R.string.scan_receipt))
         (contextActivity as MainActivity).showBottomNavbar(false)
         (contextActivity as MainActivity).showAppbarBackButton(true)
 
         val startStop = view.findViewById(R.id.ivAddImage) as ImageView?
+         txtFinish = (view.findViewById(R.id.txtFinish) as TextView?)!!
        //  imageView = (view.findViewById(R.id.imageView2) as ImageView?)!!
         viewPager2 = (view.findViewById(R.id.viewPager2) as ViewPager2?)!!
         dotsIndicator = (view.findViewById(R.id.dotsIndicator) as WormDotsIndicator?)!!
@@ -68,6 +81,16 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
         startStop?.setOnClickListener {
             showBottomSheet()
 
+        }
+        txtFinish.setOnClickListener {
+            println("bitmapArray size:" + bitmapArray.size)
+
+            if(bitmapArray.size>1) {
+                println("single bitmap:" + combineImageIntoOne(bitmapArray))
+                setObserver(combineImageIntoOne(bitmapArray))
+            }else{
+                setObserver(bitmapArray[0])
+            }
         }
 
          adapter = ScanImagePager2Adapter(requireContext(), this,bitmapArray)
@@ -80,7 +103,11 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
         dotsIndicator.setViewPager2(viewPager2)
         return view
     }
-
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(requireActivity(),
+            OcrViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(OcrViewModel::class.java)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -105,6 +132,23 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
     }
     fun setViewPagerRefresh( ) {
         adapter?.notifyDataSetChanged()
+    }
+
+    private fun setObserver(imageBitmap:Bitmap?) {
+        val stream = ByteArrayOutputStream()
+        imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+        val image = stream.toByteArray()
+        val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("user_id", "a40668de-3750-4d5b-974b-bae2450e7a0b")
+                    builder.addFormDataPart("image_name", "test", RequestBody.create(
+                        MultipartBody.FORM, image))
+
+        val mrequestBody: RequestBody = builder.build()
+
+
+        viewModel.uploadOCRImage(mrequestBody).observe(viewLifecycleOwner,{
+
+        })
     }
     private fun showBottomSheet(){
         contextActivity?.let {

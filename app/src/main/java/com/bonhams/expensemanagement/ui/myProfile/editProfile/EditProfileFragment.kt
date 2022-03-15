@@ -465,8 +465,6 @@ class EditProfileFragment() : Fragment() {
           mapRequestBody["file\"; filename=\"$file"] = requestBody
           mapRequestBody["test"] =
               RequestBody.create(okhttp3.MediaType.parse("text/plain"), "gogogogogogogog")
-
-
           body = MultipartBody.Part.createFormData("image", file.name, requestBody)
           arrBody.add(body)
         progDialog.show()

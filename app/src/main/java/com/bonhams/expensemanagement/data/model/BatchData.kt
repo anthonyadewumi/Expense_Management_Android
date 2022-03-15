@@ -25,6 +25,8 @@ data class BatchData (
     val totalAmount: Double = 0.0 ,
     @SerializedName("batch_allotted")
     val batch_allotted: Int = 0 ,
+    @SerializedName("batch_submit_check")
+    val batch_submit_check: Int = 0 ,
     @SerializedName("company_code")
     val company_code: String = "N/A"
 )

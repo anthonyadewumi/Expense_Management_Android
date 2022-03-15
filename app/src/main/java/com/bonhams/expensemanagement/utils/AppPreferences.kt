@@ -34,7 +34,6 @@ object AppPreferences {
     private val GPS_START = Pair("gps_start", "start")
     private val LEDGER_ID = Pair("ledger_id", "")
     private val CLAIMED_MILES = Pair("claimed_mils", " ")
-
     fun init(context: Context) {
         prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
@@ -204,7 +203,7 @@ var gpsStartLocation: String
             prefs.edit {
                 it.remove(IS_LOGGED_IN.first)
                 it.remove(IS_TOKEN_AVAILABLE.first)
-                it.remove(FIREBASE_TOKEN.first)
+               // it.remove(FIREBASE_TOKEN.first)
 //                it.remove(PASSWORD.first)
                 it.remove(USER_ID.first)
                 it.remove(EMPLOYEE_ID.first)
@@ -225,7 +224,7 @@ var gpsStartLocation: String
             prefs.edit {
                 it.remove(IS_LOGGED_IN.first)
                 it.remove(IS_TOKEN_AVAILABLE.first)
-                it.remove(FIREBASE_TOKEN.first)
+               // it.remove(FIREBASE_TOKEN.first)
                 it.remove(PASSWORD.first)
                 it.remove(USER_ID.first)
                 it.remove(EMPLOYEE_ID.first)

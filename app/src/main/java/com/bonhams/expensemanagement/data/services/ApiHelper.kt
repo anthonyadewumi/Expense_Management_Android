@@ -31,6 +31,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun getMielageDetails(claimId: JsonObject,mclaimId: String) = apiService.getMielageDetails(claimId)
     suspend fun updateSplit(jsonobject: JsonObject) = apiService.updateSplit(jsonobject)
     suspend fun uploadImage(newClaimRequest: RequestBody) = apiService.uploadImage(newClaimRequest)
+    suspend fun uploadOcrImage(newClaimRequest: RequestBody) = apiService.uploadOcrImage("http://ocrdev.iworklab.com/upload",newClaimRequest)
     suspend fun uploadProfileImage(claimImage :List<MultipartBody.Part>) = apiService.uploadProfileImage(claimImage)
 
     suspend fun uploadClaim(claimImage :List<MultipartBody.Part>) = apiService.uploadClaim(claimImage)

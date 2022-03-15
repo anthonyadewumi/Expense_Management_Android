@@ -191,6 +191,9 @@ interface ApiService {
     @POST("upload-claim-attachment")
     suspend fun uploadImage(@Body newClaimRequest: RequestBody): ClaimImageUploadResponse
 
+    @POST()
+    suspend fun uploadOcrImage(@Url url:String ,@Body newClaimRequest: RequestBody): ClaimImageUploadResponse
+
     @Multipart
     @POST("uploadProfileImage")
     suspend fun uploadProfileImage(@Part  claimImage :List<MultipartBody.Part>): ProfilePicUploadResponse

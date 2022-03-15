@@ -321,9 +321,9 @@ class EditSplitClaimActivityEdit : BaseActivity() {
 
                 binding.spnExpenseGroup.adapter=null
                 binding.edtGroupValue.setText(" ")
-                setupExpenceGroupType(true)
+                //setupExpenceGroupType(true)
                 viewModel.departmentListCompany.forEach {
-                    println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
+                    //println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
 
                     if(it.company_id == compnyId.toString()){
                         viewModel.departmentList.add(it)
@@ -347,7 +347,8 @@ class EditSplitClaimActivityEdit : BaseActivity() {
         binding.edtExpenceTypeValue.setText(" ")
         viewModel.expenseTypeListExpenseGroup.forEach {
 
-            if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
+
+            if (it.expenseGroupID == groupid) {
                 viewModel.expenseTypeList.add(it)
                 // println("selected expenseTypeList Added :" )
 
@@ -356,8 +357,18 @@ class EditSplitClaimActivityEdit : BaseActivity() {
 
             }
 
+
+           /* if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString())) {
+                viewModel.expenseTypeList.add(it)
+                // println("selected expenseTypeList Added :" )
+
+            } else if (it.companyID.isNullOrEmpty()) {
+                //viewModel.expenseTypeList.add(it)
+
+            }*/
+
         }
-        setupExpenceType(false)
+        setupExpenceType()
     }
     private fun setupExpenceGroupType(isShowDefault:Boolean){
         var isDefaultshow=isShowDefault
@@ -390,7 +401,7 @@ class EditSplitClaimActivityEdit : BaseActivity() {
                         }
 
                     }
-                    setupExpenceType(true)
+                    setupExpenceType()
                 }else{
                     isDefaultshow=false
                 }
@@ -403,8 +414,7 @@ class EditSplitClaimActivityEdit : BaseActivity() {
         }
     }
 
-    private fun setupExpenceType(isShowDefault:Boolean){
-        var isDefaultShow=isShowDefault
+    private fun setupExpenceType(){
         // Expense Type Adapter
 
         val expenseTypeAdapter = CustomSpinnerAdapter(
@@ -428,8 +438,6 @@ class EditSplitClaimActivityEdit : BaseActivity() {
         binding.spnExpense.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-
-                if(!isDefaultShow) {
                     binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList.get(position).name)
                     expenseCode = viewModel.expenseTypeList.get(position).activityCode
                     mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
@@ -442,9 +450,7 @@ class EditSplitClaimActivityEdit : BaseActivity() {
                     } else {
                         binding.tvAuctionExpCode.text = ""
                     }
-                }else{
-                    isDefaultShow=false
-                }
+
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}

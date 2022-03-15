@@ -89,6 +89,7 @@
             android:textColor="@color/white" />
 
         <TextView
+            android:id="@+id/txtFinish"
             style="@style/TextRegular14"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

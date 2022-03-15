@@ -1052,6 +1052,10 @@ class MainActivity : BaseActivity() {
                     setAppbarTitle(getString(R.string.create_mileage_claim))
                     showAppbarBackButton(true)
                     showBottomNavbar(false)
+                }else if(fragName.equals(CapturedImageFragment::class.java.simpleName, true)){
+                    setAppbarTitle(getString(R.string.scan_receipt))
+                    showAppbarBackButton(true)
+                    showBottomNavbar(false)
                 }
                 else if(fragName.equals(MileageDetailFragment::class.java.simpleName, true)){
                     setAppbarTitle(getString(R.string.mileage_details))

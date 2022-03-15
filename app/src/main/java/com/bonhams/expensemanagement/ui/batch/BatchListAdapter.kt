@@ -36,7 +36,7 @@ class BatchListAdapter(
     }
     override fun getItemCount(): Int {
         listOrders.let {
-            return listOrders?.size
+            return listOrders.size
         }
 
     }
@@ -84,6 +84,15 @@ class BatchListAdapter(
 
                 recylerCallback.callback("batch",item,postion)
             }
+
+            if(item.batch_submit_check==0){
+
+                binding.lnMore.visibility=View.GONE
+            }else{
+                binding.lnMore.visibility=View.VISIBLE
+
+            }
+
         }
 
         fun parseDateFormat(

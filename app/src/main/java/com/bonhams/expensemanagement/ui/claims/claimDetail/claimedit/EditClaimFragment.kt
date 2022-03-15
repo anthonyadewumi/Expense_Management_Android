@@ -298,7 +298,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 }
                 setupDeparmentType()
                 viewModel.currencyList.forEach {
-                    if(it.id.toInt()==viewModel.companyList[position].currency_type_id){
+                    if(it.id.toInt()==claimDetail.currencyTypeID.toInt()){
                         val symbol=it.symbol
                         val code=it.code
                         currencyCode=code
@@ -306,12 +306,22 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                         binding.tvTotalAmountCurrency.text = symbol
                         binding.tvTaxAmountCurrency.text = symbol
                         binding.tvNetAmountCurrency.text = symbol
-                        val currency: Currency? =
-                            viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
-                        val currencyPos = viewModel.currencyList.indexOf(currency)
-                        if (currencyPos >= 0) {
-                            binding.spnCurrency.setSelection(currencyPos)
+                        if(isCreateCopy){
+                            val currency: Currency? =
+                                viewModel.currencyList.find { it.id.toInt() == claimDetail.currencyTypeID.toInt() }
+                            val currencyPos = viewModel.currencyList.indexOf(currency)
+                            if (currencyPos >= 0) {
+                                binding.spnCurrency.setSelection(currencyPos)
+                            }
+                        }else{
+                            val currency: Currency? =
+                                viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                            val currencyPos = viewModel.currencyList.indexOf(currency)
+                            if (currencyPos >= 0) {
+                                binding.spnCurrency.setSelection(currencyPos)
+                            }
                         }
+
                     }
                 }
                 binding.edtTitle.setText(viewModel.companyList[position].code)
@@ -1229,10 +1239,11 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "",
 //            binding.edtCompanyNumber.text.toString().trim(),
             if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
-            Utils.getDateInServerRequestFormat(
+           /* Utils.getDateInServerRequestFormat(
                 binding.tvDateOfSubmission.text.toString().trim(),
                 dateFormate
-            ),
+            )*/
+            dateofRecipt,
             if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
             binding.edtTotalAmount.text.toString(),
             binding.edtTax.text.toString(),
@@ -1253,12 +1264,12 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
         val data= JsonObject()
 
-        var dateFormate = if(companyDateFormate=="USA") {
+       /* var dateFormate = if(companyDateFormate=="USA") {
             Constants.MMM_DD_YYYY_FORMAT
         }else{
             Constants.DD_MM_YYYY_FORMAT
 
-        }
+        }*/
 
 
         data.addProperty("main_id",claimDetail.id)
