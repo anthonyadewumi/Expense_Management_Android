@@ -1088,12 +1088,18 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
         }
     }
     private fun getClaimRequest() : NewClaimRequest{
-        var dateFormate = if(companyDateFormate=="USA") {
+
+        dateofRecipt = Utils.getFormattedDate2(
+            claimDetail.date_of_receipt,
+            Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
+        )
+
+        /*var dateFormate = if(companyDateFormate=="USA") {
             Constants.MMM_DD_YYYY_FORMAT
         }else{
             Constants.DD_MM_YYYY_FORMAT
 
-        }
+        }*/
         return viewModel.getNewClaimRequest(
             binding.edtTitle.text.toString().trim(),
             binding.edtMerchantName.text.toString().trim(),
@@ -1114,10 +1120,7 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
             if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "",
 //            binding.edtCompanyNumber.text.toString().trim(),
             if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
-            Utils.getDateInServerRequestFormat(
-                binding.tvDateOfSubmission.text.toString().trim(),
-                dateFormate
-            ),
+            dateofRecipt,
             if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
             binding.edtTotalAmount.text.toString(),
             binding.edtTax.text.toString(),
@@ -1572,11 +1575,11 @@ class EditClaimRMFragment() : Fragment() ,RecylerCallback{
 
                                 }
                                 try {
-                                    binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
+                                  //  binding.tvNetAmount.setText(String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
                                     //   binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+splitedClaimDetails.main_claim?.netAmount)
 
                                 } catch (e: Exception) {
-                                    binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount)
+                                 //   binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount)
                                     // binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount.toString())
 
 

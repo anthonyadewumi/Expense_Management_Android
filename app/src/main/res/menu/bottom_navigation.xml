@@ -7,7 +7,7 @@
     <item
         android:id="@+id/bottom_nav_camera"
         android:icon="@drawable/ic_scan"
-        android:visible="true"
+        android:visible="false"
         android:title="@string/scan" />
     <item
         android:id="@+id/bottom_nav_expense_plus"

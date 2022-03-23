@@ -36,6 +36,7 @@ class ScanImagePager2Adapter(var context: Context, var recylerCallback: RecylerC
             recylerCallback.callback("show",attachmentList[position],position)
 
         }
+        recylerCallback.callback("postion",attachmentList[position],position)
         holder.binding.itemImage.setImageBitmap(attachmentList[position])
 
     }

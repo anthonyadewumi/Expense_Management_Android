@@ -192,7 +192,7 @@ interface ApiService {
     suspend fun uploadImage(@Body newClaimRequest: RequestBody): ClaimImageUploadResponse
 
     @POST()
-    suspend fun uploadOcrImage(@Url url:String ,@Body newClaimRequest: RequestBody): ClaimImageUploadResponse
+    suspend fun uploadOcrImage(@Url url:String ,@Body newClaimRequest: RequestBody): OcrUploadResponse
 
     @Multipart
     @POST("uploadProfileImage")

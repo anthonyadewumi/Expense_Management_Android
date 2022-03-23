@@ -23,11 +23,14 @@ import com.bonhams.expensemanagement.adapters.ImagePager2Adapter
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
+import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
 import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
+import com.bonhams.expensemanagement.ui.claims.newClaim.OcrNewClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.rmExpence.ZoomOutPageTransformer
 import com.bonhams.expensemanagement.utils.RecylerCallback
+import com.bonhams.expensemanagement.utils.RefreshPageListener
 import com.bonhams.expensemanagement.utils.Status
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.lassi.common.utils.KeyUtils
@@ -45,7 +48,7 @@ import java.io.InputStream
 import java.util.*
 
 
-class CapturedImageFragment : Fragment(), RecylerCallback {
+class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
 
     private var contextActivity: BaseActivity? = null
     private var adapter: ScanImagePager2Adapter? = null
@@ -53,9 +56,12 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
     //private lateinit var imageView: ImageView
     private lateinit var viewPager2: ViewPager2
     private lateinit var txtFinish: TextView
+    private lateinit var txtRetak: TextView
     private lateinit var dotsIndicator: WormDotsIndicator
     private lateinit var viewModel: OcrViewModel
 
+    var imgPostion=0
+        var reTake=false
     var bitmapArray = ArrayList<Bitmap>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,25 +77,38 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
 
         val startStop = view.findViewById(R.id.ivAddImage) as ImageView?
          txtFinish = (view.findViewById(R.id.txtFinish) as TextView?)!!
+        txtRetak = (view.findViewById(R.id.reTake) as TextView?)!!
        //  imageView = (view.findViewById(R.id.imageView2) as ImageView?)!!
         viewPager2 = (view.findViewById(R.id.viewPager2) as ViewPager2?)!!
         dotsIndicator = (view.findViewById(R.id.dotsIndicator) as WormDotsIndicator?)!!
         progDialog= ProgressDialog(requireContext())
-        progDialog.setTitle("Getting current location...")
+      //  progDialog.setTitle("Getting current location...")
        // progDialog.show()
 
         startStop?.setOnClickListener {
             showBottomSheet()
 
         }
-        txtFinish.setOnClickListener {
+        txtRetak.setOnClickListener {
             println("bitmapArray size:" + bitmapArray.size)
+            reTake=true
+            showBottomSheet()
 
-            if(bitmapArray.size>1) {
-                println("single bitmap:" + combineImageIntoOne(bitmapArray))
-                setObserver(combineImageIntoOne(bitmapArray))
-            }else{
-                setObserver(bitmapArray[0])
+        }
+
+
+
+        txtFinish.setOnClickListener {
+            try {
+                println("bitmapArray size:" + bitmapArray.size)
+
+                if(bitmapArray.size>1) {
+                    println("single bitmap:" + combineImageIntoOne(bitmapArray))
+                    setObserver(combineImageIntoOne(bitmapArray))
+                }else{
+                    setObserver(bitmapArray[0])
+                }
+            } catch (e: Exception) {
             }
         }
 
@@ -135,6 +154,8 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
     }
 
     private fun setObserver(imageBitmap:Bitmap?) {
+        progDialog.show()
+
         val stream = ByteArrayOutputStream()
         imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
         val image = stream.toByteArray()
@@ -146,9 +167,39 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
         val mrequestBody: RequestBody = builder.build()
 
 
-        viewModel.uploadOCRImage(mrequestBody).observe(viewLifecycleOwner,{
+        viewModel.uploadOCRImage(mrequestBody).observe(viewLifecycleOwner) {
 
-        })
+            it?.let { resource ->
+                when (resource.status) {
+                    Status.SUCCESS -> {
+                        resource.data?.let { response ->
+                            try {
+                                progDialog.dismiss()
+                                        val fragment = OcrNewClaimFragment()
+                                        fragment.setOcrDetails(response.mapping_data)
+                                        fragment.setRefreshPageListener(this)
+                                        (contextActivity as? MainActivity)?.addFragment(fragment)
+
+
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    Status.ERROR -> {
+                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
+                    }
+                    Status.LOADING -> {
+//                        binding.mProgressBars.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+
+
+
+
+        }
     }
     private fun showBottomSheet(){
         contextActivity?.let {
@@ -239,7 +290,14 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
                             val file= File( it.path!!)
                             val filePath: String = file.path
                             val bitmap = BitmapFactory.decodeFile(filePath)
-                            bitmapArray.add(bitmap)
+                            if(reTake){
+                                reTake=false
+                                bitmapArray.removeAt(imgPostion)
+                                bitmapArray.add(imgPostion,bitmap)
+                            }else{
+                                bitmapArray.add(bitmap)
+
+                            }
                         }
 
 
@@ -260,7 +318,15 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
                         val file= File( selectedMedia[0].path!!)
                         val filePath: String = file.path
                         val bitmap = BitmapFactory.decodeFile(filePath)
-                        bitmapArray.add(bitmap)
+
+                        if(reTake){
+                            reTake=false
+                            bitmapArray.removeAt(imgPostion)
+                            bitmapArray.add(imgPostion,bitmap)
+                        }else{
+                            bitmapArray.add(bitmap)
+
+                        }
                     }
                     setViewPagerRefresh()
 
@@ -331,7 +397,13 @@ class CapturedImageFragment : Fragment(), RecylerCallback {
     }
 
     override fun callback(action: String, data: Any, postion: Int) {
-       // TODO("Not yet implemented")
+       // println("postion:" + postion)
+        imgPostion =postion
+        // TODO("Not yet implemented")
+    }
+
+    override fun refreshPage() {
+
     }
 
 }

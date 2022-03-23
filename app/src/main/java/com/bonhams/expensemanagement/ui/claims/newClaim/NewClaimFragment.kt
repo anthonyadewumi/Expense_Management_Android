@@ -349,11 +349,19 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
 
                       //  binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                        // binding.tvNetAmount.setLocale(code)
-                        val currency: Currency? =
-                            viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
-                        val currencyPos = viewModel.currencyList.indexOf(currency)
-                        if (currencyPos >= 0) {
-                            binding.spnCurrency.setSelection(currencyPos)
+                        if(isCreateCopy){
+                            val currency: Currency? = viewModel.currencyList.find { it.id == claimDetail.currencyTypeID }
+                            val currencyPos = viewModel.currencyList.indexOf(currency)
+                            if (currencyPos >= 0) {
+                                binding.spnCurrency.setSelection(currencyPos)
+                            }
+                        }else {
+                            val currency: Currency? =
+                                viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                            val currencyPos = viewModel.currencyList.indexOf(currency)
+                            if (currencyPos >= 0) {
+                                binding.spnCurrency.setSelection(currencyPos)
+                            }
                         }
                     }
                 }
@@ -449,8 +457,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                     binding.spnDepartment.setSelection(departmentPos)
                 }
 
-                val currency: Currency? =
-                    viewModel.currencyList.find { it.id == claimDetail.currencyTypeID }
+                val currency: Currency? = viewModel.currencyList.find { it.id == claimDetail.currencyTypeID }
                 val currencyPos = viewModel.currencyList.indexOf(currency)
                 if (currencyPos >= 0) {
                     binding.spnCurrency.setSelection(currencyPos)

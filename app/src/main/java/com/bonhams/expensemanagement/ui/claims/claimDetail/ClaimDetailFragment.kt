@@ -208,10 +208,13 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
 
         }
         binding.btnSplit.setOnClickListener {
-            val fragment = SplitClaimDetailsFragment()
-            fragment.setClaimRequestDetail(splitedClaimDetails)
-            fragment.setEditable(isApproved)
-            (contextActivity as? MainActivity)?.addFragment(fragment)
+            try {
+                val fragment = SplitClaimDetailsFragment()
+                fragment.setClaimRequestDetail(splitedClaimDetails)
+                fragment.setEditable(isApproved)
+                (contextActivity as? MainActivity)?.addFragment(fragment)
+            } catch (e: Exception) {
+            }
 
         }
     }
@@ -268,11 +271,11 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
 
                                 }
                                 try {
-                                    binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
+                                  //  binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
                                  //   binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+splitedClaimDetails.main_claim?.netAmount)
 
                                 } catch (e: Exception) {
-                                    binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount)
+                                   // binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount)
                                    // binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount.toString())
 
 

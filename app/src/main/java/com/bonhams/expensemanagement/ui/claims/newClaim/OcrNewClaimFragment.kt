@@ -1,4 +1,4 @@
-package com.bonhams.expensemanagement.ui.claims.claimDetail.claimedit
+package com.bonhams.expensemanagement.ui.claims.newClaim
 
 import android.app.Activity
 import android.app.Dialog
@@ -30,18 +30,11 @@ import com.bonhams.expensemanagement.data.model.Currency
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.data.services.requests.NewClaimRequest
-import com.bonhams.expensemanagement.data.services.responses.ClaimDetailsResponse
 import com.bonhams.expensemanagement.data.services.responses.CommonResponse
 import com.bonhams.expensemanagement.data.services.responses.DropdownResponse
-import com.bonhams.expensemanagement.databinding.FragmentEditClaimBinding
 import com.bonhams.expensemanagement.databinding.FragmentNewClaimBinding
 import com.bonhams.expensemanagement.ui.BaseActivity
-import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
-import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
-import com.bonhams.expensemanagement.ui.claims.splitClaim.EditSplitClaimDetailsFragment
-import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimDetailsFragment
 import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragment
-import com.bonhams.expensemanagement.ui.claims.splitClaim.SplitClaimFragmentEdit
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
@@ -51,8 +44,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.lassi.common.utils.KeyUtils
 import com.lassi.data.media.MiMedia
 import com.lassi.domain.media.LassiOption
@@ -63,15 +54,13 @@ import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.io.*
 import java.util.*
-
-
-class EditClaimFragment() : Fragment() ,RecylerCallback{
+class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
 
     private val TAG = javaClass.simpleName
     private var contextActivity: BaseActivity? = null
-    private lateinit var claimDetail: ClaimDetail
-    private lateinit var viewModel: EditClaimViewModel
-    private lateinit var binding: FragmentEditClaimBinding
+    private lateinit var claimDetail: MapingData
+    private lateinit var viewModel: NewClaimViewModel
+    private lateinit var binding: FragmentNewClaimBinding
 
     private lateinit var attachmentsAdapter: AttachmentsAdapter
     private lateinit var refreshPageListener: RefreshPageListener
@@ -85,17 +74,13 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
     private var companyDateFormate: String = ""
     private var companyLocation: String = ""
     private var isCreateCopy: Boolean = false
-    private lateinit var splitedClaimDetails: ClaimDetailsResponse
-    private lateinit var dropDownResponse: DropdownResponse
-    private var dateofRecipt: String = ""
     var groupname="n/a"
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_edit_claim, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_new_claim, container, false)
         val view = binding.root
         binding.lifecycleOwner = this
         contextActivity = activity as? BaseActivity
@@ -106,12 +91,10 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         setDropdownDataObserver()
         setupView()
         setupTextWatcher()
-        getDetails()
-
         return view
     }
 
-    fun setClaimDetails(detail: ClaimDetail?){
+    fun setOcrDetails(detail: MapingData?){
         detail?.let {
             claimDetail = it
         }
@@ -122,53 +105,14 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun setupView(){
-
+        if (this::claimDetail.isInitialized) {
+            binding.edtTotalAmount.setText(claimDetail.total)
+            binding.edtTax.setText(claimDetail.tax)
+           //binding.edt.setText(claimDetail.tax)
+        }
         try {
-            if (this::claimDetail.isInitialized) {
-                isCreateCopy=true
-                println("isCopyClaim total amount :"+claimDetail.totalAmount)
-
-                /*  binding.edtTitle.setText(
-                      claimDetail.title.replaceFirstChar(Char::uppercase) ?: claimDetail.title
-                  )*/
-                binding.edtMerchantName.setText(
-                    claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
-                )
-                binding.tvDateOfSubmission.text = Utils.getFormattedDate(
-                    claimDetail.date_of_receipt,
-                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,""
-                )
-                dateofRecipt = Utils.getFormattedDate2(
-                    claimDetail.date_of_receipt,
-                    Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
-                )
-//            binding.edtCompanyNumber.setText(claimDetail.companyName)
-              /*  binding.tvDateOfSubmission.text = if (!claimDetail.date_of_receipt.trim().isNullOrEmpty())
-                    Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
-                    ) else "n/a"*/
-               // binding.edtTotalAmount.setText(claimDetail.totalAmount)
-               // binding.edtTax.setText(claimDetail.tax)
-                // binding.tvNetAmount.text = claimDetail.netAmount
-              //  binding.tvNetAmount.setText(claimDetail.netAmount)
-
-                binding.edtDescription.setText(claimDetail.description)
-                if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
-                        .isNotEmpty()
-                ) {
-                    /*val attachment=claimDetail.attachments.split(",")
-                    viewModel.attachmentsList.clear()
-                    attachment.forEach {
-                        viewModel.attachmentsList.add(it)
-                    }
-
-                    viewModel.attachmentsList = mutableListOf(claimDetail.attachments)*/
-                }
-                refreshAttachments()
-
-            }else{
                 binding.edtMerchantName.setText(AppPreferences.ledgerId)
                 viewModel.attachmentsList.clear()
-            }
             refreshAttachments()
         }
         catch (error: Exception){
@@ -178,8 +122,8 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun setupViewModel() {
         viewModel = ViewModelProvider(requireActivity(),
-            EditClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
-        ).get(EditClaimViewModel::class.java)
+            NewClaimViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
+        ).get(NewClaimViewModel::class.java)
     }
 
     private fun setClickListeners(){
@@ -229,26 +173,31 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
+
+        // Company List Adapter
         when (AppPreferences.userType) {
             "Reporting Manager" -> { }
             "Finance Department" -> { }
             "Admin" -> { }
             "Final Approver" -> { }
             else->{
+                binding.edtTax.isEnabled=false
                 viewModel.companyList.forEach {
-                    if(claimDetail.companyName == it.name){
-                        viewModel.companyList= listOf(it)
-                        return@forEach
-                    }
-                }
+            if(AppPreferences.company == it.name){
+                viewModel.companyList= listOf(it)
+                return@forEach
             }
         }
+            }
+        }
+
+
+
         val companyAdapter = CustomSpinnerAdapter(requireContext(), R.layout.item_spinner, viewModel.companyList)
         binding.spnCompanyNumber.adapter = companyAdapter
         var compnypostion=0
         viewModel.companyList.forEachIndexed { index, element ->
-
-            if(claimDetail.companyName == element.name){
+            if(AppPreferences.company == element.name){
                 compnypostion=index
                 return@forEachIndexed
             }
@@ -263,34 +212,22 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 companyLocation=viewModel.companyList[position].location
                 binding.spnExpenseGroup.adapter=null
 
-                if(isCreateCopy){
-                    setupExpenceGroupTypeCopy(claimDetail.expenseGroupID)
-
-                    binding.edtTotalAmount.setText(claimDetail.totalAmount)
-                    binding.edtTax.setText(claimDetail.tax)
-                    binding.tvNetAmount.setText(claimDetail.netAmount)
-                   // binding.tvDateOfSubmission.setText("")
-                    binding.edtGroupValue.setText(claimDetail.expenseGroupName)
-                    binding.edtExpenceTypeValue.setText(claimDetail.expenseTypeName)
-
-                }else {
                     setupExpenceGroupType(true)
 
-                    binding.edtTotalAmount.setText("")
-                    binding.edtTax.setText("0")
-                    binding.tvNetAmount.setText("")
-                   // binding.tvDateOfSubmission.text = ""
-                    binding.edtGroupValue.setText("")
-
-                }
+                   // binding.edtTotalAmount.setText("")
+                  //  binding.edtTax.setText("")
+                   // binding.tvNetAmount.setText("")
+                  //  binding.tvDateOfSubmission.text = ""
+                   // binding.edtGroupValue.setText("")
 
 
                 println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
                 println("selected company date format:"+ viewModel.companyList[position].dateFormat)
                 println("selected company location:"+ viewModel.companyList[position].location)
+
                 viewModel.departmentList.clear()
                 viewModel.departmentListCompany.forEach {
-                    println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
+                    //println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
 
                     if(it.company_id == compnyId.toString()){
                         viewModel.departmentList.add(it)
@@ -298,30 +235,35 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 }
                 setupDeparmentType()
                 viewModel.currencyList.forEach {
-                    if(it.id.toInt()==claimDetail.currencyTypeID.toInt()){
+                    if(it.id.toInt()==viewModel.companyList[position].currency_type_id){
                         val symbol=it.symbol
                         val code=it.code
                         currencyCode=code
                         currencySymbol=symbol
+                        // binding.edtTotalAmount.text = null
+                        // binding.edtTax.text = null
+                        // binding.tvNetAmount.text = null
+                        // binding.edtTotalAmount.clearFocus()
+                        //binding.edtTax.clearFocus()
+                        // binding.tvNetAmount.clearFocus()
                         binding.tvTotalAmountCurrency.text = symbol
                         binding.tvTaxAmountCurrency.text = symbol
                         binding.tvNetAmountCurrency.text = symbol
-                        if(isCreateCopy){
-                            val currency: Currency? =
-                                viewModel.currencyList.find { it.id.toInt() == claimDetail.currencyTypeID.toInt() }
-                            val currencyPos = viewModel.currencyList.indexOf(currency)
-                            if (currencyPos >= 0) {
-                                binding.spnCurrency.setSelection(currencyPos)
-                            }
-                        }else{
-                            val currency: Currency? =
-                                viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
-                            val currencyPos = viewModel.currencyList.indexOf(currency)
-                            if (currencyPos >= 0) {
-                                binding.spnCurrency.setSelection(currencyPos)
-                            }
-                        }
 
+                       // binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                      //  binding.edtTotalAmount.setLocale(code)
+
+                       // binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                      //  binding.edtTax.setLocale(code)
+
+                      //  binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
+                       // binding.tvNetAmount.setLocale(code)
+                        val currency: Currency? =
+                            viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
+                        val currencyPos = viewModel.currencyList.indexOf(currency)
+                        if (currencyPos >= 0) {
+                            binding.spnCurrency.setSelection(currencyPos)
+                        }
                     }
                 }
                 binding.edtTitle.setText(viewModel.companyList[position].code)
@@ -385,56 +327,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
         }
 
-        if(this::claimDetail.isInitialized){
-            try {
-                /*val expenseGroup: ExpenseGroup? =
-                    viewModel.expenseGroupList.find { it.id == claimDetail.expenseGroupID }
-                val expenseGroupPos = viewModel.expenseGroupList.indexOf(expenseGroup)//(currencyAdapter).getPosition(expenseGroup)
-                if (expenseGroupPos >= 0) {
-                    binding.spnExpenseGroup.setSelection(expenseGroupPos)
-                }
-                binding.edtGroupValue.setText(expenseGroup?.name)*/
 
-               /* val expenseType: ExpenseType? =
-                    viewModel.expenseTypeList.find { it.id == claimDetail.expenseTypeID }
-                val expenseTypePos = viewModel.expenseTypeList.indexOf(expenseType)
-                if (expenseTypePos >= 0) {
-                    binding.spnExpenseType.setSelection(expenseTypePos)
-                }
-                binding.edtExpenceTypeValue.setText(expenseType?.name)*/
-                val company: Company? =
-                    viewModel.companyList.find { it.name == claimDetail.companyName }
-                val companyPos = viewModel.companyList.indexOf(company)
-                if (companyPos >= 0) {
-                    binding.spnCompanyNumber.setSelection(companyPos)
-                }
-
-                val department: Department? =
-                    viewModel.departmentList.find { it.name == claimDetail.department }
-                val departmentPos = viewModel.departmentList.indexOf(department)
-                if (departmentPos >= 0) {
-                    binding.spnDepartment.setSelection(departmentPos)
-                }
-
-                val currency: Currency? =
-                    viewModel.currencyList.find { it.id == claimDetail.currencyTypeID }
-                val currencyPos = viewModel.currencyList.indexOf(currency)
-                if (currencyPos >= 0) {
-                    binding.spnCurrency.setSelection(currencyPos)
-                }
-
-                binding.edtTotalAmount.setText(String.format("%.2f", claimDetail.totalAmount.toDouble()))
-                binding.edtTax.setText(String.format("%.2f", claimDetail.tax.toDouble()))
-                binding.tvNetAmount.setText(String.format("%.2f", claimDetail.netAmount.toDouble()))
-                println("auction create copy "+claimDetail.auction)
-                binding.edtAutionValue.setText(claimDetail.auction.toString())
-                binding.tvAuctionExpCode.text = claimDetail.expenseCode
-
-            }
-            catch (e: Exception){
-                Log.e(TAG, "setupSpinners: ${e.message}")
-            }
-        }
     }
 
     private fun setupExpenceGroupType(isShowDefault:Boolean){
@@ -454,7 +347,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 if(!isDefaultshow) {
                     binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
                     val groupid = viewModel.expenseGroupList[position].id
-                    println("selected group ID :$groupid")
                      groupname = viewModel.expenseGroupList[position].name
                     println("selected group ID :$groupid")
                     if(groupname == "Capital Asset"){
@@ -469,15 +361,15 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
                         setupDeparmentType()
                     }else{
-                        viewModel.departmentList.clear()
-                        viewModel.departmentListCompany.forEach {
-                            if(it.company_id == compnyId.toString()){
-                                viewModel.departmentList.add(it)
-                            }
-                        }
+                         viewModel.departmentList.clear()
+                    viewModel.departmentListCompany.forEach {
+                    if(it.company_id == compnyId.toString()){
+                        viewModel.departmentList.add(it)
+                       }
+                       }
                         binding.spnDepartment.setBackgroundResource(R.drawable.spinner_purple_bg)
 
-                        setupDeparmentType()
+                      setupDeparmentType()
                     }
                     viewModel.expenseTypeList.clear()
                     binding.edtExpenceTypeValue.setText(" ")
@@ -554,6 +446,8 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
                     setupDeparmentType()
                 }
+
+
                     viewModel.expenseTypeList.clear()
                     binding.edtExpenceTypeValue.setText(" ")
                     viewModel.expenseTypeList.add(ExpenseType("0","Select Expense Type",""))
@@ -596,24 +490,12 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             binding.spnExpenseType.adapter = expenseTypeAdapter
         binding.spnExpenseType.isSelected=false
 
-        if(isCreateCopy){
-             var expenseTypePos = 0
-            viewModel.expenseTypeList.forEachIndexed { index, expenseType ->
-
-                if(expenseType.name==claimDetail.expenseTypeName){
-                    expenseTypePos=index
-                }
-                }
-                if (expenseTypePos >= 0) {
-                    binding.spnExpenseType.setSelection(expenseTypePos)
-                }
-             }
-
-
         binding.spnExpenseType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                if(!isDefaultShow) {
                     binding.edtExpenceTypeValue.setText(viewModel.expenseTypeList[position].name)
+
                     expenseCode = viewModel.expenseTypeList[position].activityCode
                     mtaxcodeId = viewModel.expenseTypeList[position].taxCodeID
 
@@ -624,7 +506,9 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                     } else {
                         binding.tvAuctionExpCode.text = ""
                     }
-
+                }else{
+                    isDefaultShow=false
+                }
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -652,6 +536,20 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun setupTax(){
 
+        when (AppPreferences.userType) {
+            "Reporting Manager" -> { }
+            "Finance Department" -> { }
+            "Admin" -> { }
+            "Final Approver" -> { }
+            else->{
+                viewModel.taxList.forEach {
+                    if(it.id.toString() == mtaxcodeId){
+                        viewModel.taxList= listOf(it)
+                        return@forEach
+                    }
+                }
+            }
+        }
         viewModel.taxList.forEach {
 
             if(it.id.toString() == mtaxcodeId) {
@@ -671,11 +569,14 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
         var postion=0
         viewModel.taxList.forEachIndexed { index, element ->
-                 if (element.tax_code == claimDetail.tax_code) {
-                    postion = index
-                    return@forEachIndexed
-                }
 
+            if(element.id.toString() == mtaxcodeId) {
+
+                postion=index
+                return@forEachIndexed
+                //  binding.edtTaxcode.setText(it.tax_code)
+
+            }
         }
         binding.spntaxcode.setSelection(postion)
 
@@ -699,8 +600,15 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(binding.edtTotalAmount.text.isNotEmpty()&&binding.edtTax.text.isNotEmpty())
-                    updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+                if(binding.edtTotalAmount.text.isNotEmpty()){
+                    if(binding.edtTax.text.isEmpty()){
+                        updateNetAmount(binding.edtTotalAmount.text.toString(), "0")
+
+                    }else{
+                        updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+
+                    }
+                }
 
             }
         })
@@ -743,13 +651,9 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun refreshAttachments(){
-        println("call refreshAttachments item:${viewModel.attachmentsList.size}")
-
         if(viewModel.attachmentsList.size > 0){
             binding.tvNoFileSelected.visibility = View.GONE
             binding.rvAttachments.visibility = View.VISIBLE
-            attachmentsAdapter = AttachmentsAdapter(viewModel.attachmentsList,"claim",this)
-            binding.rvAttachments.adapter = attachmentsAdapter
             attachmentsAdapter.notifyDataSetChanged()
         }
         else{
@@ -823,7 +727,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun initializeSpinnerData(dropdownResponse: DropdownResponse){
-        dropDownResponse=dropdownResponse
        // viewModel.expenseGroupList = dropdownResponse.expenseGroup as MutableList<ExpenseGroup>
         viewModel.expenseGroupList.clear()
        viewModel.expenseGroupList.add(ExpenseGroup("0","Select Expense Group","0","active"))
@@ -872,8 +775,8 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                               // newClaimRequest.attachments=response.images
-                                //callApiCreateClaim(newClaimRequest)
+                                newClaimRequest.attachments=response.images
+                                callApiCreateClaim(newClaimRequest)
 
 
                             } catch (e: Exception) {
@@ -1004,14 +907,18 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             file // it will return null
         }
     }
-    private fun callApiEditClaim(newClaimRequest: JsonObject){
-        viewModel.editClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
+    private fun callApiCreateClaim(newClaimRequest: NewClaimRequest){
+         val splitOne = SplitClaimDetail(newClaimRequest?.companyNumber!!, newClaimRequest?.department!!, newClaimRequest.expenseType!!,
+                    newClaimRequest.totalAmount?:"0", newClaimRequest.tax?.toDouble()?:0.0,newClaimRequest.taxCode?.toInt()?:0,newClaimRequest.auction,newClaimRequest.expenseCode)
+                newClaimRequest.split.add(splitOne)
+
+        viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
                         resource.data?.let { response ->
                             try {
-                                Log.d(TAG, "editClaimObserver: ${resource.status}")
+                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
                                 //Toast.makeText(contextActivity, "Claim added successfully/submitted successfully", Toast.LENGTH_SHORT).show()
 
                                 setResponse(response)
@@ -1023,7 +930,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                     Status.ERROR -> {
                         binding.mProgressBars.visibility = View.GONE
                         binding.btnSubmit.visibility = View.VISIBLE
-                        Log.e(TAG, "editClaimObserver: ${it.message}")
+                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
                         it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
                     }
                     Status.LOADING -> {
@@ -1036,7 +943,12 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun createNewClaim() {
         try {
+            val newClaimRequest = getClaimRequest()
 
+            if (!validateCreateClaim(newClaimRequest)) {
+                onCreateClaimFailed()
+                return
+            }
             if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
                 onCreateClaimFailed()
@@ -1048,23 +960,19 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            if (binding.edtTax.text.isNullOrEmpty()) {
+           /* if (binding.edtTax.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
 
                 onCreateClaimFailed()
                 return
-            }
-            val newClaimRequest = getEditClaimRequest()
-
-            callApiEditClaim(newClaimRequest)
-
-            /*if(viewModel.attachmentsList.size > 0){
+            }*/
+            if(viewModel.attachmentsList.size > 0){
                 binding.btnSubmit.visibility = View.GONE
                 setCreateClaimObserver(newClaimRequest)
             } else{
                 Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
                 return
-            }*/
+            }
 
 
         }
@@ -1076,51 +984,65 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
     private fun splitNewClaim() {
         //  attachments = viewModel.attachmentsList.joinToString { it }
         try {
-            val newClaimRequest = getEditClaimRequestForSplit()
+            val newClaimRequest = getClaimRequest()
 
-          /*  if (!validateCreateClaim(newClaimRequest)) {
+            if (!validateCreateClaim(newClaimRequest)) {
                 onCreateClaimFailed()
                 return
-            }*/
-            /*if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
+            }
+            if (binding.tvDateOfSubmission.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please select Date", Toast.LENGTH_LONG).show()
                 onCreateClaimFailed()
                 return
-            }*/
+            }
             if (binding.edtTotalAmount.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please Enter Amount", Toast.LENGTH_LONG).show()
 
                 onCreateClaimFailed()
                 return
             }
-            if (binding.edtTax.text.isNullOrEmpty()) {
+            /*if (binding.edtTax.text.isNullOrEmpty()) {
                 Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
 
                 onCreateClaimFailed()
                 return
-            }
+            }*/
+            if(viewModel.attachmentsList.size > 0){
+
+               /* val splitOne = SplitClaimDetail(newClaimRequest?.companyNumber!!, newClaimRequest?.department!!, newClaimRequest.expenseType!!,
+                    newClaimRequest.totalAmount?:"0", newClaimRequest.tax?.toDouble()?:0.0,newClaimRequest.taxCode?.toInt()?:0,newClaimRequest.auction,newClaimRequest.expenseCode)
+                newClaimRequest.split.add(splitOne)*/
+                println("claim data :"+newClaimRequest.tax)
+
+                val splitOne = SplitClaimItem(
+                    viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id,
+                    viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].code,
+                    viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id,
+                    viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id,
+                    newClaimRequest.netAmount?:"0",
+                    newClaimRequest.taxCode?:"",
+                    newClaimRequest.tax?.toDouble()?:0.0,
+                    viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].name,
+                    viewModel.departmentList[binding.spnDepartment.selectedItemPosition].cost_code,
+                    viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].name?:"",
+                    newClaimRequest.auction?:"",
+                    expenseCode,
+                    newClaimRequest.expenseCode?:"",
+                    taxcodeId,""
+                )
+                println("splitOne :$splitOne")
 
 
-            val fragment = SplitClaimFragmentEdit()
-            fragment.setClaimRequestDetail(getClaimRequest())
-            fragment.setClaimRequestDetail(splitedClaimDetails)
-            fragment.setClaimRequestDetailJson(newClaimRequest)
-            fragment.setGroupName(groupname)
-            fragment.setEditModeRM(false)
-            fragment.setdropdownResponse(dropDownResponse)
-            fragment.setCurrency(currencyCode,currencySymbol)
-            (contextActivity as? MainActivity)?.addFragment(fragment)
-          /*  if(viewModel.attachmentsList.size > 0){
-                val fragment = EditSplitClaimDetailsFragment()
-                fragment.setClaimRequestDetail(splitedClaimDetails)
-                fragment.setClaimRequestDetailJson(newClaimRequest)
-                fragment.setdropdownResponse(dropDownResponse)
+                val fragment = SplitClaimFragment()
+                fragment.setClaimRequestDetail(newClaimRequest)
+                fragment.setSplitRequestDetail(splitOne)
+                fragment.setGroupName(groupname)
                 fragment.setCurrency(currencyCode,currencySymbol)
                 (contextActivity as? MainActivity)?.addFragment(fragment)
             } else{
                 Toast.makeText(contextActivity, "Please select receipt image to upload", Toast.LENGTH_LONG).show()
                 return
-            }*/
+            }
 
         }
         catch (e: Exception){
@@ -1128,91 +1050,10 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         }
     }
 
-    private fun getEditClaimRequest() : JsonObject{
+    private fun getClaimRequest() : NewClaimRequest{
 //     attachments = viewModel.attachmentsList.joinToString { it }
 
-        val data= JsonObject()
 
-        var dateFormate = if(companyDateFormate=="USA") {
-            Constants.MMM_DD_YYYY_FORMAT
-        }else{
-            Constants.DD_MM_YYYY_FORMAT
-
-        }
-
-
-        data.addProperty("main_id",claimDetail.id)
-        data.addProperty("split_id",splitedClaimDetails.main_claim?.split_id)
-        data.addProperty("title",binding.edtTitle.text.toString().trim())
-        data.addProperty("merchantName",binding.edtMerchantName.text.toString().trim())
-        if(binding.edtGroupValue.text.isEmpty())
-        {
-            data.addProperty("expenseGroup","")
-        }else{
-            data.addProperty("expenseGroup",if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "")
-
-        }
-        if(binding.edtExpenceTypeValue.text.isEmpty())
-        {
-            data.addProperty("expenseType","")
-        }else{
-            data.addProperty("expenseType",if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "")
-
-        }
-        data.addProperty("companyNumber",if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "")
-        data.addProperty("department", if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "")
-        data.addProperty("dateSubmitted", Utils.getDateInServerRequestFormat(
-            binding.tvDateOfSubmission.text.toString().trim(),
-            dateFormate
-        ))
-        data.addProperty("currency", if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "")
-        data.addProperty("totalAmount", binding.edtTotalAmount.text.toString())
-        data.addProperty("tax", binding.edtTax.text.toString())
-        data.addProperty("taxCode", if (!taxcodeId.isNullOrEmpty()) taxcodeId else "")
-        data.addProperty("netAmount", binding.tvNetAmount.text.toString())
-        data.addProperty("description", binding.edtDescription.text.toString().trim())
-        data.addProperty("auction", binding.edtAutionValue.text.toString().trim())
-        data.addProperty("expenseCode", if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "")
-        val jsonArraySplitId= JsonArray()
-        val jsonArraySplitData= JsonArray()
-        splitedClaimDetails.splitedClaim?.forEachIndexed { index, splitClaimItem ->
-            jsonArraySplitId.add(splitClaimItem.split_id)
-            val data= JsonObject()
-            var expenceCode= ""
-            var mtaxcodeId= ""
-            viewModel.expenseTypeList.forEach {
-                if(it.id==splitClaimItem.expenseTypeID)
-                    expenceCode=it.expenseCodeID
-                mtaxcodeId=it.taxCodeID
-            }
-            var companyId= ""
-            viewModel.companyList.forEach {
-                if(it.code==splitClaimItem.companyNumber)
-                    companyId=it.id
-            }
-            var departmentId= ""
-            viewModel.departmentList.forEach {
-                System.out.println("departmentid"+it.cost_code+" "+splitClaimItem.department)
-                if(it.cost_code==splitClaimItem.department)
-                    departmentId=it.id
-            }
-            data.addProperty("expense_type_id",splitClaimItem.expenseTypeID  )
-            data.addProperty("company_id", companyId)
-            data.addProperty("department_id", departmentId )
-            data.addProperty("amount", splitClaimItem.totalAmount)
-            data.addProperty("tax_code",mtaxcodeId)
-            data.addProperty("auction",splitClaimItem.auction )
-            data.addProperty("expense_code", expenceCode )
-            jsonArraySplitData.add(data)
-        }
-        data.add("split_ids",jsonArraySplitId)
-        data.add("split_data",jsonArraySplitData)
-
-
-        return data
-    }
-
-    private fun getClaimRequest() : NewClaimRequest{
         var dateFormate = if(companyDateFormate=="USA") {
             Constants.MMM_DD_YYYY_FORMAT
         }else{
@@ -1239,14 +1080,13 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "",
 //            binding.edtCompanyNumber.text.toString().trim(),
             if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "",
-           /* Utils.getDateInServerRequestFormat(
+            Utils.getDateInServerRequestFormat(
                 binding.tvDateOfSubmission.text.toString().trim(),
                 dateFormate
-            )*/
-            dateofRecipt,
+            ),
             if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "",
             binding.edtTotalAmount.text.toString(),
-            binding.edtTax.text.toString(),
+            if(binding.edtTax.text.isNotEmpty())binding.edtTax.text.toString()else "0",
             binding.tvNetAmount.text.toString(),
             binding.edtDescription.text.toString().trim(),
             if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
@@ -1258,55 +1098,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         )
     }
 
-
-    private fun getEditClaimRequestForSplit() : JsonObject{
-//     attachments = viewModel.attachmentsList.joinToString { it }
-
-        val data= JsonObject()
-
-       /* var dateFormate = if(companyDateFormate=="USA") {
-            Constants.MMM_DD_YYYY_FORMAT
-        }else{
-            Constants.DD_MM_YYYY_FORMAT
-
-        }*/
-
-
-        data.addProperty("main_id",claimDetail.id)
-        data.addProperty("split_id",splitedClaimDetails.main_claim?.split_id)
-        data.addProperty("overall_status_id",splitedClaimDetails.main_claim?.overall_status_id)
-        data.addProperty("fm_status_id",splitedClaimDetails.main_claim?.fm_status_id)
-        data.addProperty("rm_status_id",splitedClaimDetails.main_claim?.rm_status_id)
-        data.addProperty("title",binding.edtTitle.text.toString().trim())
-        data.addProperty("merchantName",binding.edtMerchantName.text.toString().trim())
-        if(binding.edtGroupValue.text.isEmpty())
-        {
-            data.addProperty("expenseGroup","")
-        }else{
-            data.addProperty("expenseGroup",if (!viewModel.expenseGroupList.isNullOrEmpty()) viewModel.expenseGroupList[binding.spnExpenseGroup.selectedItemPosition].id else "")
-
-        }
-        if(binding.edtExpenceTypeValue.text.isEmpty())
-        {
-            data.addProperty("expenseType","")
-        }else{
-            data.addProperty("expenseType",if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].id else "")
-
-        }
-        data.addProperty("companyNumber",if (!viewModel.companyList.isNullOrEmpty()) viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].id else "")
-        data.addProperty("department", if (!viewModel.departmentList.isNullOrEmpty()) viewModel.departmentList[binding.spnDepartment.selectedItemPosition].id else "")
-        data.addProperty("dateSubmitted", dateofRecipt)
-
-        data.addProperty("currency", if (!viewModel.currencyList.isNullOrEmpty()) viewModel.currencyList[binding.spnCurrency.selectedItemPosition].id else "")
-        data.addProperty("totalAmount", binding.edtTotalAmount.text.toString())
-        data.addProperty("tax", binding.edtTax.text.toString())
-        data.addProperty("taxCode", if (!taxcodeId.isNullOrEmpty()) taxcodeId else "")
-        data.addProperty("netAmount", binding.tvNetAmount.text.toString())
-        data.addProperty("description", binding.edtDescription.text.toString().trim())
-        data.addProperty("auction", binding.edtAutionValue.text.toString().trim())
-        data.addProperty("expenseCode", if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "")
-        return data
-    }
     private fun validateCreateClaim(newClaimRequest: NewClaimRequest): Boolean {
         val isValid = viewModel.validateNewClaimRequest(newClaimRequest)
         if(!isValid.first){
@@ -1338,12 +1129,12 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         val calendarStart: Calendar = Calendar.getInstance()
 //        val calendarEnd: Calendar = Calendar.getInstance()
 
-        calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
+       // calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
 //        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
 
         val constraintsBuilder =
             CalendarConstraints.Builder()
-               // .setStart(calendarStart.timeInMillis)
+                //.setStart(calendarStart.timeInMillis)
                 .setEnd(calendar.timeInMillis)
                 .setValidator(DateValidatorPointBackward.now())
 
@@ -1357,8 +1148,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         picker.addOnPositiveButtonClickListener {
             val date = Utils.getDateInDisplayFormatWithCountry(it,companyDateFormate)
             Log.d("DatePicker Activity", "Date String = ${date}:: Date epoch value = ${it}")
-            dateofRecipt =Utils.getDateInDisplayFormatWithCountry2(it)
-
             binding.tvDateOfSubmission.text = date
         }
     }
@@ -1406,7 +1195,7 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
                // .setMinFileSize(50) // Restrict by minimum file size
                // .setMaxFileSize(100) //  Restrict by maximum file size
-                //.disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
                 .setProgressBarColor(R.color.secondary)
@@ -1522,64 +1311,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             dialog.dismiss()
         }
     }
-
-    private fun getDetails() {
-        val jsonObject = JsonObject().also {
-            it.addProperty("claim_id", claimDetail.id.toInt())
-        }
-        viewModel.getDetails(jsonObject,claimDetail.id).observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                splitedClaimDetails=response
-                                if(splitedClaimDetails.splitedClaim?.isEmpty() == true){
-                                    binding.btnSplit.visibility=View.GONE
-                                }else{
-                                    var splittotalamount: Double = 0.0
-                                    splitedClaimDetails.splitedClaim?.forEach {
-                                        splittotalamount +=it.totalAmount.toDouble()
-
-                                    }
-                                    /*  try {
-                                          binding.tvSplitAmount.setText(claimDetail.currencySymbol+" "+splittotalamount)
-                                      } catch (e: Exception) {
-                                          binding.tvSplitAmount.setText(splittotalamount.toString())
-
-                                      }*/
-
-
-                                }
-                                try {
-                                   // binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
-                                    //   binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+splitedClaimDetails.main_claim?.netAmount)
-
-                                } catch (e: Exception) {
-                                  //  binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount)
-                                    // binding.tvNetAmount.setText(splitedClaimDetails.main_claim?.netAmount.toString())
-
-
-                                }
-
-                                //setResponse(response)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        Log.e(TAG, "deleteClaim: ${it.message}")
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                    }
-                    Status.LOADING -> {
-
-                    }
-                }
-            }
-        })
-    }
-
     override fun callback(action: String, data: Any, postion: Int) {
         if (action == "show") {
             showImagePopup(data as String)
@@ -1591,4 +1322,9 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
             }
         }
     }
+
+
+
+
+
 }
