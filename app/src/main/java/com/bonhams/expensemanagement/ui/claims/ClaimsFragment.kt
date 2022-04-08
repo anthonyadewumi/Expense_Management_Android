@@ -83,36 +83,35 @@ class ClaimsFragment : Fragment(), ClaimsAdapter.OnClaimClickListener, RefreshPa
             HomeViewModelFactory(ApiHelper(RetrofitBuilder.apiService))
         ).get(HomeViewModel::class.java)
 
-        homeViewModel.datePicker.observe(viewLifecycleOwner, {
+        homeViewModel.datePicker.observe(viewLifecycleOwner) {
             Log.d(TAG, "setupViewModel: datePicker: $it")
             updatedClaimsFromStatus(null, it)
-        })
+        }
 
-        homeViewModel.statusPicker.observe(viewLifecycleOwner, {
+        homeViewModel.statusPicker.observe(viewLifecycleOwner) {
             Log.d(TAG, "setupViewModel: statusPicker: $it")
             updatedClaimsFromStatus(it as String?, null)
-        })
-        mainViewModel.isClaimListRefresh?.observe(viewLifecycleOwner, {
-            if(it) {
-                mainViewModel.isClaimListRefresh?.value=false
+        }
+        mainViewModel.isClaimListRefresh?.observe(viewLifecycleOwner) {
+            if (it) {
+                mainViewModel.isClaimListRefresh?.value = false
                 claimsAdapter.refresh()
             }
 
-        })
+        }
 
 
-        mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner, {
+        mainViewModel.appbarSearchClick?.observe(viewLifecycleOwner) {
             Log.d(TAG, "setupViewModel: appbarSearchClick: $it")
-            if(it){
+            if (it) {
                 binding.tilSearchClaim.visibility = View.VISIBLE
                 binding.edtSearchClaim.showKeyboard(contextActivity, true)
-            }
-            else{
+            } else {
                 binding.tilSearchClaim.visibility = View.GONE
                 binding.edtSearchClaim.setText("")
                 binding.edtSearchClaim.showKeyboard(contextActivity, false)
             }
-        })
+        }
         binding.txtTitle.text = "Total Claimed"
 
         getClaimTotal()

@@ -7,6 +7,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
@@ -40,6 +42,7 @@ import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
@@ -1186,7 +1189,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                     viewModel.companyList[binding.spnCompanyNumber.selectedItemPosition].name,
                     viewModel.departmentList[binding.spnDepartment.selectedItemPosition].cost_code,
                     viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].name?:"",
-                    newClaimRequest.auction?:"",
+                    newClaimRequest.auction?:"0",
                     expenseCode,
                     newClaimRequest.expenseCode?:"",
                     taxcodeId,""
@@ -1250,7 +1253,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
             if(binding.edtTax.text.isNotEmpty())binding.edtTax.text.toString()else "0",
             binding.tvNetAmount.text.toString(),
             binding.edtDescription.text.toString().trim(),
-            if (!taxcodeId.isNullOrEmpty()) taxcodeId else "",
+            if (!taxcodeId.isNullOrEmpty()) taxcodeId else "0",
             binding.edtAutionValue.text.toString().trim(),
             if (!viewModel.expenseTypeList.isNullOrEmpty()) viewModel.expenseTypeList[binding.spnExpenseType.selectedItemPosition].expenseCodeID else "",
 
@@ -1349,7 +1352,7 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     private fun choosePhotoFromGallery() {
         contextActivity?. let {
             val intent = Lassi(contextActivity!!)
-                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .with(LassiOption.CAMERA_AND_GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
@@ -1369,24 +1372,37 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun takePhotoFromCamera(){
-        contextActivity?. let {
-            val intent = Lassi(contextActivity!!)
-                .with(LassiOption.CAMERA) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
-                .setMaxCount(1)
-                .setGridSize(3)
-                .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(50) // Restrict by minimum file size
-                .setMaxFileSize(100) //  Restrict by maximum file size
-                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
-                .setStatusBarColor(R.color.secondary)
-                .setToolbarResourceColor(R.color.white)
-                .setProgressBarColor(R.color.secondary)
-                .setToolbarColor(R.color.secondary)
-                .setPlaceHolder(R.drawable.ic_image_placeholder)
-                .setErrorDrawable(R.drawable.ic_image_placeholder)
-                .build()
-            startActivityForResult(intent, 101)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ImagePicker.with(this)
+                .crop()
+                .cameraOnly()//Crop image(Optional), Check Customization for more option
+                .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                .maxResultSize(
+                    1080,
+                    1080
+                )    //Final image resolution will be less than 1080 x 1080(Optional)
+                .start()
+        }else {
+            contextActivity?.let {
+                val intent = Lassi(contextActivity!!)
+                    .with(LassiOption.CAMERA) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                    .setMaxCount(1)
+                    .setGridSize(3)
+                    .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
+                    .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
+                    .setMinFileSize(50) // Restrict by minimum file size
+                    .setMaxFileSize(100) //  Restrict by maximum file size
+                    .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+                    .setStatusBarColor(R.color.secondary)
+                    .setToolbarResourceColor(R.color.white)
+                    .setProgressBarColor(R.color.secondary)
+                    .setToolbarColor(R.color.secondary)
+                    .setPlaceHolder(R.drawable.ic_image_placeholder)
+                    .setErrorDrawable(R.drawable.ic_image_placeholder)
+                    .build()
+                startActivityForResult(intent, 101)
+            }
         }
     }
 
@@ -1421,7 +1437,18 @@ class NewClaimFragment() : Fragment() ,RecylerCallback{
                         refreshAttachments()
                         Log.d(TAG, "onActivityResult:  attachmentsList: ${viewModel.attachmentsList.size}")
                     }
+                }else->{
+                if (resultCode == Activity.RESULT_OK){
+                    val uri: Uri = data?.data!!
+                    val file= File( uri.path)
+                    val filePath: String = file.path
+                    val bitmap = BitmapFactory.decodeFile(filePath)
+                    viewModel.claimImageList.add(bitmap)
+                    viewModel.attachmentsList.add(uri.path)
+                    refreshAttachments()
                 }
+
+            }
             }
         }
     }

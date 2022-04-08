@@ -111,6 +111,10 @@ class NewClaimViewModel(private val newClaimRepository: NewClaimRepository) : Vi
 
         if(newClaimRequest.title.isNullOrEmpty())
             isValid = Pair(false, R.string.please_enter_company_numer)
+        else if(newClaimRequest.expenseGroup.isNullOrEmpty())
+            isValid = Pair(false, R.string.please_select_expense_group)
+        else if(newClaimRequest.expenseType.isNullOrEmpty())
+            isValid = Pair(false, R.string.please_select_expense_type)
         else if(newClaimRequest.department.isNullOrEmpty())
             isValid = Pair(false, R.string.please_select_department)
         else if(newClaimRequest.currency.isNullOrEmpty())

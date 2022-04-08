@@ -75,6 +75,7 @@ class NewMileageClaimViewModel(private val mileageClaimRepository: NewMileageCla
             mapQuery["key"] = "AIzaSyBG514Hl7ekIEU3iyXKcnqBi0vvIgjtp-8"
             mapQuery["origins"] = origins
             mapQuery["destinations"] = destinations
+           // mapQuery["waypoints"] = "Saharsa"
             emit(Resource.success(data = mileageClaimRepository.getdistance(mapQuery)))
         } catch (exception: Exception) {
             emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))

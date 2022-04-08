@@ -1461,7 +1461,7 @@ class EditMileageClaimFragment : Fragment() ,RecylerCallback{
     private fun choosePhotoFromGallery() {
         contextActivity?. let {
             val intent = Lassi(contextActivity!!)
-                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .with(LassiOption.CAMERA_AND_GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC

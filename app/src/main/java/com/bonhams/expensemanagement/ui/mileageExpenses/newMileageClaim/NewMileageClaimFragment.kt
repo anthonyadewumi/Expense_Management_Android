@@ -7,8 +7,11 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.Editable
@@ -19,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
-import android.widget.CompoundButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -47,6 +49,8 @@ import com.bonhams.expensemanagement.utils.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -71,7 +75,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Locale
 
 
 class NewMileageClaimFragment : Fragment() ,RecylerCallback{
@@ -104,7 +107,9 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
     private var companyDateFormate: String = ""
     private var companyLocation: String = ""
     private var icCreateCopy: Boolean = false
-        override fun onCreateView(
+    private var calculatedDistance:Float=0f
+
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -129,6 +134,12 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
     fun setMileageDetails(detail: MileageDetail?){
         detail?.let {
             mileageDetail = it
+        }
+    }
+    fun setCalculatedDistance(calculatedDistances: Float?){
+
+        if (calculatedDistances != null) {
+            calculatedDistance=calculatedDistances
         }
     }
     fun setAutoMileageDetails(detail: GpsMileageDetail?){
@@ -597,12 +608,20 @@ class NewMileageClaimFragment : Fragment() ,RecylerCallback{
             binding.edtMerchantName.setText(AppPreferences.ledgerId)
 
         }
-        if(this::gpsMileageDetail.isInitialized){
+        if(this::gpsMileageDetail.isInitialized) {
             binding.tvDateOfTrip.text = gpsMileageDetail.startDate
             binding.tvDateOfSubmission.text = gpsMileageDetail.stopDate
             binding.tvTripFrom.text = gpsMileageDetail.fromLocation
             binding.tvTripTo.text = gpsMileageDetail.toLoaction
             getmatrixDistanceObserver(gpsMileageDetail.fromLocation,gpsMileageDetail.toLoaction)
+           /* if (calculatedDistance > 0) {
+                val bd = BigDecimal(calculatedDistance.toDouble())
+                val roundoff = bd.setScale(1, RoundingMode.FLOOR)
+                binding.edtClaimedMiles.setText(roundoff.toString())
+                binding.edtClaimedMiles2.setText(roundoff.toString())
+
+                // getmatrixDistanceObserver(gpsMileageDetail.fromLocation,gpsMileageDetail.toLoaction)
+            }*/
         }
     }
     private fun setupDeparmentType(){
@@ -1123,7 +1142,7 @@ var claculatedMiles=0.0
 
                         resource.data?.let { response ->
                             val distance=
-                                response.rows[0].elements.get(0).distance?.value?.let { it1 ->
+                                response.rows[0].elements[0].distance?.value?.let { it1 ->
                                     meterToKiloMeter(
                                         it1
                                     )
@@ -1139,9 +1158,6 @@ var claculatedMiles=0.0
                                     distanceKmMiles = distance/1.609
                                 }
                             }
-
-
-
                             val decimalmiles = distanceKmMiles.let { it1 -> BigDecimal(it1).setScale(1, RoundingMode.HALF_EVEN) }
                             binding.edtClaimedMiles.setText(decimalmiles.toString())
                             binding.edtClaimedMiles2.setText(decimalmiles.toString())
@@ -1474,7 +1490,7 @@ var claculatedMiles=0.0
     private fun choosePhotoFromGallery() {
         contextActivity?. let {
             val intent = Lassi(contextActivity!!)
-                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .with(LassiOption.CAMERA_AND_GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
@@ -1496,24 +1512,36 @@ var claculatedMiles=0.0
     }
 
     private fun takePhotoFromCamera(){
-        contextActivity?. let {
-            val intent = Lassi(contextActivity!!)
-                .with(LassiOption.CAMERA) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
-                .setMaxCount(1)
-                .setGridSize(3)
-                .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(50) // Restrict by minimum file size
-                .setMaxFileSize(100) //  Restrict by maximum file size
-                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
-                .setStatusBarColor(R.color.secondary)
-                .setToolbarResourceColor(R.color.white)
-                .setProgressBarColor(R.color.secondary)
-                .setToolbarColor(R.color.secondary)
-                .setPlaceHolder(R.drawable.ic_image_placeholder)
-                .setErrorDrawable(R.drawable.ic_image_placeholder)
-                .build()
-            startActivityForResult(intent, 101)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            ImagePicker.with(this)
+                .crop()
+                .cameraOnly()//Crop image(Optional), Check Customization for more option
+                .compress(1024)            //Final image size will be less than 1 MB(Optional)
+                .maxResultSize(
+                    1080,
+                    1080
+                )    //Final image resolution will be less than 1080 x 1080(Optional)
+                .start()
+        }else {
+            contextActivity?.let {
+                val intent = Lassi(contextActivity!!)
+                    .with(LassiOption.CAMERA) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                    .setMaxCount(1)
+                    .setGridSize(3)
+                    .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
+                    .setCompressionRation(20) // compress image for single item selection (can be 0 to 100)
+                    .setMinFileSize(50) // Restrict by minimum file size
+                    .setMaxFileSize(100) //  Restrict by maximum file size
+                    .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+                    .setStatusBarColor(R.color.secondary)
+                    .setToolbarResourceColor(R.color.white)
+                    .setProgressBarColor(R.color.secondary)
+                    .setToolbarColor(R.color.secondary)
+                    .setPlaceHolder(R.drawable.ic_image_placeholder)
+                    .setErrorDrawable(R.drawable.ic_image_placeholder)
+                    .build()
+                startActivityForResult(intent, 101)
+            }
         }
     }
     private fun meterToMiles(meter:Int):Double{
@@ -1562,7 +1590,14 @@ var claculatedMiles=0.0
                         refreshAttachments()
                         Log.d(TAG, "onActivityResult:  attachmentsList: ${viewModel.attachmentsList.size}")
                     }
+                }else->{
+                if (resultCode == Activity.RESULT_OK){
+                    val uri: Uri = data?.data!!
+                    viewModel.attachmentsList.add(uri.path)
+                    refreshAttachments()
                 }
+
+            }
             }
         }
     }

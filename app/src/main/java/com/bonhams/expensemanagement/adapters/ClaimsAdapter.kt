@@ -68,6 +68,7 @@ class ClaimsAdapter() : PagingDataAdapter<ClaimDetail, ClaimsAdapter.ViewHolder>
                 when {
                     item.status.equals(Constants.STATUS_PENDING, true) -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorTextDarkGray))
                     item.status.equals(Constants.STATUS_APPROVED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
+                    item.status.equals(Constants.STATUS_POSTED, true) ->binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorGreen))
                     else -> binding.tvStatus.setTextColor(itemView.context.resources.getColor(R.color.colorRed))
                 }
             }

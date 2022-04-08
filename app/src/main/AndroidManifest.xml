@@ -10,9 +10,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-
-    <!-- Application Permissions -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- Application Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
@@ -22,8 +20,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" /> <!-- For unsupported tablets -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -33,19 +31,31 @@
             <action android:name="android.media.action.IMAGE_CAPTURE" />
         </intent>
     </queries>
+<!--
+    android:requestLegacyExternalStorage="true"
+-->
 
     <application
         android:name=".ui.BonhamsApplication"
         android:allowBackup="false"
         android:icon="@drawable/new_logo"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/new_logo"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.ExpenseManagement"
+        android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
-        android:requestLegacyExternalStorage="true"
         tools:targetApi="m">
+        <service
+            android:name=".ui.gpsTracking.LocationMyService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"></service>
+        <service
+            android:name=".ui.gpsTracking.LocationUpdatesService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".ui.splash.SplashScreenActivity"
@@ -59,13 +69,11 @@
             </intent-filter>
         </activity>
 
-
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
 
         <activity
             android:name=".ui.login.LoginActivity"
@@ -73,11 +81,9 @@
         <activity
             android:name=".ui.login.LocationActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.forgotPassword.ForgotPasswordActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.resetPassword.ResetPasswordActivity"
             android:screenOrientation="portrait" />
@@ -93,7 +99,6 @@
         <activity
             android:name=".ui.claims.newClaim.SplitClaimActivity2"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.claims.splitClaim.EditSplitClaimDetailsActivity"
             android:screenOrientation="portrait" />
@@ -109,11 +114,10 @@
         <activity
             android:name=".ui.rmExpence.RequestClaimDetails"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -123,11 +127,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-
-        <!--Push Notification-->
-
-
+        </provider> <!-- Push Notification -->
         <!--
             The API key for Google Maps-based APIs is defined as a string resource.
             (See the file "res/values/google_maps_api.xml").
@@ -135,11 +135,10 @@
             You need a different API key for each encryption key, including the release key that is used to
             sign the APK for publishing.
             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-       -->
+        -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
     </application>
 
 </manifest>

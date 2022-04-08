@@ -13,7 +13,7 @@ data class SplitClaimItem (
     val compnyName: String = "",
     val departmentName: String = "",
     val expenceTypeName: String = "",
-    val auctionSales: String = "",
+    val auctionSales: String = "0",
     val expenceCode: String = "",
     val expenseCodeID: String = "0",
     val taxCodeValue: String = "0",

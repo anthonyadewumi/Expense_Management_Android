@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,18 +15,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bonhams.expensemanagement.R
-import com.bonhams.expensemanagement.adapters.ImagePager2Adapter
 import com.bonhams.expensemanagement.data.services.ApiHelper
 import com.bonhams.expensemanagement.data.services.RetrofitBuilder
 import com.bonhams.expensemanagement.ui.BaseActivity
-import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimFragment
-import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModel
-import com.bonhams.expensemanagement.ui.claims.newClaim.NewClaimViewModelFactory
 import com.bonhams.expensemanagement.ui.claims.newClaim.OcrNewClaimFragment
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.rmExpence.ZoomOutPageTransformer
@@ -63,6 +59,8 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
     var imgPostion=0
         var reTake=false
     var bitmapArray = ArrayList<Bitmap>()
+    var reciptList: MutableList<String?> = mutableListOf<String?>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,6 +84,8 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
        // progDialog.show()
 
         startStop?.setOnClickListener {
+            reTake=false
+
             showBottomSheet()
 
         }
@@ -104,9 +104,9 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
 
                 if(bitmapArray.size>1) {
                     println("single bitmap:" + combineImageIntoOne(bitmapArray))
-                    setObserver(combineImageIntoOne(bitmapArray))
+                    reciptList[0]?.let { it1 -> setObserver(combineImageIntoOne(bitmapArray), it1) }
                 }else{
-                    setObserver(bitmapArray[0])
+                    reciptList[0]?.let { it1 -> setObserver(bitmapArray[0], it1) }
                 }
             } catch (e: Exception) {
             }
@@ -153,16 +153,25 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
         adapter?.notifyDataSetChanged()
     }
 
-    private fun setObserver(imageBitmap:Bitmap?) {
+    private fun setObserver(imageBitmap:Bitmap?,fileTpe:String) {
         progDialog.show()
-
+/*
         val stream = ByteArrayOutputStream()
-        imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-        val image = stream.toByteArray()
+        if(fileTpe.endsWith(".png")){
+            imageBitmap?.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        }else{
+            imageBitmap?.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        }*/
+        val file = File(
+            fileTpe
+        )
+       // val image = stream.toByteArray()
         val builder = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "a40668de-3750-4d5b-974b-bae2450e7a0b")
                     builder.addFormDataPart("image_name", "test", RequestBody.create(
-                        MultipartBody.FORM, image))
+                        MultipartBody.FORM, file))
+
+
 
         val mrequestBody: RequestBody = builder.build()
 
@@ -175,6 +184,7 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
                         resource.data?.let { response ->
                             try {
                                 progDialog.dismiss()
+                                response.mapping_data?.attachmentsList=reciptList
                                         val fragment = OcrNewClaimFragment()
                                         fragment.setOcrDetails(response.mapping_data)
                                         fragment.setRefreshPageListener(this)
@@ -236,11 +246,11 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
     private fun choosePhotoFromGallery() {
         contextActivity?. let {
             val intent = Lassi(contextActivity!!)
-                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .with(LassiOption.CAMERA_AND_GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
                 .setMaxCount(5)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
+                //.setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
                 // .setMinFileSize(50) // Restrict by minimum file size
                 // .setMaxFileSize(100) //  Restrict by maximum file size
                 //.disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
@@ -261,11 +271,12 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
                 .with(LassiOption.CAMERA) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
                 .setMaxCount(5)
                 .setGridSize(3)
+                .enableRotate()
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC
-                .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
-                .setMinFileSize(50) // Restrict by minimum file size
-                .setMaxFileSize(100) //  Restrict by maximum file size
-                .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
+               // .setCompressionRation(50) // compress image for single item selection (can be 0 to 100)
+                //.setMinFileSize(50) // Restrict by minimum file size
+               // .setMaxFileSize(100) //  Restrict by maximum file size
+               // .disableCrop() // to remove crop from the single image selection (crop is enabled by default for single image)
                 .setStatusBarColor(R.color.secondary)
                 .setToolbarResourceColor(R.color.white)
                 .setProgressBarColor(R.color.secondary)
@@ -279,6 +290,7 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && data != null) {
+            txtRetak.visibility=View.VISIBLE
             when (requestCode) {
                 100 -> {
                     //bitmapArray.clear()
@@ -290,12 +302,18 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
                             val file= File( it.path!!)
                             val filePath: String = file.path
                             val bitmap = BitmapFactory.decodeFile(filePath)
+                            Log.d("capatured Image", "path: ${file.path}")
+
                             if(reTake){
                                 reTake=false
                                 bitmapArray.removeAt(imgPostion)
                                 bitmapArray.add(imgPostion,bitmap)
+                                reciptList.removeAt(imgPostion)
+                                reciptList.add(imgPostion,it.path!!)
                             }else{
                                 bitmapArray.add(bitmap)
+                                reciptList.add(it.path!!)
+
 
                             }
                         }
@@ -323,8 +341,12 @@ class CapturedImageFragment : Fragment(), RecylerCallback, RefreshPageListener {
                             reTake=false
                             bitmapArray.removeAt(imgPostion)
                             bitmapArray.add(imgPostion,bitmap)
+                            reciptList.removeAt(imgPostion)
+                            reciptList.add(imgPostion,selectedMedia[0].path!!)
                         }else{
                             bitmapArray.add(bitmap)
+                            reciptList.add(selectedMedia[0].path!!)
+
 
                         }
                     }

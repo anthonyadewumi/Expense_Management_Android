@@ -4,30 +4,36 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.*
+import android.content.Context.JOB_SCHEDULER_SERVICE
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
 import android.location.*
 import android.location.LocationListener
 import android.os.Bundle
+import android.os.IBinder
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bonhams.expensemanagement.R
 import com.bonhams.expensemanagement.data.model.GpsMileageDetail
 import com.bonhams.expensemanagement.ui.BaseActivity
 import com.bonhams.expensemanagement.ui.main.MainActivity
 import com.bonhams.expensemanagement.ui.mileageExpenses.newMileageClaim.NewMileageClaimFragment
 import com.bonhams.expensemanagement.utils.AppPreferences
+import com.bonhams.expensemanagement.utils.Utils
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,10 +44,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Locale
 
 
-class GPSTrackingFragment : Fragment(),LocationListener {
+class GPSTrackingFragment : Fragment(),LocationListener, OnSharedPreferenceChangeListener {
 
     private var contextActivity: BaseActivity? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -59,6 +64,28 @@ class GPSTrackingFragment : Fragment(),LocationListener {
     var UPDATE_INTERVAL: Long = 2000 // 2 SECOND
     var FINE_LOCATION_REQUEST: Int = 888
     lateinit var locationRequest: LocationRequest
+   // var points: List<LatLng> = ArrayList()
+    var points: MutableList<LatLng> = mutableListOf<LatLng>()
+
+    // jobSchedular
+    private var jobScheduler: JobScheduler? = null
+    private var componentName: ComponentName? = null
+
+    // Used in checking for runtime permissions.
+    private val REQUEST_PERMISSIONS_REQUEST_CODE = 34
+
+    // The BroadcastReceiver used to listen from broadcasts from the service.
+    private var myReceiver: MyReceiver? = null
+
+    // A reference to the service used to get location updates.
+    private var mService: LocationUpdatesService? = null
+
+    // Tracks the bound state of the service.
+    private var mBound = false
+
+    // UI elements.
+    private var mRequestLocationUpdatesButton: Button? = null
+    private var mRemoveLocationUpdatesButton: Button? = null
 
     private val callback = OnMapReadyCallback { map ->
       //  obtieneLocalizacion()
@@ -66,11 +93,31 @@ class GPSTrackingFragment : Fragment(),LocationListener {
 
         googleMap=map
 
+        // Bind to the service. If the service is in foreground mode, this signals to the service
+        // that since this activity is in the foreground, the service can exit foreground mode.
+       /* activity?.bindService(
+            Intent(requireContext(), LocationUpdatesService::class.java), mServiceConnection,
+            Context.BIND_AUTO_CREATE
+        )*/
+        //activity?.startService(Intent(requireContext(), LocationMyService::class.java))
+
+     //   activity?.startService(Intent(requireContext(), LocationUpdatesService::class.java)
        /* val currentlocation = LatLng(Latitude, Longitude)
         map.addMarker(MarkerOptions().position(currentlocation).title("Marker in current location"))
         map.moveCamera(CameraUpdateFactory.newLatLng(currentlocation))*/
     }
+    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val binder: LocationUpdatesService.LocalBinder = service as LocationUpdatesService.LocalBinder
+            mService = binder.service
+            mBound = true
+        }
 
+        override fun onServiceDisconnected(name: ComponentName) {
+            mService = null
+            mBound = false
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -93,36 +140,108 @@ class GPSTrackingFragment : Fragment(),LocationListener {
             startlocation= AppPreferences.gpsStartLocation
             startDate=AppPreferences.gpsStartDate
         }
+      //  StartBackgroundTask()
 
         startStop?.setOnClickListener {
             if(startStop.text.toString() == "Start"){
-
+                points.clear()
                 println("current date :"+getCurrentDate())
                 getLocation()
                startDate=getCurrentDate()
                 startlocation= getCompleteAddressString(Latitude,Longitude)
-
+              //  mService!!.requestLocationUpdates()
+                points
                 startStop.text="Stop"
                 AppPreferences.gpsStartDate=startDate
                 AppPreferences.gpsStartLocation=startlocation
                 AppPreferences.gpsStart="Stop"
             }else{
                 getLocation()
+              //  mService!!.removeLocationUpdates()
 
                 startStop.text="Start"
                 AppPreferences.gpsStart="Start"
                 stoplocation= getCompleteAddressString(Latitude,Longitude)
                 stopDate=getCurrentDate()
 
+               /* println("points.size ${points.size}")
+                var distance : Float = 0f
+                points.forEachIndexed { index, latLng ->
+                    if(index<points.size-1) {
+                        val fromLocation = Location("")
+                        fromLocation.latitude = latLng.latitude
+                        fromLocation.longitude = latLng.longitude
+                        val toLocation = Location("")
+                        toLocation.latitude = points[index + 1].latitude
+                        toLocation.longitude = points[index + 1].longitude
+                        val dist=fromLocation.distanceTo(toLocation)
+
+                        println("one point to other point distance : $dist")
+                        if(dist>100) {
+                            distance += dist
+                        }
+                    }
+
+                }
+                println("traveled distance in meter $distance")*/
+
+
                 val details= GpsMileageDetail(startDate,stopDate,startlocation,stoplocation)
                 val fragment = NewMileageClaimFragment()
-                fragment.setAutoMileageDetails(details)
+               fragment.setAutoMileageDetails(details)
+              // fragment.setCalculatedDistance(distance)
                 addFragment(fragment)
             }
         }
-
+        myReceiver = MyReceiver()
         //getLocation()
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .registerOnSharedPreferenceChangeListener(this)
+
+    }
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+            myReceiver!!,
+            IntentFilter(LocationUpdatesService.ACTION_BROADCAST)
+        )
+    }
+
+    override fun onPause() {
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(myReceiver!!)
+        super.onPause()
+    }
+
+    override fun onStop() {
+        if (mBound) {
+            // Unbind from the service. This signals to the service that this activity is no longer
+            // in the foreground, and the service can respond by promoting itself to a foreground
+            // service.
+            activity?.unbindService(mServiceConnection)
+            mBound = false
+        }
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .unregisterOnSharedPreferenceChangeListener(this)
+        super.onStop()
+    }
+
+
+
+
+    @SuppressLint("NewApi")
+    fun StartBackgroundTask() {
+        jobScheduler =
+            activity?.getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
+        componentName = ComponentName(requireContext(), LocationMyService::class.java)
+       val jobInfo = JobInfo.Builder(1, componentName!!)
+            .setMinimumLatency(10000) //10 sec interval
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setRequiresCharging(false).build()
+        jobScheduler!!.schedule(jobInfo)
     }
 
     @SuppressLint("MissingPermission")
@@ -256,7 +375,8 @@ class GPSTrackingFragment : Fragment(),LocationListener {
         googleMap.setMinZoomPreference(11f)
         googleMap.addMarker(MarkerOptions().position(currentlocation).title("Marker in current location"))
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentlocation))
-        println("currentlocation $currentlocation")
+        println("currentlocation onLocationChangeds $currentlocation")
+        points.add(currentlocation)
     }
    override fun onLocationChanged(location: Location) {
     }
@@ -290,7 +410,7 @@ class GPSTrackingFragment : Fragment(),LocationListener {
             googleMap.setMinZoomPreference(11f)
             googleMap.addMarker(MarkerOptions().position(currentlocation).title("Marker in current location"))
             googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentlocation))
-            println("currentlocation $currentlocation")
+            println("currentlocation in fragment $currentlocation")
         }
 
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
@@ -360,5 +480,39 @@ class GPSTrackingFragment : Fragment(),LocationListener {
                 DialogInterface.OnClickListener { dialog, id -> dialog.cancel() })
         val alert: AlertDialog = builder.create()
         alert.show()
+    }
+    private class MyReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val location =
+                intent.getParcelableExtra<Location>(LocationUpdatesService.EXTRA_LOCATION)
+            if (location != null) {
+                println("gps location:$location")
+              /* Toast.makeText(
+                    requireContext(), Utils.getLocationText(location),
+                    Toast.LENGTH_SHORT
+                ).show()*/
+            }
+        }
+    }
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+
+        // Update the buttons state depending on whether location updates are being requested.
+        if (key == Utils.KEY_REQUESTING_LOCATION_UPDATES) {
+            setButtonsState(
+                sharedPreferences!!.getBoolean(
+                    Utils.KEY_REQUESTING_LOCATION_UPDATES,
+                    false
+                )
+            )
+        }
+    }
+    private fun setButtonsState(requestingLocationUpdates: Boolean) {
+        if (requestingLocationUpdates) {
+          //  mRequestLocationUpdatesButton.setEnabled(false)
+           // mRemoveLocationUpdatesButton.setEnabled(true)
+        } else {
+          //  mRequestLocationUpdatesButton.setEnabled(true)
+         //   mRemoveLocationUpdatesButton.setEnabled(false)
+        }
     }
 }

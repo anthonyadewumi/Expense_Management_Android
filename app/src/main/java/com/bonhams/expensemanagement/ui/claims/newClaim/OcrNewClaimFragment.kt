@@ -53,6 +53,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.imaginativeworld.oopsnointernet.utils.NoInternetUtils
 import java.io.*
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
 
@@ -75,6 +77,8 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
     private var companyLocation: String = ""
     private var isCreateCopy: Boolean = false
     var groupname="n/a"
+    val inputFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+    val outputFormat: DateFormat = SimpleDateFormat(Constants.MMM_DD_YYYY_FORMAT)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -89,8 +93,8 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
         setClickListeners()
         setupAttachmentRecyclerView()
         setDropdownDataObserver()
-        setupView()
         setupTextWatcher()
+        setupView()
         return view
     }
 
@@ -106,18 +110,56 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun setupView(){
         if (this::claimDetail.isInitialized) {
+
+            println("selected company date format:"+ claimDetail.receipt_date)
+            println("selected company total:"+ claimDetail.total)
+
+
+
+            try {
+                val date: Date = inputFormat.parse(claimDetail.receipt_date)
+                val outputDateStr: String = outputFormat.format(date)
+                binding.tvDateOfSubmission.text = outputDateStr
+            } catch (e: Exception) {
+            }
+
             binding.edtTotalAmount.setText(claimDetail.total)
-            binding.edtTax.setText(claimDetail.tax)
-           //binding.edt.setText(claimDetail.tax)
-        }
-        try {
+            if(claimDetail.net_amount.isNotEmpty()){
+                binding.tvNetAmount.setText(claimDetail.net_amount)
+
+            }
+            if(claimDetail.tax.isNullOrEmpty()){
+                binding.edtTax.setText(claimDetail.vat_amount)
+
+            }else{
+                binding.edtTax.setText(claimDetail.tax)
+
+            }
+
+            if(claimDetail.merchant_name.isNullOrEmpty()){
                 binding.edtMerchantName.setText(AppPreferences.ledgerId)
-                viewModel.attachmentsList.clear()
-            refreshAttachments()
+
+            }else{
+                binding.edtMerchantName.setText(claimDetail.merchant_name)
+
+            }
+
+
+            try {
+                // binding.edtMerchantName.setText(AppPreferences.ledgerId)
+               // viewModel.attachmentsList.clear()
+                viewModel.attachmentsList=claimDetail.attachmentsList
+                println("attachemnent size :"+viewModel.attachmentsList.size)
+                setupAttachmentRecyclerView()
+
+                refreshAttachments()
+            }
+            catch (error: Exception){
+                Log.e(TAG, "setupView: ${error.message}")
+            }
+
         }
-        catch (error: Exception){
-            Log.e(TAG, "setupView: ${error.message}")
-        }
+
     }
 
     private fun setupViewModel() {
@@ -211,7 +253,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                 companyDateFormate=viewModel.companyList[position].dateFormat
                 companyLocation=viewModel.companyList[position].location
                 binding.spnExpenseGroup.adapter=null
-
                     setupExpenceGroupType(true)
 
                    // binding.edtTotalAmount.setText("")
@@ -234,7 +275,7 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                     }
                 }
                 setupDeparmentType()
-                viewModel.currencyList.forEach {
+               viewModel.currencyList.forEach {
                     if(it.id.toInt()==viewModel.companyList[position].currency_type_id){
                         val symbol=it.symbol
                         val code=it.code
@@ -258,9 +299,20 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
 
                       //  binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
                        // binding.tvNetAmount.setLocale(code)
-                        val currency: Currency? =
+
+                        var currencyPos=0
+                        viewModel.currencyList.forEachIndexed { index, currency ->
+                            try {
+                                if(claimDetail.currency==currency.symbol||claimDetail.currency==currency.name){
+                                    currencyPos=index
+                                }
+                            } catch (e: Exception) {
+                            }
+                        }
+
+                       /* val currency: Currency? =
                             viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
-                        val currencyPos = viewModel.currencyList.indexOf(currency)
+                        val currencyPos = viewModel.currencyList.indexOf(currency)*/
                         if (currencyPos >= 0) {
                             binding.spnCurrency.setSelection(currencyPos)
                         }
@@ -284,6 +336,21 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
             viewModel.currencyList
         )
         binding.spnCurrency.adapter = currencyAdapter
+        if (this::claimDetail.isInitialized) {
+            println("claimDetail.currency"+claimDetail.currency)
+            var currencyPos=0
+            viewModel.currencyList.forEachIndexed { index, currency ->
+                try {
+                    if(claimDetail.currency==currency.symbol||claimDetail.currency==currency.name){
+                        currencyPos=index
+                    }
+                } catch (e: Exception) {
+                }
+            }
+            if (currencyPos >= 0) {
+                binding.spnCurrency.setSelection(currencyPos)
+            }
+        }
 
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
@@ -602,10 +669,10 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(binding.edtTotalAmount.text.isNotEmpty()){
                     if(binding.edtTax.text.isEmpty()){
-                        updateNetAmount(binding.edtTotalAmount.text.toString(), "0")
+                        //updateNetAmount(binding.edtTotalAmount.text.toString(), "0")
 
                     }else{
-                        updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+                        //updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
 
                     }
                 }
@@ -619,8 +686,9 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(binding.edtTotalAmount.text.isNotEmpty()&&binding.edtTax.text.isNotEmpty())
-                updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+                if(binding.edtTotalAmount.text.isNotEmpty()&&binding.edtTax.text.isNotEmpty()) {
+                    //updateNetAmount(binding.edtTotalAmount.text.toString(), binding.edtTax.text.toString())
+                }
             }
         })
         binding.edtAutionValue.addTextChangedListener(object : TextWatcher {
@@ -663,6 +731,7 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
     }
 
     private fun updateNetAmount(total: String, tax: String){
+        println("call update amount")
         try {
             var totalAmount = 0.0
             var taxAmount = 0.0
@@ -1188,7 +1257,7 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
     private fun choosePhotoFromGallery() {
         contextActivity?. let {
             val intent = Lassi(contextActivity!!)
-                .with(LassiOption.GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
+                .with(LassiOption.CAMERA_AND_GALLERY) // choose Option CAMERA, GALLERY or CAMERA_AND_GALLERY
                 .setMaxCount(1)
                 .setGridSize(3)
                 .setMediaType(MediaType.IMAGE) // MediaType : VIDEO IMAGE, AUDIO OR DOC

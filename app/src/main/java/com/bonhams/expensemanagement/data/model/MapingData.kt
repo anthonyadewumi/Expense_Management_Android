@@ -14,9 +14,11 @@ data class MapingData (
     @SerializedName("vat_rate")
     val vat_rate: String = "",
     @SerializedName("total")
-    val total: String = "",
+    var total: String = "",
     @SerializedName("tax")
     val tax: String = "",
     @SerializedName("currency")
     val currency: String = "",
-)
+    var attachmentsList: MutableList<String?> = mutableListOf<String?>()
+
+    )

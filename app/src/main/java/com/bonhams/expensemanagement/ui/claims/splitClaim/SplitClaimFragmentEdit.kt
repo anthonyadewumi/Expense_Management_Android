@@ -344,7 +344,14 @@ class SplitClaimFragmentEdit() : Fragment() , RecylerCallback {
                         data.addProperty("totalAmount", splitClaimItem.totalAmount)
                         data.addProperty("taxCode",mtaxcodeId)
                         data.addProperty("tax",splitClaimItem.tax)
-                        data.addProperty("auction",splitClaimItem.auctionSales )
+                      if(splitClaimItem.auctionSales.isNullOrEmpty()){
+                          data.addProperty("auction","0" )
+
+                      }else{
+                          data.addProperty("auction",splitClaimItem.auctionSales )
+
+                      }
+                       // data.addProperty("auction",splitClaimItem.auctionSales )
                         data.addProperty("expenseCode", expenceCode )
                         jsonArraySplitData.add(data)
                     }

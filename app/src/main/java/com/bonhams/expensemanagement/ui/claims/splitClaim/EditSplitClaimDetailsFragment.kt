@@ -234,7 +234,13 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                         data.addProperty("totalAmount", splitClaimItem.totalAmount)
                         data.addProperty("taxCode",mtaxcodeId)
                         data.addProperty("tax",splitClaimItem.tax)
-                        data.addProperty("auction",splitClaimItem.auctionSales )
+                        if(splitClaimItem.auctionSales.isNullOrEmpty()){
+                            data.addProperty("auction","0" )
+
+                        }else{
+                            data.addProperty("auction",splitClaimItem.auctionSales )
+
+                        }
                         data.addProperty("expenseCode", expenceCode )
                         jsonArraySplitData.add(data)
                     }
@@ -319,7 +325,6 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
       // binding.tvTotalAmount.setText(netAmount.toString())
 
       // binding.tvTotalAmount.setText(remaningAmount.toString())
-
         remaningAmount=totalAmount-totalSplitAmount
         //binding.tvTotalAmount.setText(remaningAmount.toString())
         binding.tvTotalAmount.setText(String.format("%.2f", remaningAmount))
@@ -360,7 +365,7 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
-                        resource.data?.let { response ->
+                        resource.data?.let {
                             try {
                                 if(isRMEdit){
                                     requireActivity().finish()

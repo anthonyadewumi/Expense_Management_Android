@@ -307,13 +307,34 @@ class MainActivity : BaseActivity() {
             binding.navDrawer.closeDrawer(GravityCompat.START)
         } else {
             // Checking for fragment count on back stack
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                backButtonPressed()
+            } else {
+                // Exit the app
+                super.onBackPressed()
+            }
+
+          /*  val fragment = supportFragmentManager.findFragmentById(R.id.container)
+            if (fragment != null) {
+                val fragName = fragment.javaClass.simpleName
+                if (fragName == "CapturedImageFragment") {
+                    setupAppbar()
+                    showBottomNavbar(true)
+                    removeAnyOtherFragVisible()
+                    // val fragment = HomeFragment()
+                    val fragment = BatchFragment()
+                    changeFragment(fragment)
+                } else {
                     if (supportFragmentManager.backStackEntryCount > 0) {
                         backButtonPressed()
                     } else {
                         // Exit the app
                         super.onBackPressed()
-
+                    }
                 }
+            }else{
+                super.onBackPressed()
+            }*/
         }
     }
 
@@ -322,7 +343,9 @@ class MainActivity : BaseActivity() {
 
          // Go to the previous fragment
         supportFragmentManager.popBackStack()
-        // Reset app bar
+         println("chk this"+supportFragmentManager.backStackEntryCount)
+
+         // Reset app bar
         if (supportFragmentManager.backStackEntryCount == 1) {
             setupAppbar()
             showBottomNavbar(true)
@@ -349,7 +372,7 @@ class MainActivity : BaseActivity() {
                         removeAnyOtherFragVisible()
                        // val fragment = HomeFragment()
                         val fragment = BatchFragment()
-                        changeFragment(fragment)
+                        addFragment(fragment)
                         return@OnNavigationItemSelectedListener true
                     }
 

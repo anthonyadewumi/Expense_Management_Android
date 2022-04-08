@@ -16,8 +16,10 @@
         <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/activity_request_claim_details.xml" value="0.128" />
         <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/fragment_edit_claim.xml" value="0.1" />
-        <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/fragment_image_capture.xml" value="0.11096014492753623" />
+        <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/fragment_image_capture.xml" value="0.136" />
+        <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/fragment_new_claim.xml" value="0.16799999999999998" />
         <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/material_page.xml" value="0.1" />
+        <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/layout/scan_page_item.xml" value="0.10054347826086957" />
         <entry key="..\:/Users/Naveen Kumar/expense-management/app/src/main/res/menu/bottom_navigation.xml" value="0.1" />
       </map>
     </option>
