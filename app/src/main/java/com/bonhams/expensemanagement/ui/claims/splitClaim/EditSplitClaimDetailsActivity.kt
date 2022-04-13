@@ -109,13 +109,6 @@ class EditSplitClaimDetailsActivity : BaseActivity() {
                     val totalAmountOne = binding.edtTotalAmount.text
                     val taxCodeOne = binding.edtTaxCode.text
                     val mtax = binding.edtTax.text.toString().toDouble()
-                    println("companynumber :" + companyOne?.id)
-                    println("companycode :" + companyOne?.code)
-                    println("departmentOne :" + departmentOne?.id)
-                    println("expenseTypeOne :" + expenseTypeOne?.id)
-                    println("taxcode id :" + expenseTypeOne?.taxCodeID)
-                    println("taxcode taxcodeValue :$taxcodeValue")
-                    println("expence codeid id :" + expenseTypeOne?.expenseCodeID)
                     val splitOne = SplitClaimItem(
                         companyOne?.code?:"0",
                         companyOne?.code?:"0", departmentOne?.id?:"0", expenseTypeOne?.id!!,

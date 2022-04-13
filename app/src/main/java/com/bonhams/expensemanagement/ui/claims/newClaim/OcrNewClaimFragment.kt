@@ -110,12 +110,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun setupView(){
         if (this::claimDetail.isInitialized) {
-
-            println("selected company date format:"+ claimDetail.receipt_date)
-            println("selected company total:"+ claimDetail.total)
-
-
-
             try {
                 val date: Date = inputFormat.parse(claimDetail.receipt_date)
                 val outputDateStr: String = outputFormat.format(date)
@@ -146,8 +140,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
 
 
             try {
-                // binding.edtMerchantName.setText(AppPreferences.ledgerId)
-               // viewModel.attachmentsList.clear()
                 viewModel.attachmentsList=claimDetail.attachmentsList
                 println("attachemnent size :"+viewModel.attachmentsList.size)
                 setupAttachmentRecyclerView()
@@ -255,12 +247,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                 binding.spnExpenseGroup.adapter=null
                     setupExpenceGroupType(true)
 
-                   // binding.edtTotalAmount.setText("")
-                  //  binding.edtTax.setText("")
-                   // binding.tvNetAmount.setText("")
-                  //  binding.tvDateOfSubmission.text = ""
-                   // binding.edtGroupValue.setText("")
-
 
                 println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
                 println("selected company date format:"+ viewModel.companyList[position].dateFormat)
@@ -281,25 +267,10 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                         val code=it.code
                         currencyCode=code
                         currencySymbol=symbol
-                        // binding.edtTotalAmount.text = null
-                        // binding.edtTax.text = null
-                        // binding.tvNetAmount.text = null
-                        // binding.edtTotalAmount.clearFocus()
-                        //binding.edtTax.clearFocus()
-                        // binding.tvNetAmount.clearFocus()
+
                         binding.tvTotalAmountCurrency.text = symbol
                         binding.tvTaxAmountCurrency.text = symbol
                         binding.tvNetAmountCurrency.text = symbol
-
-                       // binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                      //  binding.edtTotalAmount.setLocale(code)
-
-                       // binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                      //  binding.edtTax.setLocale(code)
-
-                      //  binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-                       // binding.tvNetAmount.setLocale(code)
-
                         var currencyPos=0
                         viewModel.currencyList.forEachIndexed { index, currency ->
                             try {
@@ -309,10 +280,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                             } catch (e: Exception) {
                             }
                         }
-
-                       /* val currency: Currency? =
-                            viewModel.currencyList.find { it.id.toInt() == viewModel.companyList[position].currency_type_id }
-                        val currencyPos = viewModel.currencyList.indexOf(currency)*/
                         if (currencyPos >= 0) {
                             binding.spnCurrency.setSelection(currencyPos)
                         }
@@ -355,35 +322,14 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                //binding.edtTotalAmount.text = null
-               // binding.edtTax.text = null
-               // binding.tvNetAmount.text = null
-              //  binding.edtTotalAmount.clearFocus()
-               // binding.edtTax.clearFocus()
-               // binding.tvNetAmount.clearFocus()
 
                 val code = viewModel.currencyList[position].code
                 val symbol = viewModel.currencyList[position].symbol
                 currencyCode=code
                 currencySymbol=symbol
-               // binding.edtTotalAmount.text = null
-               // binding.edtTax.text = null
-               // binding.tvNetAmount.text = null
-               // binding.edtTotalAmount.clearFocus()
-               // binding.edtTax.clearFocus()
-              //  binding.tvNetAmount.clearFocus()
                 binding.tvTotalAmountCurrency.text = symbol
                 binding.tvTaxAmountCurrency.text = symbol
                 binding.tvNetAmountCurrency.text = symbol
-
-              //  binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.edtTotalAmount.setLocale(code)
-
-              //  binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.edtTax.setLocale(code)
-
-               // binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.tvNetAmount.setLocale(code)
 
 
             }
@@ -400,7 +346,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
     private fun setupExpenceGroupType(isShowDefault:Boolean){
         var isDefaultshow=isShowDefault
         // Expense Group Adapter
-        // viewModel.expenseGroupList.add(ExpenseGroup("0","N/A","0","active"))
         val expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,
@@ -415,7 +360,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                     binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
                     val groupid = viewModel.expenseGroupList[position].id
                      groupname = viewModel.expenseGroupList[position].name
-                    println("selected group ID :$groupid")
                     if(groupname == "Capital Asset"){
                         viewModel.departmentList.clear()
                         viewModel.departmentListCompany.forEach {
@@ -442,15 +386,10 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                     binding.edtExpenceTypeValue.setText(" ")
                     viewModel.expenseTypeList.add(ExpenseType("0","Select Expense Type",""))
                     viewModel.expenseTypeListExpenseGroup.forEach {
-                       // if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
-
-
                             if (it.expenseGroupID == groupid) {
                             viewModel.expenseTypeList.add(it)
-                            // println("selected expenseTypeList Added :" )
 
                         } else if (it.companyID.isNullOrEmpty()) {
-                            //viewModel.expenseTypeList.add(it)
 
                         }
 
@@ -488,7 +427,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     binding.edtGroupValue.setText(viewModel.expenseGroupList[position].name)
                     val groupid = viewModel.expenseGroupList[position].id
-                    println("selected group ID :$groupid")
                 val groupname = viewModel.expenseGroupList[position].name
                 println("selected group ID :$groupid")
                 if(groupname == "Capital Asset"){
@@ -866,92 +804,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
             }
         })
 
-        /*val mapRequestBody = LinkedHashMap<String, RequestBody>()
-
-        val requestBody: RequestBody
-        val body: MultipartBody.Part
-        val arrBody: MutableList<MultipartBody.Part> = ArrayList()
-        val file= File( viewModel.attachmentsList.get(0))
-        requestBody = RequestBody.create(okhttp3.MediaType.parse("multipart/form-data"), file)
-
-
-
-        mapRequestBody["file\"; filename=\"" + file] = requestBody
-        mapRequestBody["title"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.title.toString())
-        mapRequestBody["merchantName"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.merchantName.toString())
-        mapRequestBody["expenseGroup"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.expenseGroup.toString())
-        mapRequestBody["expenseType"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.expenseType.toString())
-
-        mapRequestBody["companyNumber"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.companyNumber.toString())
-        mapRequestBody["department"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.department.toString())
-        mapRequestBody["dateSubmitted"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.dateSubmitted.toString())
-        mapRequestBody["currency"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.currency.toString())
-
-        mapRequestBody["totalAmount"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.totalAmount.toString())
-        mapRequestBody["tax"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.tax.toString())
-        mapRequestBody["netAmount"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.netAmount.toString())
-        mapRequestBody["description"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.description.toString())
-        mapRequestBody["taxCode"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.taxCode.toString())
-        mapRequestBody["auction"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.auction.toString())
-        mapRequestBody["expenseCode"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), newClaimRequest.expenseCode.toString())
-        mapRequestBody["claim_type"] = RequestBody.create(okhttp3.MediaType.parse("text/plain"), "E")
-
-
-        mapRequestBody["split[]"] = RequestBody.create(okhttp3.MediaType.parse("application/json"), Gson().toJson(SplitClaimDetail("12")))
-        body = MultipartBody.Part.createFormData("attachments", file.name, requestBody)
-        arrBody.add(body)
-        viewModel.uploadClaim(arrBody).observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        binding.mProgressBars.visibility = View.GONE
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                    }
-                    Status.LOADING -> {
-                        binding.mProgressBars.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })
-*/
-       /*viewModel.createNewClaim(newClaimRequest).observe(viewLifecycleOwner, Observer {
-            it?.let { resource ->
-                when (resource.status) {
-                    Status.SUCCESS -> {
-                        resource.data?.let { response ->
-                            try {
-                                Log.d(TAG, "setChangePasswordObserver: ${resource.status}")
-                                //Toast.makeText(contextActivity, "Claim added successfully/submitted successfully", Toast.LENGTH_SHORT).show()
-
-                                setResponse(response)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-                    Status.ERROR -> {
-                        binding.mProgressBars.visibility = View.GONE
-                        binding.btnSubmit.visibility = View.VISIBLE
-                        Log.e(TAG, "setChangePasswordObserver: ${it.message}")
-                        it.message?.let { it1 -> Toast.makeText(contextActivity, it1, Toast.LENGTH_SHORT).show() }
-                    }
-                    Status.LOADING -> {
-                        binding.mProgressBars.visibility = View.VISIBLE
-                    }
-                }
-            }
-        })*/
     }
     fun bitmapToFile(bitmap: Bitmap, fileNameToSave: String): File? { // File name like "image.png"
         //create a file to write bitmap data
@@ -1029,12 +881,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-           /* if (binding.edtTax.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
-
-                onCreateClaimFailed()
-                return
-            }*/
             if(viewModel.attachmentsList.size > 0){
                 binding.btnSubmit.visibility = View.GONE
                 setCreateClaimObserver(newClaimRequest)
@@ -1070,17 +916,8 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
                 onCreateClaimFailed()
                 return
             }
-            /*if (binding.edtTax.text.isNullOrEmpty()) {
-                Toast.makeText(contextActivity, "Please Enter Tax", Toast.LENGTH_LONG).show()
 
-                onCreateClaimFailed()
-                return
-            }*/
             if(viewModel.attachmentsList.size > 0){
-
-               /* val splitOne = SplitClaimDetail(newClaimRequest?.companyNumber!!, newClaimRequest?.department!!, newClaimRequest.expenseType!!,
-                    newClaimRequest.totalAmount?:"0", newClaimRequest.tax?.toDouble()?:0.0,newClaimRequest.taxCode?.toInt()?:0,newClaimRequest.auction,newClaimRequest.expenseCode)
-                newClaimRequest.split.add(splitOne)*/
                 println("claim data :"+newClaimRequest.tax)
 
                 val splitOne = SplitClaimItem(
@@ -1184,8 +1021,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
             val intent = Intent(requireActivity(), MainActivity::class.java)
             startActivity(intent)
             requireActivity(). finish()
-//            (contextActivity as? MainActivity)?.backButtonPressed()
-        //    (contextActivity as? MainActivity)?.clearFragmentBackstack()
         }
     }
 
@@ -1196,10 +1031,6 @@ class OcrNewClaimFragment() : Fragment() ,RecylerCallback{
     private fun showCalenderDialog(){
         val calendar = Calendar.getInstance()
         val calendarStart: Calendar = Calendar.getInstance()
-//        val calendarEnd: Calendar = Calendar.getInstance()
-
-       // calendarStart.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH] - 1, calendar[Calendar.DAY_OF_MONTH])
-//        calendarEnd.set(calendar[Calendar.YEAR], calendar[Calendar.MONTH], calendar[Calendar.DAY_OF_MONTH])
 
         val constraintsBuilder =
             CalendarConstraints.Builder()

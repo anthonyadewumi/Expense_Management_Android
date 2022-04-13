@@ -121,9 +121,7 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
             splitItmlist[0].tax=totalCalculatedTaxdefault
 
             splitItmlist.forEachIndexed { index, splitClaimItem ->
-                println("splitClaimItem: ${splitClaimItem}")
-                println("totalAmount: ${splitClaimItem.totalAmount}")
-                println("taxamount: ${splitClaimItem.tax}")
+
 
                 splittotalamount += splitClaimItem.totalAmount.toDouble()
                 splitTaxamount += splitClaimItem.tax
@@ -159,8 +157,7 @@ class SplitClaimFragment() : Fragment() , RecylerCallback {
     }
     fun setClaimRequestDetail(request: NewClaimRequest){
         claimRequest = request
-        System.out.println("claimRequest totalAmount : ${claimRequest.totalAmount}")
-        System.out.println("claimRequest netAmount : ${claimRequest.netAmount}")
+
 
 
     }

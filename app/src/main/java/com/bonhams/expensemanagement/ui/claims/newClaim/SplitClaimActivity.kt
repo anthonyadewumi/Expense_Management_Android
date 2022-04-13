@@ -89,13 +89,6 @@ class SplitClaimActivity : BaseActivity() {
                     val totalAmountOne = binding.edtTotalAmount.text
                     val taxCodeOne = binding.edtTaxCode.text
                     val mtax = binding.edtTax.text.toString().toDouble()
-                    println("companynumber :" + companyOne?.id)
-                    println("companycode :" + companyOne?.code)
-                    println("departmentOne :" + departmentOne?.id)
-                    println("expenseTypeOne :" + expenseTypeOne?.id)
-                    println("taxcode id :" + expenseTypeOne?.taxCodeID)
-                    println("taxcode taxcodeValue :$taxcodeValue")
-                    println("expence codeid id :" + expenseTypeOne?.expenseCodeID)
                     val splitOne = SplitClaimItem(
                         companyOne?.id?:"0",
                         companyOne?.code?:"0", departmentOne?.id?:"0", expenseTypeOne?.id!!,
@@ -229,22 +222,18 @@ class SplitClaimActivity : BaseActivity() {
          taxAmount = ((intent.getSerializableExtra("taxAmount") as Double?)!!)
         val  totalAmount = ((intent.getSerializableExtra("totalAmount") as String?)!!)
         totalAmountForsplit = ((intent.getSerializableExtra("totalAmount") as String?)!!).toDouble()
-        println("department :"+department)
         try {
-            //binding.edtTotalAmount.setText(intent.getSerializableExtra("totalAmount") as String?)
+
             binding.edtTotalAmount.setText(String.format("%.2f",totalAmount.toDouble()))
             binding.edtTax.setText(String.format("%.2f",taxAmount.toString().toDouble()))
         } catch (e: Exception) {
         }
-        //binding.edtTax.setText(taxAmount.toString())
 
         if (currencySymbol != null) {
             binding.tvTotalAmountCurrency.text = currencySymbol
             binding.tvTaxCurrency.text = currencySymbol
-           // binding.edtTax.setCurrencySymbol(currencySymbol, useCurrencySymbolAsHint = true)
         }
         if (currancyCode != null) {
-           // binding.edtTotalAmount.setLocale(currancyCode)
            // binding.edtTax.setLocale(currancyCode)
         }
 
@@ -344,8 +333,6 @@ class SplitClaimActivity : BaseActivity() {
 
                 setupDeparmentType()
 
-                // System.out.println("selected appoint :"+ viewModel.companyList[position].code)
-                //binding.edtTitle.setText(viewModel.companyList[position].code)
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
             override fun onFocusChange(v: View?, hasFocus: Boolean) {}
@@ -369,15 +356,6 @@ class SplitClaimActivity : BaseActivity() {
 
             }
 
-
-           /* if (it.expenseGroupID == groupid && (it.companyID == compnyId.toString() || it.companyID == null)) {
-                viewModel.expenseTypeList.add(it)
-                // println("selected expenseTypeList Added :" )
-
-            } else if (it.companyID.isNullOrEmpty()) {
-                //viewModel.expenseTypeList.add(it)
-
-            }*/
 
         }
         setupExpenceType()

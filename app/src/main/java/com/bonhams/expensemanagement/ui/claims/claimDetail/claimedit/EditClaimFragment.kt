@@ -126,11 +126,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         try {
             if (this::claimDetail.isInitialized) {
                 isCreateCopy=true
-                println("isCopyClaim total amount :"+claimDetail.totalAmount)
-
-                /*  binding.edtTitle.setText(
-                      claimDetail.title.replaceFirstChar(Char::uppercase) ?: claimDetail.title
-                  )*/
                 binding.edtMerchantName.setText(
                     claimDetail.merchant.replaceFirstChar(Char::uppercase) ?: claimDetail.merchant
                 )
@@ -142,26 +137,13 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                     claimDetail.date_of_receipt,
                     Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT
                 )
-//            binding.edtCompanyNumber.setText(claimDetail.companyName)
-              /*  binding.tvDateOfSubmission.text = if (!claimDetail.date_of_receipt.trim().isNullOrEmpty())
-                    Utils.getFormattedDate(claimDetail.createdOn, Constants.YYYY_MM_DD_SERVER_RESPONSE_FORMAT,companyDateFormate
-                    ) else "n/a"*/
-               // binding.edtTotalAmount.setText(claimDetail.totalAmount)
-               // binding.edtTax.setText(claimDetail.tax)
-                // binding.tvNetAmount.text = claimDetail.netAmount
-              //  binding.tvNetAmount.setText(claimDetail.netAmount)
+
 
                 binding.edtDescription.setText(claimDetail.description)
                 if (!claimDetail.attachments.isNullOrEmpty() && claimDetail.attachments.trim()
                         .isNotEmpty()
                 ) {
-                    /*val attachment=claimDetail.attachments.split(",")
-                    viewModel.attachmentsList.clear()
-                    attachment.forEach {
-                        viewModel.attachmentsList.add(it)
-                    }
 
-                    viewModel.attachmentsList = mutableListOf(claimDetail.attachments)*/
                 }
                 refreshAttachments()
 
@@ -284,13 +266,8 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
                 }
 
-
-                println("selected company currency id :"+ viewModel.companyList[position].currency_type_id)
-                println("selected company date format:"+ viewModel.companyList[position].dateFormat)
-                println("selected company location:"+ viewModel.companyList[position].location)
                 viewModel.departmentList.clear()
                 viewModel.departmentListCompany.forEach {
-                    println("selected department compnyid id :"+ it.company_id+" and company id$"+compnyId)
 
                     if(it.company_id == compnyId.toString()){
                         viewModel.departmentList.add(it)
@@ -346,35 +323,15 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
         binding.spnCurrency.onItemSelectedListener = object : AdapterView.OnItemSelectedListener,
             View.OnFocusChangeListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                //binding.edtTotalAmount.text = null
-               // binding.edtTax.text = null
-               // binding.tvNetAmount.text = null
-              //  binding.edtTotalAmount.clearFocus()
-               // binding.edtTax.clearFocus()
-               // binding.tvNetAmount.clearFocus()
 
                 val code = viewModel.currencyList[position].code
                 val symbol = viewModel.currencyList[position].symbol
                 currencyCode=code
                 currencySymbol=symbol
-               // binding.edtTotalAmount.text = null
-               // binding.edtTax.text = null
-               // binding.tvNetAmount.text = null
-               // binding.edtTotalAmount.clearFocus()
-               // binding.edtTax.clearFocus()
-              //  binding.tvNetAmount.clearFocus()
                 binding.tvTotalAmountCurrency.text = symbol
                 binding.tvTaxAmountCurrency.text = symbol
                 binding.tvNetAmountCurrency.text = symbol
 
-              //  binding.edtTotalAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.edtTotalAmount.setLocale(code)
-
-              //  binding.edtTax.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.edtTax.setLocale(code)
-
-               // binding.tvNetAmount.setCurrencySymbol(symbol, useCurrencySymbolAsHint = true)
-               // binding.tvNetAmount.setLocale(code)
 
 
             }
@@ -387,21 +344,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
         if(this::claimDetail.isInitialized){
             try {
-                /*val expenseGroup: ExpenseGroup? =
-                    viewModel.expenseGroupList.find { it.id == claimDetail.expenseGroupID }
-                val expenseGroupPos = viewModel.expenseGroupList.indexOf(expenseGroup)//(currencyAdapter).getPosition(expenseGroup)
-                if (expenseGroupPos >= 0) {
-                    binding.spnExpenseGroup.setSelection(expenseGroupPos)
-                }
-                binding.edtGroupValue.setText(expenseGroup?.name)*/
-
-               /* val expenseType: ExpenseType? =
-                    viewModel.expenseTypeList.find { it.id == claimDetail.expenseTypeID }
-                val expenseTypePos = viewModel.expenseTypeList.indexOf(expenseType)
-                if (expenseTypePos >= 0) {
-                    binding.spnExpenseType.setSelection(expenseTypePos)
-                }
-                binding.edtExpenceTypeValue.setText(expenseType?.name)*/
                 val company: Company? =
                     viewModel.companyList.find { it.name == claimDetail.companyName }
                 val companyPos = viewModel.companyList.indexOf(company)
@@ -426,7 +368,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
                 binding.edtTotalAmount.setText(String.format("%.2f", claimDetail.totalAmount.toDouble()))
                 binding.edtTax.setText(String.format("%.2f", claimDetail.tax.toDouble()))
                 binding.tvNetAmount.setText(String.format("%.2f", claimDetail.netAmount.toDouble()))
-                println("auction create copy "+claimDetail.auction)
                 binding.edtAutionValue.setText(claimDetail.auction.toString())
                 binding.tvAuctionExpCode.text = claimDetail.expenseCode
 
@@ -439,8 +380,6 @@ class EditClaimFragment() : Fragment() ,RecylerCallback{
 
     private fun setupExpenceGroupType(isShowDefault:Boolean){
         var isDefaultshow=isShowDefault
-        // Expense Group Adapter
-        // viewModel.expenseGroupList.add(ExpenseGroup("0","N/A","0","active"))
         val expenseGroupAdapter = CustomSpinnerAdapter(
             requireContext(),
             R.layout.item_spinner,

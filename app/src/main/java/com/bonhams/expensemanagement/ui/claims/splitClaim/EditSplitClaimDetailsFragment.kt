@@ -187,9 +187,7 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                 }else{
                     val totalCalculateamount=totalAmount-splittotalamount
                    // binding.tvTotalAmount.setText(totalCalculateamount.toString())
-                    println("companyList size ${newClaimViewModel.companyList.size}")
-                    println("departmentList size ${newClaimViewModel.departmentList.size}")
-                    println("expenseTypeList size ${newClaimViewModel.expenseTypeList.size}")
+
 
 
 
@@ -220,13 +218,6 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                             if(it.id==splitClaimItem.department||it.cost_code==splitClaimItem.departmentName)
                                 departmentId=it.id
                         }
-                       /* data.addProperty("expense_type_id",splitClaimItem.expenseType  )
-                        data.addProperty("company_id", companyId)
-                        data.addProperty("department_id", departmentId )
-                        data.addProperty("amount", splitClaimItem.totalAmount)
-                        data.addProperty("tax_code",mtaxcodeId)
-                        data.addProperty("auction",splitClaimItem.auctionSales )
-                        data.addProperty("expense_code", expenceCode ) */
 
                         data.addProperty("expenseType",splitClaimItem.expenseType  )
                         data.addProperty("companyNumber", companyId)
@@ -301,22 +292,12 @@ class EditSplitClaimDetailsFragment() : Fragment() , RecylerCallback {
         remaningAmount=splitedSplitAmount-totalSplitAmount
         splitAdapter.notifyDataSetChanged()
 
-        //  binding.tvMerchantName.text = claimRequest.expenseCode
-     //   binding.tvDate.text = claimRequest.dateSubmitted
-     //   binding.tvUserName.text = AppPreferences.fullName
-
         binding.tvTotalAmountCurrency.text = currencySymbol
-       // binding.tvTotalAmount.setLocale(currencyCode)
-      //  netAmount=splitedClaimDetails.main_claim?.netAmount.toString().toDouble()
-       //val  totalAmountWithTax=splitedClaimDetails.main_claim?.totalAmount.toString().toDouble()
-        //val  taxAmount=splitedClaimDetails.main_claim?.tax.toString().toDouble()
-        netAmount=objectRequest.get("netAmount").asDouble
 
+        netAmount=objectRequest.get("netAmount").asDouble
         val  totalAmountWithTax=objectRequest.get("totalAmount").asDouble
         val  taxAmount=objectRequest.get("tax").asDouble
-        println("totalAmountWithTax:"+totalAmountWithTax)
-        println("taxAmount:"+taxAmount)
-        println("netAmount:"+netAmount)
+
 
 
        // totalAmount=totalAmountWithTax-taxAmount

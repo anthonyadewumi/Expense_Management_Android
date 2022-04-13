@@ -153,11 +153,7 @@ class SplitClaimDetailsFragment() : Fragment() , RecylerCallback {
                     return@OnClickListener
                 }else{
                     val totalCalculateamount=totalAmount-splittotalamount
-                   // binding.tvTotalAmount.setText(totalCalculateamount.toString())
-                    println("Splited id array$idOfSplitList")
-                    println("Splited amount array$valueOfSplitList")
-                    println("Splited net amount $totalCalculateamount")
-                    println("Splited main_claim_id ${splitedClaimDetails.main_claim?.id}")
+
 
                      val jsonArrayId=JsonArray()
                      val jsonArrayValue=JsonArray()

@@ -261,14 +261,6 @@ class ClaimDetailFragment() : Fragment(), RecylerCallback {
                                         splittotalamount +=it.totalAmount.toDouble()
 
                                     }
-                                  /*  try {
-                                        binding.tvSplitAmount.setText(claimDetail.currencySymbol+" "+splittotalamount)
-                                    } catch (e: Exception) {
-                                        binding.tvSplitAmount.setText(splittotalamount.toString())
-
-                                    }*/
-
-
                                 }
                                 try {
                                   //  binding.tvNetAmount.setText(claimDetail.currencySymbol+" "+String.format("%.2f", splitedClaimDetails.main_claim?.netAmount?.toDouble()))
